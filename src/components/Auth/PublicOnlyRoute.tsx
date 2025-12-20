@@ -2,13 +2,16 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext';
 
 const PublicOnlyRoute = () => {
-    const { isAuthenticated, isLoading } = useAuth();
+    const { isAuthenticated, isLoading, user } = useAuth();
 
     if (isLoading) {
         return <div className="h-screen flex items-center justify-center">Chargement...</div>;
     }
 
     if (isAuthenticated) {
+        if (user?.role === 'admin') {
+            return <Navigate to="/admin" replace />;
+        }
         return <Navigate to="/" replace />;
     }
 

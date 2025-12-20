@@ -24,7 +24,7 @@ const registerSchema = z.object({
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 const RegisterPage = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate();             
   const { login } = useAuth();
   const [loading, setLoading] = useState(false);
 

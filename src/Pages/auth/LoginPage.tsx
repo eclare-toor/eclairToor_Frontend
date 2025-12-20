@@ -46,7 +46,7 @@ const LoginPage = () => {
       login(token, user);
 
       // 4. Redirect
-      if (user.role === 'ADMIN' || user.role === 'admin') {
+      if (user?.role === 'admin') {
         console.log('user.role', user.role);
         navigate('/admin');
 

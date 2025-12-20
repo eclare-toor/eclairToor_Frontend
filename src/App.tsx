@@ -35,13 +35,18 @@ import AdminLayout from "./components/Layout/AdminLayout";
 
 
 import { useAuth } from "./Context/AuthContext";
+import { useEffect } from "react";
 
 function App() {
-  const { isLoading } = useAuth();
+  
+  const { isLoading,user } = useAuth();
 
   if (isLoading) {
     return <div className="h-screen flex items-center justify-center">Chargement...</div>;
   }
+
+  useEffect(() => {
+  }, [user, isLoading]);
 
   return (
     <>
@@ -62,7 +67,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
 
           {/* ROUTES PROTÉGÉES (Nécessitent une connexion) */}
-          <Route element={<ProtectedRoute />}>
+          <Route element={<Protecte dRoute />}>
             <Route path="/voyages/:id/congratulationReservation" element={<CongratulationReservation />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/mon-compte" element={<DashboardUser />} />
@@ -77,7 +82,7 @@ function App() {
         </Route>
 
         {/* ROUTES ADMIN (Layout Admin - Protégé Role='ADMIN') */}
-        
+        {user?.role==='admin' && (
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboardPage />} />
             <Route path="voyages" element={<AdminTripsPage />} />
@@ -86,7 +91,7 @@ function App() {
             <Route path="messages" element={<AdminRequestContact />} />
             <Route path="users" element={<AdminUsersPage />} />
           </Route>
-        
+        )}
       </Routes>
 
       <ToastContainer

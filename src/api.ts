@@ -84,7 +84,7 @@ export const deleteHotel = async (id: string): Promise<void> => {
 
 
 // --- AUTH & USERS ---
-export interface AuthResponse {
+export interface AuthResponse { 
     message: string;
     user: User;
     token: string;
