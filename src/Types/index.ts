@@ -5,7 +5,7 @@ export interface User {
   email: string;
   role: string;
   is_active?: boolean;
-  created_at: string;
+  created_at: string | null;
   linkfacebook?: string;
   nationalite: string;
   phone?: string;
@@ -20,12 +20,15 @@ export interface Hotel {
   stars: number; // 1–5
   maps_url: string;
   address?: string;
+  type?: string;
+  images?: string[] | null;
   created_at: string;
+  updated_at?: string;
 }
 
 
 
-export type TripType = "NATIONAL" | "INTERNATIONAL" | "OMRA";
+export type TripType = "national" | "international" | "religieuse";
 
 export interface Trip {
   id: string;
@@ -36,8 +39,10 @@ export interface Trip {
   end_date: string;
   base_price: number;
   images: string[];
-  equipment_list: string[];
-  personalized_fields?: string;
+  equipment_list?: string[];
+  destination_wilaya?: string;
+  destination_country?: string;
+  omra_category?: string;
   created_at: string;
 }
 
@@ -72,16 +77,40 @@ export interface Booking {
   passengers_adult: number;
   passengers_child: number;
   passengers_baby: number;
-  total_price: number;
+  total_price?: number; // Optional in response if backend calculates it, but good to keep
   status: BookingStatus;
-  description: string;//admin add description
-  created_at: string;
+  description?: string;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+export interface BookingItem extends Booking {
+  nom?: string;
+  prenom?: string;
+  email?: string;
+  title?: string;
+  destination_country?: string | null;
+  type?: TripType;
+  omra_category?: string | null;
+  base_price?: string | number;
 }
 
 
 export type CustomRequestType = "NATIONAL" | "INTERNATIONAL" | "OMRA";
 
 export type CustomRequestStatus = "PENDING" | "PROCESSED" | "REJECTED";
+
+export type RequestCategory = 'voyage' | 'omra' | 'hotel' | 'vol';
+
+export interface UnifiedRequest {
+  id: string;
+  user_id: string;
+  category: RequestCategory;
+  info: any;
+  status: CustomRequestStatus | null;
+  created_at: string | null;
+  updated_at: string | null;
+}
 
 export interface CustomRequest {
   id: string;
@@ -161,13 +190,26 @@ export type ContactMessageStatus =
   | "ARCHIVED";
 
 export interface ContactMessage {
-  id: string;
+  id: string | number;
   user_id?: string;
   full_name: string;
   email: string;
   phone?: string;
   subject?: string;
   message: string;
-  status: ContactMessageStatus;
-  created_at: string;
+  status: ContactMessageStatus | null;
+  created_at: string | null;
+}
+
+export interface AppNotification {
+  id: string;
+  user_id: string;
+  type: string;
+  title: string;
+  message: string;
+  is_read: boolean | null;
+  action_url?: string;
+  metadata?: any;
+  created_at: string | null;
+  expires_at?: string | null;
 }

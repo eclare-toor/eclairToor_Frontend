@@ -27,7 +27,6 @@ const Footer = () => {
                             <li><Link to="/voyages" className="hover:text-primary transition-colors">Voyages Organisés</Link></li>
                             <li><Link to="/request-hotel" className="hover:text-primary transition-colors">Hôtels</Link></li>
                             <li><Link to="/request-flight" className="hover:text-primary transition-colors">Vols</Link></li>
-                            <li><Link to="/Promos-trips" className="hover:text-primary transition-colors">Promos</Link></li>
                         </ul>
                     </div>
 

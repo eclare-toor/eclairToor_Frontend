@@ -1,6 +1,9 @@
-//Vue d'ensemble (Stats, KPIs, Dernières activités).
-import React from 'react';
-import { Users, Map, Globe, BedDouble, TrendingUp, Calendar } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Users, Map, BedDouble, TrendingUp, Calendar, Bell, Clock, AlertCircle } from 'lucide-react';
+import { getNotifications } from '../../api';
+import type { AppNotification } from '../../Types';
+import LoadingSpinner from '../../components/Shared/LoadingSpinner';
+import { cn } from '../../lib/utils';
 
 const StatCard = ({ icon: Icon, title, value, subtext, color }: { icon: any, title: string, value: string, subtext: string, color: string }) => (
   <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-start justify-between hover:shadow-md transition-shadow">
@@ -9,14 +12,46 @@ const StatCard = ({ icon: Icon, title, value, subtext, color }: { icon: any, tit
       <h3 className="text-3xl font-bold text-slate-900 mb-2">{value}</h3>
       <p className="text-xs text-slate-400">{subtext}</p>
     </div>
-    <div className={`p-4 rounded-xl ${color} bg-opacity-10 text-opacity-100`}>
-      {/* Note: The color logic below is simplified for Tailwind classes constructed dynamically */}
-      <Icon className={`w-6 h-6 ${color.replace('bg-', 'text-')}`} />
+    <div className={cn("p-4 rounded-xl bg-opacity-10", color)}>
+      <Icon className={cn("w-6 h-6", color.replace('bg-', 'text-'))} />
     </div>
   </div>
 );
 
 function AdminDashboardPage() {
+  const [activities, setActivities] = useState<AppNotification[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        setLoading(true);
+        const data = await getNotifications();
+        // Sort by latest first and take top 5
+        const lastFive = (data || []).sort((a, b) => {
+          const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+          const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+          return dateB - dateA;
+        }).slice(0, 5);
+
+        setActivities(lastFive);
+      } catch (error) {
+        console.error('Error fetching dashboard activities:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchActivities();
+  }, []);
+
+  const getActivityIcon = (type: string) => {
+    if (type.includes('payment')) return { icon: TrendingUp, bg: 'bg-green-100', text: 'text-green-600' };
+    if (type.includes('booking')) return { icon: Calendar, bg: 'bg-blue-100', text: 'text-blue-600' };
+    if (type.includes('request')) return { icon: Bell, bg: 'bg-amber-100', text: 'text-amber-600' };
+    return { icon: AlertCircle, bg: 'bg-slate-100', text: 'text-slate-600' };
+  };
+
   return (
     <div className="space-y-8">
       <div>
@@ -100,24 +135,45 @@ function AdminDashboardPage() {
           </div>
         </div>
 
-        {/* Recent Activities (Static Mock) */}
+        {/* Recent Activities (Real Data) */}
         <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
-          <h3 className="font-bold text-slate-900 mb-6">Activités Récentes</h3>
-          <div className="space-y-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="flex items-start gap-4 p-4 rounded-xl hover:bg-slate-50 transition-colors cursor-default border border-transparent hover:border-slate-100">
-                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs">
-                  UD
-                </div>
-                <div>
-                  <p className="text-sm text-slate-800 font-medium">
-                    <span className="font-bold">Amine Benali</span> a réservé le voyage <span className="font-bold text-primary">Omra VIP</span>.
-                  </p>
-                  <p className="text-xs text-slate-400 mt-1">Il y a 2 heures</p>
-                </div>
-              </div>
-            ))}
-          </div>
+          <h3 className="font-bold text-slate-900 mb-6 flex items-center gap-2">
+            <Clock className="w-5 h-5 text-primary" /> Activités Récentes
+          </h3>
+
+          {loading ? (
+            <div className="py-20 flex justify-center">
+              <LoadingSpinner />
+            </div>
+          ) : activities.length === 0 ? (
+            <div className="py-20 text-center text-slate-400">
+              <Bell className="w-12 h-12 mx-auto mb-3 opacity-20" />
+              <p>Aucune activité récente.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {activities.map((activity) => {
+                const style = getActivityIcon(activity.type);
+                const Icon = style.icon;
+                return (
+                  <div key={activity.id} className="flex items-start gap-4 p-4 rounded-xl hover:bg-slate-50 transition-colors cursor-default border border-transparent hover:border-slate-100">
+                    <div className={cn("w-10 h-10 rounded-full flex items-center justify-center shrink-0", style.bg, style.text)}>
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-slate-800 font-medium">
+                        <span className="font-bold">{activity.title}</span>: {activity.message}
+                      </p>
+                      <p className="text-xs text-slate-400 mt-1 flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {activity.created_at ? new Date(activity.created_at).toLocaleString() : 'Récemment'}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
       </div>

@@ -26,22 +26,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
             console.log('🔄 AuthContext: Initializing...', { storedToken, storedUserId });
 
-            if (storedToken && storedUserId) {
+            if (storedToken) {
                 setToken(storedToken);
-                try {
-                    console.log('🔄 AuthContext: Fetching user data for ID:', storedUserId);
-                    const userData = await getUserById(storedUserId);
-                    console.log('✅ AuthContext: Fetched user data:', userData);
 
-                    if (userData) {
-                        setUser(userData);
-                    } else {
-                        console.warn('⚠️ AuthContext: User not found for ID, logging out.');
-                        handleLogout();
+                // Fallback to localStorage since we don't have a getUserById endpoint yet
+                const storedUser = localStorage.getItem('user_data');
+                if (storedUser) {
+                    try {
+                        const parsedUser = JSON.parse(storedUser);
+                        setUser(parsedUser);
+                        console.log('✅ AuthContext: Restored user from localStorage:', parsedUser);
+                    } catch (e) {
+                        console.error('❌ AuthContext: Failed to parse user data from localStorage');
+
                     }
-                } catch (err) {
-                    console.error("❌ AuthContext: Failed to restore user session", err);
-                    handleLogout();
+                } else {
+                    console.warn('⚠️ AuthContext: Token found but no user data in localStorage.');
+                    // Optional: handleLogout() if you want to force re-login
                 }
             } else {
                 console.log('ℹ️ AuthContext: No session found.');
@@ -59,9 +60,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         // Persistent storage
         Cookies.set('token', newToken, { expires: 7 });
-        Cookies.set('userId', newUser.id, { expires: 7 });
+        Cookies.set('userId', newUser.id, { expires: 7 }); // Kept for consistency but not primarily used for rehydration now
         Cookies.set('userRole', newUser.role, { expires: 7 });
-        console.log('💾 AuthContext: Cookies set.');
+        localStorage.setItem('user_data', JSON.stringify(newUser));
+        console.log('💾 AuthContext: Cookies & LocalStorage set.');
     };
 
     const handleLogout = () => {
@@ -72,6 +74,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         Cookies.remove('token');
         Cookies.remove('userId');
         Cookies.remove('userRole');
+        localStorage.removeItem('user_data');
 
         if (window.location.pathname !== '/connexion') {
             window.location.href = '/connexion';

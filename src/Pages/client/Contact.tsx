@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
 import { Mail, Phone, MapPin, Send, CheckCircle, Clock } from 'lucide-react';
-import { cn } from '../../lib/utils';
+import { sendContactMessage } from '../../api';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
     full_name: '',
     email: '',
     phone: '',
-    subject: '',
     message: '',
   });
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -28,16 +28,21 @@ const Contact = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    console.log("Contact Message:", formData);
-    setSuccess(true);
-    setFormData({ full_name: '', email: '', phone: '', subject: '', message: '' });
-    setLoading(false);
+    setError(null);
+    try {
+      await sendContactMessage(formData);
+      setSuccess(true);
+      setFormData({ full_name: '', email: '', phone: '', message: '' });
+    } catch (err: any) {
+      console.error("Contact Form Error:", err);
+      setError(err.message || "Une erreur est survenue lors de l'envoi du message.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 pt-24 pb-20">
+    <div className="min-h-screen bg-transparent pt-40 pb-20">
       <div className="container mx-auto px-4">
 
         <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
@@ -53,7 +58,7 @@ const Contact = () => {
 
           {/* Contact Info */}
           <div className="space-y-10">
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 space-y-6">
+            <div className="bg-white/70 backdrop-blur-2xl p-8 rounded-[2.5rem] shadow-2xl shadow-blue-900/5 border border-white/40 space-y-6">
               <h3 className="text-2xl font-bold text-slate-900 mb-6">Nos Coordonnées</h3>
 
               <div className="flex items-start gap-4">
@@ -125,12 +130,18 @@ const Contact = () => {
           </div>
 
           {/* Form */}
-          <div className="bg-white p-8 md:p-10 rounded-3xl shadow-xl border border-slate-100">
+          <div className="bg-white/70 backdrop-blur-2xl p-8 md:p-10 rounded-[2.5rem] shadow-2xl shadow-blue-900/10 border border-white/50">
 
             <div className="mb-8">
               <h2 className="text-2xl font-bold text-slate-900">Envoyez-nous un message</h2>
               <p className="text-slate-500 mt-2">Nous vous répondrons dans les 24h.</p>
             </div>
+
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-sm animate-fade-in">
+                {error}
+              </div>
+            )}
 
             {success ? (
               <div className="py-20 text-center animate-fade-in-up">
@@ -180,18 +191,6 @@ const Contact = () => {
                     placeholder="email@exemple.com"
                     className="bg-slate-50 border-slate-200 h-11"
                     value={formData.email}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="subject">Sujet</Label>
-                  <Input
-                    id="subject"
-                    name="subject"
-                    placeholder="Renseignements..."
-                    className="bg-slate-50 border-slate-200 h-11"
-                    value={formData.subject}
                     onChange={handleChange}
                   />
                 </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Trip } from '../../Types';
-import { Calendar, MapPin, ArrowRight, Clock } from 'lucide-react';
+import { Calendar, MapPin, ArrowRight, Clock, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
@@ -9,12 +9,10 @@ interface TripCardProps {
 }
 
 const TripCard: React.FC<TripCardProps> = ({ trip }) => {
-    // Calculate duration
     const startDate = new Date(trip.start_date);
     const endDate = new Date(trip.end_date);
     const duration = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
 
-    // Check if trip is new (created within last 7 days)
     const isNew = React.useMemo(() => {
         const createdDate = new Date(trip.created_at);
         const now = new Date();
@@ -23,101 +21,111 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
         return diffDays <= 7;
     }, [trip.created_at]);
 
-    // Type Badge Colors
     const getTypeColor = (type: string) => {
-        switch (type) {
-            case 'NATIONAL': return 'bg-emerald-500/90 text-white';
-            case 'INTERNATIONAL': return 'bg-blue-500/90 text-white';
-            case 'OMRA': return 'bg-amber-500/90 text-white';
-            default: return 'bg-gray-500/90 text-white';
+        const lowerType = type.toLowerCase();
+        switch (lowerType) {
+            case 'national': return 'from-emerald-500 to-teal-600';
+            case 'international': return 'from-blue-500 to-indigo-600';
+            case 'religieuse': return 'from-amber-500 to-orange-600';
+            case 'omra': return 'from-amber-500 to-orange-600';
+            default: return 'from-slate-500 to-slate-700';
         }
     };
 
     return (
         <motion.div
-            whileHover={{ y: -8 }}
-            className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/50 bg-card shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-primary/10"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            whileHover={{ y: -12 }}
+            className="group relative flex h-full flex-col overflow-hidden rounded-[2.5rem] bg-white/40 backdrop-blur-xl border border-white/40 shadow-2xl shadow-blue-900/5 transition-all duration-500"
         >
-            {/* Image Section */}
-            <div className="relative aspect-[4/3] overflow-hidden">
+            {/* Image Container */}
+            <div className="relative aspect-[16/10] overflow-hidden">
                 <img
-                    src={trip.images[0]}
+                    src={trip.images[0] ? (trip.images[0].startsWith('http') ? trip.images[0] : `http://localhost:3000/api${trip.images[0]}`) : 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=800&q=80'}
                     alt={trip.title}
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
                 />
 
-                {/* Overlay Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 transition-opacity group-hover:opacity-40" />
+                {/* Image Overlay Gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80" />
 
-                {/* Badges Container */}
-                <div className="absolute left-3 top-3 flex flex-col gap-2 z-10">
-                    {/* Type Badge */}
-                    <span className={`rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md ${getTypeColor(trip.type)}`}>
-                        {trip.type}
-                    </span>
+                {/* Price Tag Overlay */}
+                <div className="absolute top-6 right-6 z-20">
+                    <div className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl shadow-xl border border-white/50">
+                        <p className="text-[10px] font-black uppercase text-slate-400 leading-none mb-1">À partir de</p>
+                        <div className="flex items-baseline gap-1">
+                            <span className="text-xl font-black text-primary leading-none">
+                                {trip.base_price.toLocaleString()}
+                            </span>
+                            <span className="text-[10px] font-bold text-slate-600">DZD</span>
+                        </div>
+                    </div>
                 </div>
 
-                {/* New Badge */}
-                {isNew && (
-                    <div className="absolute right-3 top-3 z-10">
-                        <span className="relative flex h-3 w-3">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                {/* Badges */}
+                <div className="absolute top-6 left-6 flex flex-col gap-2 z-20">
+                    <span className={`bg-gradient-to-r ${getTypeColor(trip.type)} text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg shadow-black/10`}>
+                        {trip.type}
+                    </span>
+                    {isNew && (
+                        <span className="bg-white text-primary px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg flex items-center gap-2">
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                            </span>
+                            Nouveau
                         </span>
-                        <span className="ml-2 rounded-full bg-primary/90 px-3 py-1 text-[10px] font-bold uppercase text-primary-foreground backdrop-blur-md shadow-sm">
-                            New
+                    )}
+                </div>
+
+                {/* Location at bottom of image */}
+                <div className="absolute bottom-6 left-6 right-6 z-20 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-white/90">
+                        <div className="p-2 bg-white/20 backdrop-blur-md rounded-lg">
+                            <MapPin className="w-4 h-4" />
+                        </div>
+                        <span className="text-sm font-bold tracking-wide uppercase">
+                            {trip.destination_wilaya || trip.destination_country || trip.omra_category || trip.type}
                         </span>
                     </div>
-                )}
+                </div>
             </div>
 
             {/* Content Section */}
-            <div className="flex flex-1 flex-col p-5">
-                {/* Location */}
-                <div className="mb-3 flex items-center text-xs font-semibold text-muted-foreground/80">
-                    {(trip.type === 'NATIONAL' || trip.type === 'INTERNATIONAL') && (
-                        <MapPin className="mr-1.5 h-3.5 w-3.5 text-primary" />
-                    )}
-                    <span className="uppercase tracking-wider">{trip.personalized_fields || trip.type}</span>
+            <div className="flex flex-1 flex-col p-8 bg-gradient-to-b from-transparent to-white/20">
+                <div className="flex items-center gap-1 mb-4">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                        <Star key={s} className="w-3 h-3 fill-amber-400 text-amber-400" />
+                    ))}
+                    <span className="text-[10px] font-bold text-slate-400 ml-2 uppercase tracking-tighter">Éclat Garanti</span>
                 </div>
 
-                {/* Title */}
-                <h3 className="mb-3 line-clamp-2 text-xl font-bold leading-tight text-foreground group-hover:text-primary transition-colors duration-300">
+                <h3 className="mb-4 text-2xl font-black leading-tight text-slate-900 group-hover:text-primary transition-colors duration-300 line-clamp-2">
                     {trip.title}
                 </h3>
 
-                {/* Info Row */}
-                <div className="mb-5 flex items-center gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1.5  px-2.5 py-1 rounded-md">
-                        <Clock className="h-4 w-4 text-primary" />
-                        <span className="font-medium">{duration} Days</span>
+                <div className="flex items-center gap-6 mb-8">
+                    <div className="flex items-center gap-2 text-slate-500 bg-slate-100/50 px-3 py-1.5 rounded-xl border border-white/50">
+                        <Clock className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-bold">{duration} Jours</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                        <Calendar className="h-4 w-4 text-primary" />
-                        <span>{startDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
+                    <div className="flex items-center gap-2 text-slate-500">
+                        <Calendar className="w-4 h-4 text-primary" />
+                        <span className="text-sm font-medium">{startDate.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}</span>
                     </div>
                 </div>
 
-                {/* Bottom Section: Price & Action */}
-                <div className="mt-auto flex items-end justify-between border-t border-border/50 pt-4">
-                    <div className="flex flex-col">
-                        <span className="text-[10px] font-medium uppercase text-muted-foreground mb-0.5">Starting from</span>
-                        <div className="flex items-baseline gap-1">
-                            <span className="text-xl font-bold text-primary">
-                                {trip.base_price.toLocaleString()}
-                            </span>
-                            <span className="text-xs font-semibold text-muted-foreground">DZD</span>
-                        </div>
-                    </div>
-
-                    <Link
-                        to={`/voyages/${trip.id}`}
-                        className="group/btn flex items-center justify-center rounded-full bg-primary/10 p-3 text-primary transition-all duration-300 hover:bg-primary hover:text-primary-foreground"
-                        aria-label="View details"
-                    >
-                        <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover/btn:-rotate-45" />
-                    </Link>
-                </div>
+                <Link
+                    to={`/voyages/${trip.id}`}
+                    className="mt-auto group/btn relative flex items-center justify-center gap-3 w-full bg-slate-900 text-white rounded-2xl py-4 font-black text-sm uppercase tracking-widest overflow-hidden transition-all duration-300 hover:bg-primary hover:shadow-2xl hover:shadow-primary/40 active:scale-95"
+                >
+                    <span className="relative z-10 flex items-center gap-2">
+                        Découvrir <ArrowRight className="w-4 h-4 transition-transform duration-500 group-hover/btn:translate-x-1" />
+                    </span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-white/10 to-primary/0 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-1000" />
+                </Link>
             </div>
         </motion.div>
     );

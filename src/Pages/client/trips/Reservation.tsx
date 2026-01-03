@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { getTrip, createReservation } from '../../../api';
-import type { TripDetails } from '../../../api';
+import type { Trip } from '../../../Types';
 import { useAuth } from '../../../Context/AuthContext';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
-import { Calendar, Users, MapPin, CheckCircle2, Minus, Plus, Wallet, ShieldCheck, Mail, Phone, User as UserIcon } from 'lucide-react';
+import { Calendar, Users, MapPin, Minus, Plus, ShieldCheck, Mail, Phone, User as UserIcon } from 'lucide-react';
 
 const Reservation = () => {
   const { id } = useParams<{ id: string }>();
@@ -15,7 +15,7 @@ const Reservation = () => {
   const location = useLocation();
   const { user: authUser, isAuthenticated, isLoading: isAuthLoading } = useAuth();
 
-  const [trip, setTrip] = useState<TripDetails | null>(location.state?.trip || null);
+  const [trip, setTrip] = useState<Trip | null>(location.state?.trip || null);
   const [loading, setLoading] = useState(!location.state?.trip);
   const [error, setError] = useState<string | null>(null);
 
@@ -75,12 +75,10 @@ const Reservation = () => {
     setLoading(true);
     try {
       const reservationData = {
-        user_id: authUser.id,
         trip_id: id || '',
         passengers_adult: adults,
         passengers_child: children,
-        passengers_baby: babies,
-        total_price: totalPrice
+        passengers_baby: babies
       };
 
       const result = await createReservation(reservationData);
@@ -100,7 +98,7 @@ const Reservation = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-24 pb-20 px-4">
+    <div className="min-h-screen bg-transparent pt-40 pb-20 px-4">
       <div className="container mx-auto max-w-6xl">
         <h1 className="text-3xl md:text-4xl font-heading font-bold text-slate-900 mb-8">
           Finaliser votre réservation
@@ -111,8 +109,8 @@ const Reservation = () => {
           {/* LEFT COLUMN: Form */}
           <div className="lg:col-span-2 space-y-8">
 
-            {/* Section 1: Coordonnées */}
-            <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100">
+            {/* Section 1: Coordonnée */}
+            <div className="bg-white/70 backdrop-blur-2xl rounded-2xl p-6 md:p-8 shadow-xl shadow-blue-900/5 border border-white/40">
               <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
                 <UserIcon className="w-5 h-5 text-primary" />
                 Vos Coordonnées
@@ -155,7 +153,7 @@ const Reservation = () => {
             </div>
 
             {/* Section 2: Passagers */}
-            <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-slate-100">
+            <div className="bg-white/70 backdrop-blur-2xl rounded-2xl p-6 md:p-8 shadow-xl shadow-blue-900/5 border border-white/40">
               <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
                 <Users className="w-5 h-5 text-primary" />
                 Nombre de passagers
@@ -245,10 +243,14 @@ const Reservation = () => {
           <div className="lg:col-span-1">
             <div className="sticky top-24 space-y-6">
 
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden">
+              <div className="bg-white/70 backdrop-blur-2xl rounded-2xl border border-white/40 shadow-2xl shadow-blue-900/10 overflow-hidden">
                 {/* Trip Image Header */}
                 <div className="relative h-32">
-                  <img src={trip.images[0]} alt={trip.title} className="w-full h-full object-cover" />
+                  <img
+                    src={trip.images[0] ? (trip.images[0].startsWith('http') ? trip.images[0] : `http://localhost:3000/api${trip.images[0]}`) : 'https://via.placeholder.com/400x300'}
+                    alt={trip.title}
+                    className="w-full h-full object-cover"
+                  />
                   <div className="absolute inset-0 bg-black/40" />
                   <div className="absolute bottom-3 left-4 text-white">
                     <p className="text-xs font-bold uppercase opacity-90">{trip.type}</p>
@@ -265,7 +267,7 @@ const Reservation = () => {
                     </div>
                     <div className="flex items-center gap-2">
                       <MapPin className="w-4 h-4" />
-                      <span>{trip.personalized_fields}</span>
+                      <span>{trip.destination_wilaya || trip.destination_country || trip.omra_category || trip.type}</span>
                     </div>
                   </div>
 

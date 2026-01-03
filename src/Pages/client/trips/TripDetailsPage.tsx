@@ -1,41 +1,55 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getTrip } from '../../../api';
-import type { TripDetails } from '../../../api';
+import { getTrip, getTripItinerary, getTripHotels } from '../../../api';
+import type { Trip, TripItinerary, Hotel } from '../../../Types';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 import { Button } from '../../../components/ui/button';
 import { Calendar, MapPin, Clock, CheckCircle2, Hotel as HotelIcon, ArrowLeft, Share2, Heart, ExternalLink, ShieldCheck, Zap, Star } from 'lucide-react';
-import { cn } from '../../../lib/utils';  
+import { cn } from '../../../lib/utils';
 
 const TripDetailsPage = () => {
   const { id } = useParams<{ id: string }>();
-  const [trip, setTrip] = useState<TripDetails | null>(null);
+  const [trip, setTrip] = useState<Trip | null>(null);
+  const [itinerary, setItinerary] = useState<TripItinerary[]>([]);
+  const [hotels, setHotels] = useState<Hotel[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchTrip = async () => {
+    const fetchTripData = async () => {
+
       if (!id) return;
       try {
-        const data = await getTrip(id);
-        if (!data) {
-          setError('Trip not found');
+        setLoading(true);
+        // Execute all requests in parallel for better performance
+        const [tripData, itineraryData, hotelsData] = await Promise.all([
+          getTrip(id),
+          getTripItinerary(id),
+          getTripHotels(id)
+        ]);
+
+        if (!tripData) {
+          setError('Voyage non trouvé');
         } else {
-          setTrip(data);
+          setTrip(tripData);
+          setItinerary(itineraryData);
+          setHotels(hotelsData);
+          console.log('hotels', hotelsData);
         }
       } catch (err) {
-        setError('Failed to load trip details');
+        console.error("Error loading details:", err);
+        setError('Impossible de charger les détails du voyage');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTrip();
+    fetchTripData();
   }, [id]);
 
   if (loading) {
     return (
-      <div className="min-h-screen pt-24 flex justify-center items-center">
+      <div className="min-h-screen pt-40 flex justify-center items-center">
         <LoadingSpinner />
       </div>
     );
@@ -43,7 +57,7 @@ const TripDetailsPage = () => {
 
   if (error || !trip) {
     return (
-      <div className="min-h-screen pt-24 flex flex-col justify-center items-center gap-4">
+      <div className="min-h-screen pt-40 flex flex-col justify-center items-center gap-4">
         <h2 className="text-2xl font-bold text-destructive">{error || 'Trip not found'}</h2>
         <Link to="/voyages">
           <Button variant="outline">Back to Trips</Button>
@@ -65,7 +79,7 @@ const TripDetailsPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background pb-20 pt-20">
+    <div className="min-h-screen bg-transparent pb-20 pt-40">
       {/* Navigation Bar for Details */}
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Link to="/voyages" className="text-muted-foreground hover:text-primary transition-colors flex items-center gap-2 font-medium">
@@ -85,10 +99,10 @@ const TripDetailsPage = () => {
       {/* Image Gallery with Smooth Scroll */}
       <div className="container mx-auto px-4 mb-12">
         <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar h-[50vh] md:h-[60vh] rounded-3xl  active:cursor-grabbing gap-4">
-          {trip.images.map((img, idx) => (
+          {trip.images && trip.images.map((img, idx) => (
             <div key={idx} className="min-w-full snap-center relative">
               <img
-                src={img}
+                src={img.startsWith('http') ? img : `http://localhost:3000/api${img}`}
                 alt={`${trip.title} ${idx + 1}`}
                 className="w-full h-full object-cover"
               />
@@ -111,7 +125,7 @@ const TripDetailsPage = () => {
           <div className="space-y-6">
             <div className="flex flex-wrap items-center gap-4 text-primary font-medium">
               <span className="bg-primary/10 px-4 py-1.5 rounded-full text-sm font-semibold tracking-wide uppercase">
-                {trip.type === 'NATIONAL' ? 'Voyage National' : trip.type === 'INTERNATIONAL' ? 'Voyage International' : 'Omra'}
+                {trip.type === 'national' ? 'Voyage National' : trip.type === 'international' ? 'Voyage International' : 'Omra'}
               </span>
               <span className="flex items-center gap-1.5 text-sm text-slate-600 font-semibold bg-slate-100 px-3 py-1.5 rounded-full">
                 <Clock className="w-4 h-4" />
@@ -119,7 +133,7 @@ const TripDetailsPage = () => {
               </span>
               <span className="flex items-center gap-1.5 text-sm text-slate-600 font-semibold bg-slate-100 px-3 py-1.5 rounded-full">
                 <MapPin className="w-4 h-4" />
-                {trip.personalized_fields}
+                {trip.destination_wilaya || trip.destination_country || trip.omra_category || trip.type}
               </span>
             </div>
 
@@ -138,49 +152,53 @@ const TripDetailsPage = () => {
           </div>
 
           {/* Itinerary */}
-          <div>
-            <h3 className="text-2xl font-bold text-slate-900 mb-8 flex items-center gap-2">
-              <MapPin className="w-6 h-6 text-primary" />
-              Itinéraire détaillé
-            </h3>
-            <div className="space-y-8 border-l-2 border-primary/20 ml-3 pl-8 relative">
-              {trip.itinerary.map((item, index) => (
-                <div key={item.id} className="relative group">
-                  <span className="absolute -left-[43px] top-0 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-bold ring-4 ring-background transition-transform group-hover:scale-110">
-                    {item.day_number}
-                  </span>
-                  <h4 className="text-xl font-bold text-slate-800 mb-3">Jour {item.day_number}</h4>
-                  <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:shadow-md transition-shadow">
-                    <ul className="space-y-3">
-                      {Array.isArray(item.activities) ? (
-                        item.activities.map((activity, idx) => (
-                          <li key={idx} className="flex items-start gap-3 text-slate-600">
-                            <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                            <span className="font-medium">{activity}</span>
-                          </li>
-                        ))
-                      ) : (
-                        <li className="flex items-start gap-3 text-slate-600">
-                          <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                          <span className="font-medium">{item.activities}</span>
-                        </li>
-                      )}
-                    </ul>
+          {itinerary && itinerary.length > 0 && (
+            <div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-8 flex items-center gap-2">
+                <MapPin className="w-6 h-6 text-primary" />
+                Itinéraire détaillé
+              </h3>
+              <div className="space-y-8 border-l-2 border-primary/20 ml-3 pl-8 relative">
+                {itinerary.map((item, index) => (
+                  <div key={item.id || index} className="relative group">
+                    <span className="absolute -left-[43px] top-0 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-bold ring-4 ring-background transition-transform group-hover:scale-110">
+                      {item.day_number}
+                    </span>
+                    <h4 className="text-xl font-bold text-slate-800 mb-3">Jour {item.day_number}</h4>
+                    <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:shadow-md transition-shadow">
+                      <ul className="space-y-3">
+                        {Array.isArray(item.activities) ? (
+                          item.activities.map((activity, idx) => (
+                            <li key={idx} className="flex items-start gap-3 text-slate-600">
+                              <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                              <span className="font-medium">{activity}</span>
+                            </li>
+                          ))
+                        ) : (
+                          item.activities && (
+                            <li className="flex items-start gap-3 text-slate-600">
+                              <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                              <span className="font-medium">{item.activities}</span>
+                            </li>
+                          )
+                        )}
+                      </ul>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Hotels */}
-          {trip.hotels.length > 0 && (
+          {hotels && hotels.length > 0 && (
             <div>
               <h3 className="text-2xl font-bold text-slate-900 mb-8 flex items-center gap-2">
                 <HotelIcon className="w-6 h-6 text-primary" />
                 Hébergement
               </h3>
               <div className="grid grid-cols-1 gap-6">
-                {trip.hotels.map((hotel) => (
+                {hotels.map((hotel) => (
                   <div key={hotel.id} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col sm:flex-row gap-6 items-start sm:items-center">
                     <div className="bg-blue-50 p-4 rounded-xl shrink-0">
                       <HotelIcon className="w-8 h-8 text-blue-600" />
@@ -285,7 +303,7 @@ const TripDetailsPage = () => {
                 Équipement recommandé
               </h4>
               <div className="flex flex-wrap gap-2">
-                {trip.equipment_list.map((item, idx) => (
+                {trip.equipment_list && trip.equipment_list.map((item, idx) => (
                   <span key={idx} className="bg-slate-100 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-200 transition-colors cursor-default">
                     {item}
                   </span>
