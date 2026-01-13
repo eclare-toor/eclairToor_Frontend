@@ -1,4 +1,3 @@
-import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
     LayoutDashboard,
@@ -12,6 +11,8 @@ import {
 import { Button } from '../ui/button';
 import { cn } from '../../lib/utils';
 import { useAuth } from '../../Context/AuthContext';
+
+import logo from '../../assets/logo.png';
 
 const AdminSidebar = () => {
     const { logout } = useAuth();
@@ -30,12 +31,17 @@ const AdminSidebar = () => {
     ];
 
     return (
-        <aside className="w-64 bg-slate-900 text-white fixed h-full z-10 hidden md:flex flex-col">
-            <div className="p-6 border-b border-white/10">
-                <h2 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-                    <span className="text-primary font-black text-3xl">E</span>clair
-                </h2>
-                <p className="text-xs text-slate-400 mt-1">Administration</p>
+        <aside className="w-64 bg-slate-900/95 backdrop-blur-xl text-white fixed h-full z-20 hidden md:flex flex-col border-r border-white/5">
+            <div className="p-8 flex flex-col items-center border-b border-white/5 bg-black/20">
+                <img src={logo} alt="Logo" className="w-20 h-20 object-contain mb-4 drop-shadow-2xl" />
+                <div className="text-center">
+                    <h2 className="text-xl font-black tracking-tighter text-white uppercase italic">
+                        Eclair Travel
+                    </h2>
+                    <p className="text-[10px] text-primary font-black uppercase tracking-[0.3em] mt-1 ml-1 opacity-80">
+                        Administration
+                    </p>
+                </div>
             </div>
 
             <nav className="flex-1 py-6 px-3 space-y-1">

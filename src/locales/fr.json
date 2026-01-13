@@ -1,0 +1,239 @@
+{
+    "nav": {
+        "home": "Accueil",
+        "trips": "Voyages",
+        "hotels": "Hôtels",
+        "flights": "Vols",
+        "contact": "Contact",
+        "dashboard": "Tableau de bord",
+        "profile": "Profil",
+        "logout": "Se déconnecter",
+        "login": "Connexion",
+        "notifications": "Notifications",
+        "mark_all_read": "Tout marquer comme lu",
+        "no_notifications": "Aucune notification",
+        "view_all": "Voir toutes les notifications"
+    },
+    "footer": {
+        "desc": "Votre partenaire de confiance pour des voyages inoubliables. Découvrez le monde avec confort et sérénité.",
+        "nav_title": "Navigation",
+        "info_title": "Informations",
+        "contact_title": "Contact",
+        "about": "À propos",
+        "contact_us": "Contactez-nous",
+        "agency_label": "Notre Agence",
+        "phone_label": "Téléphone",
+        "email_label": "Email",
+        "hours_label": "Horaires d'ouverture",
+        "copyright": "© {{year}} Eclair Travel. Tous droits réservés."
+    },
+    "hero": {
+        "subtitle": "Meilleure Agence de Voyage",
+        "title_part1": "Explorez le",
+        "title_part2": "Monde",
+        "title_part3": "Avec Nous",
+        "desc": "Découvrez des destinations de rêve, des offres exclusives et des expériences inoubliables avec Eclair Travel.",
+        "cta_trips": "Explorer les Voyages",
+        "cta_contact": "Contactez-nous",
+        "stats": {
+            "clients": "Clients Satisfaits",
+            "destinations": "Destinations",
+            "experience": "Années d'Expérience"
+        }
+    },
+    "auth": {
+        "welcome_back": "Bon retour",
+        "subtitle_login": "Connectez-vous pour accéder à votre compte",
+        "email_label": "Email",
+        "email_placeholder": "exemple@email.com",
+        "password_label": "Mot de passe",
+        "password_placeholder": "••••••••",
+        "forgot_password": "Mot de passe oublié ?",
+        "login_btn": "Se connecter",
+        "login_loading": "Connexion...",
+        "no_account": "Pas encore de compte ?",
+        "register_link": "Créer un compte",
+        "login_success": "Connexion réussie !",
+        "register_title": "Créer un compte",
+        "register_subtitle": "Rejoignez Eclair Travel et commencez votre aventure",
+        "nom_label": "Nom *",
+        "prenom_label": "Prénom *",
+        "phone_label": "Numéro de téléphone *",
+        "nationality_label": "Nationalité *",
+        "facebook_label": "Lien Facebook (Optionnel)",
+        "register_btn": "S'inscrire",
+        "register_loading": "Inscription en cours...",
+        "already_account": "Déjà un compte ?",
+        "login_link": "Se connecter",
+        "register_success": "Inscription réussie !",
+        "errors": {
+            "nom_required": "Le nom est requis",
+            "prenom_required": "Le prénom est requis",
+            "email_invalid": "Adresse email invalide",
+            "facebook_invalid": "Lien Facebook invalide",
+            "password_min": "Le mot de passe doit contenir au moins 8 caractères",
+            "phone_required": "Le numéro de téléphone est requis",
+            "nationality_required": "La nationalité est requise",
+            "generic": "Une erreur est survenue"
+        }
+    },
+    "contact": {
+        "title": "Contactez-nous",
+        "subtitle": "Une question ? Un projet de voyage ? Notre équipe est à votre écoute pour vous répondre dans les plus brefs délais.",
+        "coords_title": "Nos Coordonnées",
+        "form_title": "Envoyez-nous un message",
+        "form_subtitle": "Nous vous répondrons dans les 24h.",
+        "full_name_label": "Nom complet",
+        "message_label": "Message",
+        "send_btn": "Envoyer le message",
+        "sending": "Envoi...",
+        "success_title": "Message Envoyé !",
+        "success_desc": "Merci de nous avoir contacté.",
+        "new_message_btn": "Envoyer un nouveau message",
+        "hours_val": "Sam - Jeu: 09:00 - 18:00\nVendredi: Fermé"
+    },
+    "profile": {
+        "loading": "Chargement de votre profil...",
+        "error": "Erreur lors du chargement du profil.",
+        "retry": "Réessayer",
+        "personal_info": "Informations Personnelles",
+        "nom": "Nom",
+        "prenom": "Prénom",
+        "email": "Email",
+        "phone": "Téléphone",
+        "nationality": "Nationalité",
+        "joined_date": "Date d'inscription",
+        "not_provided": "Non renseigné",
+        "account_status": "Statut du Compte",
+        "active": "Actif",
+        "inactive": "Inactif",
+        "status_desc_active": "Votre compte est pleinement opérationnel.",
+        "status_desc_inactive": "Votre compte est désactivé.",
+        "linked_facebook": "Lié à Facebook",
+        "view_profile": "Voir le profil"
+    },
+    "trips": {
+        "title": "Nos Voyages",
+        "categories": {
+            "all": "Tous les Voyages",
+            "national": "National",
+            "international": "International",
+            "omra": "Omra"
+        },
+        "custom_trip": {
+            "button": "Voyage à la carte",
+            "label": "Personnalisez votre séjour",
+            "options": {
+                "national": "Tourisme National",
+                "international": "Tourisme International",
+                "omra": "Omra à la carte"
+            }
+        },
+        "filters": {
+            "search_placeholder": "Où voulez-vous aller ?",
+            "max_duration": "DURÉE MAX"
+        },
+        "results_count": "Résultats",
+        "loading": "Chargement de votre prochaine aventure...",
+        "empty": {
+            "title": "Aucune pépite trouvée...",
+            "desc": "Essayez d'ajuster vos filtres pour découvrir de nouveaux horizons.",
+            "reset": "Réinitialiser la recherche"
+        },
+        "subtitle": "Découvrez notre sélection de voyages organisés",
+        "filter_national": "Tourisme National",
+        "filter_international": "International",
+        "filter_religious": "Tourisme Religieux",
+        "search_placeholder": "Rechercher une destination...",
+        "duration": "Durée",
+        "price_from": "À partir de",
+        "details_btn": "Voir Détails"
+    },
+    "trip_details": {
+        "not_found": "Voyage non trouvé",
+        "load_error": "Impossible de charger les détails du voyage",
+        "back_link": "Retour aux voyages",
+        "gallery": {
+            "click_to_expand": "{{index}} / {{total}} • Cliquez pour agrandir",
+            "photo_count": "Photo {{index}} / {{total}}",
+            "main_photo": "Photo principale"
+        },
+        "sidebar": {
+            "price_label": "Prix total par personne",
+            "best_price": "Meilleur prix garanti",
+            "start_date": "Date de départ",
+            "end_date": "Date de retour",
+            "book_btn": "Réserver maintenant",
+            "benefits": {
+                "confirmation": "Confirmation immédiate",
+                "payment": "Paiement sécurisé",
+                "support": "Support 24/7",
+                "cancellation": "Annulation flexible"
+            }
+        },
+        "days": "{{count}} Jours",
+        "day": "Jour {{day}}",
+        "about_title": "À propos du voyage",
+        "itinerary_title": "Itinéraire détaillé",
+        "accommodation_title": "Hébergement d'exception",
+        "no_images": "Pas d'images dispos",
+        "stars": "Étoiles",
+        "location": "Localisation",
+        "category": "Catégorie",
+        "unspecified": "Non spécifié",
+        "maps_btn": "Itinéraire Google Maps",
+        "equipment_title": "Équipement recommandé"
+    },
+    "common": {
+        "loading": "Chargement...",
+        "error": "Une erreur est survenue",
+        "success": "Succès",
+        "save": "Enregistrer",
+        "cancel": "Annuler",
+        "delete": "Supprimer",
+        "edit": "Modifier",
+        "confirm_delete": "Êtes-vous sûr de vouloir supprimer ?"
+    },
+    "home": {
+        "hero": {
+            "phrases": [
+                "SANS LIMITES",
+                "VOS RÊVES",
+                "L'AVENTURE",
+                "LE MONDE"
+            ],
+            "explore": "EXPLOREZ",
+            "subtitle": "Plus qu'une agence, votre partenaire voyage en Algérie. Circuits uniques, hôtels de prestige et expertise locale.",
+            "book_trip": "Réserver un voyage",
+            "need_help": "Besoin d'aide ?"
+        },
+        "stats": {
+            "happy_travelers": "Voyageurs Heureux",
+            "destinations": "Destinations",
+            "years_experience": "Années d'Expertise",
+            "client_rating": "Note Clients"
+        },
+        "gallery": {
+            "label": "Notre Galerie Exclusive",
+            "title_part1": "Instants",
+            "title_part2": "Inoubliables",
+            "card_label": "Eclair Travel Galerie",
+            "card_experience": "Expérience #"
+        },
+        "cta": {
+            "title_part1": "VOTRE PROCHAINE",
+            "title_part2": "DESTINATION",
+            "desc": "Le monde est vaste, votre temps est précieux. Confiez-nous vos rêves, nous en ferons des réalités.",
+            "button": "Commencer l'aventure"
+        },
+        "reviews": {
+            "title_part1": "La voix de nos",
+            "title_part2": "Voyageurs"
+        },
+        "map": {
+            "label": "Retrouvez-nous",
+            "title_part1": "Notre",
+            "title_part2": "Emplacement"
+        }
+    }
+}

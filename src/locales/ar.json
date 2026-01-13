@@ -1,0 +1,239 @@
+{
+    "nav": {
+        "home": "الرئيسية",
+        "trips": "الرحلات",
+        "hotels": "الفنادق",
+        "flights": "الرحلات الجوية",
+        "contact": "اتصل بنا",
+        "dashboard": "لوحة التحكم",
+        "profile": "الملف الشخصي",
+        "logout": "تسجيل الخروج",
+        "login": "تسجيل الدخول",
+        "notifications": "الإشعارات",
+        "mark_all_read": "تحديد الكل كمقروء",
+        "no_notifications": "لا توجد إشعارات",
+        "view_all": "عرض كل الإشعارات"
+    },
+    "footer": {
+        "desc": "شريكك الموثوق لرحلات لا تُنسى. اكتشف العالم براحة وهدوء.",
+        "nav_title": "التنقل",
+        "info_title": "معلومات",
+        "contact_title": "اتصل بنا",
+        "about": "حولنا",
+        "contact_us": "تواصل معنا",
+        "agency_label": "وكالتنا",
+        "phone_label": "الهاتف",
+        "email_label": "البريد الإلكتروني",
+        "hours_label": "ساعات العمل",
+        "copyright": "© {{year}} إكلير ترافيل. جميع الحقوق محفوظة."
+    },
+    "hero": {
+        "subtitle": "أفضل وكالة سفر",
+        "title_part1": "اكتشف",
+        "title_part2": "العالم",
+        "title_part3": "معنا",
+        "desc": "اكتشف وجهات الأحلام والعروض الحصرية والتجارب التي لا تنسى مع إكلير ترافيل.",
+        "cta_trips": "استكشف الرحلات",
+        "cta_contact": "تواصل معنا",
+        "stats": {
+            "clients": "عملاء سعداء",
+            "destinations": "وجهات",
+            "experience": "سنوات خبرة"
+        }
+    },
+    "auth": {
+        "welcome_back": "مرحباً بعودتك",
+        "subtitle_login": "أدخل بيانات اعتمادك للوصول إلى حسابك",
+        "email_label": "البريد الإلكتروني",
+        "email_placeholder": "example@email.com",
+        "password_label": "كلمة المرور",
+        "password_placeholder": "••••••••",
+        "forgot_password": "نسيت كلمة المرور؟",
+        "login_btn": "تسجيل الدخول",
+        "login_loading": "جاري تسجيل الدخول...",
+        "no_account": "ليس لديك حساب؟",
+        "register_link": "إنشاء حساب",
+        "login_success": "تم تسجيل الدخول بنجاح!",
+        "register_title": "إنشاء حساب",
+        "register_subtitle": "انضم إلى إكلير ترافيل وابدأ مغامرتك",
+        "nom_label": "الاسم *",
+        "prenom_label": "اللقب *",
+        "phone_label": "رقم الهاتف *",
+        "nationality_label": "الجنسية *",
+        "facebook_label": "رابط فيسبوك (اختياري)",
+        "register_btn": "تسجيل",
+        "register_loading": "جاري التسجيل...",
+        "already_account": "لديك حساب بالفعل؟",
+        "login_link": "تسجيل الدخول",
+        "register_success": "تم التسجيل بنجاح!",
+        "errors": {
+            "nom_required": "الاسم مطلوب",
+            "prenom_required": "اللقب مطلوب",
+            "email_invalid": "البريد الإلكتروني غير صالح",
+            "facebook_invalid": "رابط فيسبوك غير صالح",
+            "password_min": "يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل",
+            "phone_required": "رقم الهاتف مطلوب",
+            "nationality_required": "الجنسية مطلوبة",
+            "generic": "حدث خطأ ما"
+        }
+    },
+    "contact": {
+        "title": "اتصل بنا",
+        "subtitle": "سؤال؟ مشروع سفر؟ فريقنا هنا للرد عليك في أقرب وقت ممكن.",
+        "coords_title": "معلومات الاتصال",
+        "form_title": "أرسل لنا رسالة",
+        "form_subtitle": "سنرد خلال 24 ساعة.",
+        "full_name_label": "الاسم الكامل",
+        "message_label": "الرسالة",
+        "send_btn": "إرسال الرسالة",
+        "sending": "جاري الإرسال...",
+        "success_title": "تم إرسال الرسالة!",
+        "success_desc": "شكراً لاتصالك بنا.",
+        "new_message_btn": "إرسال رسالة جديدة",
+        "hours_val": "السبت - الخميس: 09:00 - 18:00\nالجمعة: مغلق"
+    },
+    "profile": {
+        "loading": "جاري تحميل ملفك الشخصي...",
+        "error": "خطأ في تحميل الملف الشخصي.",
+        "retry": "إعادة المحاولة",
+        "personal_info": "المعلومات الشخصية",
+        "nom": "اللقب",
+        "prenom": "الاسم",
+        "email": "البريد الإلكتروني",
+        "phone": "الهاتف",
+        "nationality": "الجنسية",
+        "joined_date": "تاريخ الانضمام",
+        "not_provided": "غير محدد",
+        "account_status": "حالة الحساب",
+        "active": "نشط",
+        "inactive": "غير نشط",
+        "status_desc_active": "حسابك يعمل بشكل كامل.",
+        "status_desc_inactive": "حسابك معطل.",
+        "linked_facebook": "مرتبط بفيسبوك",
+        "view_profile": "عرض الملف الشخصي"
+    },
+    "trips": {
+        "title": "رحلاتنا",
+        "categories": {
+            "all": "كل الرحلات",
+            "national": "سياحة داخلية",
+            "international": "سياحة دولية",
+            "omra": "عمرة"
+        },
+        "custom_trip": {
+            "button": "رحلة حسب الطلب",
+            "label": "خصص إقامتك",
+            "options": {
+                "national": "سياحة داخلية",
+                "international": "سياحة دولية",
+                "omra": "عمرة حسب الطلب"
+            }
+        },
+        "filters": {
+            "search_placeholder": "إلى أين تريد الذهاب؟",
+            "max_duration": "المدة القصوى"
+        },
+        "results_count": "نتائج",
+        "loading": "جاري تحميل مغامرتك القادمة...",
+        "empty": {
+            "title": "لم يتم العثور على أي رحلات...",
+            "desc": "جرب تعديل الفلاتر لاكتشاف آفاق جديدة.",
+            "reset": "إعادة تعيين البحث"
+        },
+        "subtitle": "اكتشف مجموعتنا المختارة من الرحلات المنظمة",
+        "filter_national": "سياحة داخلية",
+        "filter_international": "سياحة دولية",
+        "filter_religious": "سياحة دينية",
+        "search_placeholder": "ابحث عن وجهة...",
+        "duration": "المدة",
+        "price_from": "ابتداءً من",
+        "details_btn": "عرض التفاصيل"
+    },
+    "trip_details": {
+        "not_found": "الرحلة غير موجودة",
+        "load_error": "تعذر تحميل تفاصيل الرحلة",
+        "back_link": "العودة للرحلات",
+        "gallery": {
+            "click_to_expand": "{{index}} / {{total}} • اضغط للتكبير",
+            "photo_count": "صورة {{index}} / {{total}}",
+            "main_photo": "الصورة الرئيسية"
+        },
+        "sidebar": {
+            "price_label": "السعر الإجمالي للشخص",
+            "best_price": "أفضل سعر مضمون",
+            "start_date": "تاريخ المغادرة",
+            "end_date": "تاريخ العودة",
+            "book_btn": "احجز الآن",
+            "benefits": {
+                "confirmation": "تأكيد فوري",
+                "payment": "دفع آمن",
+                "support": "دعم 24/7",
+                "cancellation": "إلغاء مرن"
+            }
+        },
+        "days": "{{count}} أيام",
+        "day": "اليوم {{day}}",
+        "about_title": "عن الرحلة",
+        "itinerary_title": "البرنامج المفصل",
+        "accommodation_title": "إقامة مميزة",
+        "no_images": "لا توجد صور",
+        "stars": "نجوم",
+        "location": "الموقع",
+        "category": "الفئة",
+        "unspecified": "غير محدد",
+        "maps_btn": "مسار خرائط جوجل",
+        "equipment_title": "المعدات الموصى بها"
+    },
+    "common": {
+        "loading": "جاري التحميل...",
+        "error": "حدث خطأ ما",
+        "success": "نجاح",
+        "save": "حفظ",
+        "cancel": "إلغاء",
+        "delete": "حذف",
+        "edit": "تعديل",
+        "confirm_delete": "هل أنت متأكد أنك تريد الحذف؟"
+    },
+    "home": {
+        "hero": {
+            "phrases": [
+                "بلا حدود",
+                "أحلامك",
+                "المغامرة",
+                "العالم"
+            ],
+            "explore": "اكتشف",
+            "subtitle": "أكثر من مجرد وكالة، شريكك في السفر في الجزائر. مسارات فريدة، وفنادق راقية، وخبرة محلية.",
+            "book_trip": "احجز رحلة",
+            "need_help": "تحتاج مساعدة؟"
+        },
+        "stats": {
+            "happy_travelers": "مسافرون سعداء",
+            "destinations": "وجهات",
+            "years_experience": "سنوات خبرة",
+            "client_rating": "تقييم العملاء"
+        },
+        "gallery": {
+            "label": "معرضنا الحصري",
+            "title_part1": "لحظات",
+            "title_part2": "لا تُنسى",
+            "card_label": "معرض إكلير ترافيل",
+            "card_experience": "تجربة #"
+        },
+        "cta": {
+            "title_part1": "وجهتك",
+            "title_part2": "القادمة",
+            "desc": "العالم واسع ووقتك ثمين. ائتمنا على أحلامك، وسنحولها إلى واقع.",
+            "button": "ابدأ المغامرة"
+        },
+        "reviews": {
+            "title_part1": "صوت",
+            "title_part2": "مسافرينا"
+        },
+        "map": {
+            "label": "تجدنا",
+            "title_part1": "موقعنا",
+            "title_part2": "الجغرافي"
+        }
+    }
+}

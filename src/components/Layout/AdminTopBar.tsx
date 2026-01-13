@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, Check, CheckCheck, User, LogOut } from 'lucide-react';
-import { getNotifications, getUnreadNotificationsCount, markNotificationAsRead, markAllNotificationsAsRead } from '../../api';
+import { Bell, Check, CheckCheck, User, LogOut, ShieldCheck, Calendar, Zap, Trash2, ArrowRight } from 'lucide-react';
+import { getNotifications, getUnreadNotificationsCount, markNotificationAsRead, markAllNotificationsAsRead, deleteNotification } from '../../api';
 import type { AppNotification } from '../../Types';
 import { useAuth } from '../../Context/AuthContext';
 import { cn } from '../../lib/utils';
+import { toast } from 'react-toastify';
 import { Button } from '../ui/button';
 import {
     DropdownMenu,
@@ -22,23 +23,11 @@ const AdminTopBar = () => {
     const fetchNotificationsData = async () => {
         if (isAuthenticated) {
             const [notifs, count] = await Promise.all([
-                getNotifications(),
+                getNotifications({ limit: 10 }),
                 getUnreadNotificationsCount()
             ]);
 
             let processedNotifs = Array.isArray(notifs) ? [...notifs] : [];
-            const hasDates = processedNotifs.some(n => n.created_at);
-
-            if (hasDates) {
-                processedNotifs.sort((a, b) => {
-                    const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
-                    const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
-                    return dateB - dateA;
-                });
-            } else {
-                processedNotifs.reverse();
-            }
-
             setNotifications(processedNotifs);
             setUnreadCount(count || 0);
         }
@@ -47,7 +36,7 @@ const AdminTopBar = () => {
     useEffect(() => {
         if (isAuthenticated) {
             fetchNotificationsData();
-            const interval = setInterval(fetchNotificationsData, 30000);
+            const interval = setInterval(fetchNotificationsData, 900000); // 15 minutes
             return () => clearInterval(interval);
         }
     }, [isAuthenticated]);
@@ -63,6 +52,17 @@ const AdminTopBar = () => {
         fetchNotificationsData();
     };
 
+    const handleDeleteNotification = async (id: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        try {
+            await deleteNotification(id);
+            toast.success("Notification supprimée");
+            fetchNotificationsData();
+        } catch (error) {
+            toast.error("Erreur lors de la suppression");
+        }
+    };
+
     const handleNotificationClick = async (notif: AppNotification) => {
         if (!notif.is_read) {
             await markNotificationAsRead(notif.id);
@@ -71,86 +71,116 @@ const AdminTopBar = () => {
     };
 
     return (
-        <header className="h-16 bg-white border-b border-slate-100 flex items-center justify-between px-6 sticky top-0 z-40 shadow-sm">
-            <h1 className="font-bold text-slate-800">Panneau d'administration</h1>
+        <header className="h-20 bg-white/40 backdrop-blur-xl border-b border-white/50 flex items-center justify-between px-8 sticky top-0 z-40">
+            <div>
+                <h1 className="text-xl font-black text-slate-900 tracking-tight">Tableau de Bord</h1>
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest leading-none mt-1">Gérez vos opérations en temps réel</p>
+            </div>
 
             <div className="flex items-center gap-4">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <button className="relative p-2 text-slate-400 hover:bg-slate-50 rounded-full transition-colors">
-                            <Bell className="w-5 h-5" />
+                        <button className="relative h-11 w-11 flex items-center justify-center text-slate-400 hover:text-slate-900 hover:bg-white/50 rounded-full transition-all duration-300 group">
+                            <Bell className="w-6 h-6 group-hover:scale-110 transition-transform" />
                             {unreadCount > 0 && (
-                                <span className="absolute -top-0.5 -right-0.5 min-w-[17px] h-[17px] px-1 bg-red-600 rounded-full border-2 border-white flex items-center justify-center text-[9px] text-white font-black z-50">
+                                <span className="absolute top-1 right-1 min-w-[20px] h-[20px] px-1 bg-red-600 rounded-full border-2 border-white flex items-center justify-center text-[10px] text-white font-black z-50 shadow-sm">
                                     {unreadCount}
                                 </span>
                             )}
                         </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-80 p-0 overflow-hidden rounded-2xl border-slate-200">
-                        <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                            <DropdownMenuLabel className="p-0 text-sm font-bold text-slate-800">Notifications Admin</DropdownMenuLabel>
+                    <DropdownMenuContent align="end" className="w-[400px] p-0 overflow-hidden rounded-[2rem] border-slate-200/50 shadow-2xl backdrop-blur-3xl bg-white/95">
+                        <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-white/50">
+                            <div>
+                                <DropdownMenuLabel className="p-0 text-lg font-black text-slate-900">Notifications Admin</DropdownMenuLabel>
+                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Alertes système & Réservations</p>
+                            </div>
                             {unreadCount > 0 && (
                                 <Button
                                     variant="ghost"
                                     size="sm"
-                                    className="h-7 px-2 text-[10px] text-primary hover:text-primary hover:bg-primary/10 gap-1"
+                                    className="h-8 px-3 text-[11px] font-bold text-primary hover:text-primary hover:bg-primary/10 rounded-full border border-primary/20 gap-1.5"
                                     onClick={handleMarkAllAsRead}
                                 >
-                                    <CheckCheck className="w-3 h-3" /> Tout marquer
+                                    <CheckCheck className="w-3.5 h-3.5" /> Tout marquer
                                 </Button>
                             )}
                         </div>
                         <div className="max-h-80 overflow-y-auto">
                             {notifications.length === 0 ? (
-                                <div className="p-8 text-center text-slate-300">
-                                    <Bell className="w-8 h-8 mx-auto mb-2 opacity-20" />
-                                    <p className="text-xs">Aucune notification</p>
+                                <div className="p-12 text-center text-slate-400">
+                                    <Bell className="w-12 h-12 mx-auto mb-3 opacity-20" />
+                                    <p className="text-sm font-bold">Aucune notification</p>
+                                    <p className="text-[10px] uppercase tracking-tighter mt-1 opacity-60">Revenez plus tard</p>
                                 </div>
                             ) : (
-                                <div className="py-1">
+                                <div className="py-2">
                                     {notifications.map((notif) => (
                                         <div
                                             key={notif.id}
                                             className={cn(
-                                                "group px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors relative flex gap-3",
+                                                "group px-5 py-4 hover:bg-slate-50 cursor-pointer transition-colors relative flex gap-4",
                                                 !notif.is_read && "bg-primary/5"
                                             )}
                                             onClick={() => handleNotificationClick(notif)}
                                         >
                                             <div className={cn(
-                                                "w-9 h-9 rounded-full flex items-center justify-center shrink-0",
+                                                "w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm transition-transform group-hover:scale-110",
                                                 notif.type.includes('request') ? "bg-amber-100 text-amber-600" :
                                                     notif.type.includes('booking') ? "bg-blue-100 text-blue-600" :
-                                                        "bg-slate-100 text-slate-600"
+                                                        "bg-indigo-100 text-indigo-600"
                                             )}>
-                                                <Bell className="w-4 h-4" />
+                                                {notif.type.includes('request') ? <Zap className="w-5 h-5" /> :
+                                                    notif.type.includes('booking') ? <Calendar className="w-5 h-5" /> :
+                                                        <ShieldCheck className="w-5 h-5" />}
                                             </div>
                                             <div className="flex-1 min-w-0 pr-4">
-                                                <p className="text-xs font-bold text-slate-800 truncate pr-4">{notif.title}</p>
-                                                <p className="text-[11px] text-slate-500 line-clamp-2 mt-0.5">{notif.message}</p>
-                                                <p className="text-[9px] text-slate-400 mt-1 uppercase font-bold tracking-tighter">
-                                                    {notif.created_at ? new Date(notif.created_at).toLocaleDateString() : 'Admin'}
-                                                </p>
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <p className="text-[13px] font-black text-slate-900 truncate">{notif.title}</p>
+                                                    <p className="text-[9px] font-bold text-slate-400 whitespace-nowrap">
+                                                        {notif.created_at ? new Date(notif.created_at).toLocaleDateString() : 'Aujourd\'hui'}
+                                                    </p>
+                                                </div>
+                                                <p className="text-[11px] text-slate-500 line-clamp-2 mt-1 font-medium leading-relaxed">{notif.message}</p>
                                             </div>
-                                            {!notif.is_read && (
+
+                                            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all z-10">
+                                                {!notif.is_read && (
+                                                    <button
+                                                        title="Marquer comme lu"
+                                                        className="p-1.5 bg-white border border-slate-100 shadow-sm rounded-md text-slate-400 hover:text-primary transition-all"
+                                                        onClick={(e) => handleMarkAsRead(notif.id, e)}
+                                                    >
+                                                        <Check className="w-3.5 h-3.5" />
+                                                    </button>
+                                                )}
                                                 <button
-                                                    title="Marquer comme lu"
-                                                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 opacity-0 group-hover:opacity-100 hover:bg-white border border-slate-100 shadow-sm rounded-md transition-all text-slate-400 hover:text-primary z-10"
-                                                    onClick={(e) => handleMarkAsRead(notif.id, e)}
+                                                    title="Supprimer"
+                                                    className="p-1.5 bg-white border border-slate-100 shadow-sm rounded-md text-slate-400 hover:text-red-500 transition-all"
+                                                    onClick={(e) => handleDeleteNotification(notif.id, e)}
                                                 >
-                                                    <Check className="w-3.5 h-3.5" />
+                                                    <Trash2 className="w-3.5 h-3.5" />
                                                 </button>
+                                            </div>
+
+                                            {!notif.is_read && (
+                                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r-full" />
                                             )}
                                             {!notif.is_read && (
-                                                <div className="absolute right-2 top-4 w-1.5 h-1.5 bg-primary rounded-full group-hover:opacity-0 transition-opacity" />
+                                                <div className="absolute right-4 top-4 w-2.5 h-2.5 bg-primary rounded-full border-2 border-white shadow-sm group-hover:opacity-0 transition-opacity" />
                                             )}
                                         </div>
                                     ))}
                                 </div>
                             )}
                         </div>
-                        <div className="p-2 border-t border-slate-100 bg-slate-50/30 text-center">
-                            <p className="text-[9px] uppercase tracking-wider font-bold text-slate-400">Administration Eclair Travel</p>
+                        <div className="p-3 border-t border-slate-100 bg-slate-50/50">
+                            <button
+                                onClick={() => navigate('/admin/notifications')}
+                                className="w-full flex items-center justify-center gap-2 text-xs font-black text-primary hover:gap-3 transition-all"
+                            >
+                                Voir toutes les notifications <ArrowRight className="w-3.5 h-3.5" />
+                            </button>
                         </div>
                     </DropdownMenuContent>
                 </DropdownMenu>

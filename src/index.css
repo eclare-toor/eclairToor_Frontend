@@ -4,34 +4,36 @@
 
 @layer base {
   :root {
-     --background: 0 0% 100%; 
-    
-    --foreground: 210 11% 15%; 
-    
+    --background: 0 0% 100%;
+
+    --foreground: 210 11% 15%;
+
     --card: 0 0% 100%;
     --card-foreground: 210 11% 15%;
- 
+
     --popover: 0 0% 100%;
     --popover-foreground: 210 11% 15%;
- 
-  
+
+
     --primary: 176 100% 33%;
-    --primary-foreground: 0 0% 100%; /* Texte blanc sur fond vert */
- 
-    
+    --primary-foreground: 0 0% 100%;
+    /* Texte blanc sur fond vert */
+
+
     --secondary: 328 56% 36%;
-    --secondary-foreground: 0 0% 100%; /* Texte blanc sur fond bordeaux */
- 
+    --secondary-foreground: 0 0% 100%;
+    /* Texte blanc sur fond bordeaux */
+
     /* --- ELEMENTS DISCRETS (Gris Clair #F8F9FA) --- */
     /* Utilisé pour les fonds de section ou inputs désactivés */
     --muted: 210 17% 98%;
     --muted-foreground: 215.4 16.3% 46.9%;
- 
+
     /* --- ACCENTS --- */
     /* Une version très claire du vert primaire pour les hovers (#E5F6F5) */
     --accent: 176 50% 96%;
     --accent-foreground: 176 100% 33%;
- 
+
     /* --- ETATS D'ERREUR --- */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -39,43 +41,43 @@
     /* --- BORDURES & INPUTS --- */
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    
+
     /* --- FOCUS RING (Anneau de focus) --- */
     /* Utilise la couleur primaire pour l'accessibilité */
     --ring: 176 100% 33%;
- 
+
     /* --- RAYON DES BORDURES (Rounded-lg = 0.5rem) --- */
     --radius: 0.5rem;
   }
- 
+
   .dark {
     /* Mode Sombre (Généré automatiquement pour être cohérent) */
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
- 
+
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
- 
+
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
- 
+
     /* Le Vert Eclair reste le même ou s'éclaircit légèrement pour le contraste sombre */
-    --primary: 176 100% 33%; 
+    --primary: 176 100% 33%;
     --primary-foreground: 0 0% 100%;
- 
+
     /* Le Bordeaux peut rester ou devenir plus clair */
     --secondary: 328 56% 36%;
     --secondary-foreground: 0 0% 100%;
- 
+
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
- 
+
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
- 
+
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
- 
+
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 176 100% 33%;
@@ -96,8 +98,11 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
   .no-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
   }
 }

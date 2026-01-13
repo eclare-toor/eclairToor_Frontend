@@ -4,13 +4,12 @@ export interface User {
   prenom: string;
   email: string;
   role: string;
-  is_active?: boolean;
+  is_active: boolean | null;
   created_at: string | null;
   linkfacebook?: string;
   nationalite: string;
   phone?: string;
   password_hash?: string;
-
 }
 
 export interface Hotel {
@@ -43,13 +42,14 @@ export interface Trip {
   destination_wilaya?: string;
   destination_country?: string;
   omra_category?: string;
+  omra_type?: 'classic' | 'vip';
   created_at: string;
 }
 
 export interface TripItinerary {
   id: string;
   trip_id: string;
-  day_number: number;
+  day_date: string;
   activities: string[] | string;
 }
 
@@ -57,6 +57,15 @@ export interface TripItinerary {
 export interface TripHotel {
   trip_id: string;
   hotel_id: string;
+  description?: string;
+  name: string;
+  city: string;
+  stars: number;
+  address?: string;
+  image?: string;
+  images?: string[] | null;
+  maps_url?: string;
+  type?: string;
 }
 
 
@@ -110,6 +119,10 @@ export interface UnifiedRequest {
   status: CustomRequestStatus | null;
   created_at: string | null;
   updated_at: string | null;
+  response_id?: string | null;
+  admin_id?: string | null;
+  offer?: string | null;
+  response_created_at?: string | null;
 }
 
 export interface CustomRequest {

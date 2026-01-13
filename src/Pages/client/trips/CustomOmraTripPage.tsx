@@ -92,7 +92,7 @@ const CustomOmraTripPage = () => {
         >
             <div className="aspect-video bg-slate-100 relative overflow-hidden">
                 {hotel.images && hotel.images.length > 0 ? (
-                    <img src={hotel.images[0]} alt={hotel.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    <img src={`http://localhost:3000/api${hotel.images[0]}`} alt={hotel.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-slate-400 bg-slate-100">
                         <Moon className="w-10 h-10 opacity-20" />
@@ -141,7 +141,7 @@ const CustomOmraTripPage = () => {
                         <Moon className="w-8 h-8" />
                     </div>
                     <h1 className="text-3xl md:text-4xl font-heading font-bold text-slate-900 mb-4">
-                        Personnalisez votre Omra
+                        Personnalisez votre Tourisme Religieux
                     </h1>
                     <p className="text-slate-600 max-w-2xl mx-auto">
                         Organisez votre pèlerinage selon vos souhaits. Choisissez vos hôtels à La Mecque et Médine, vos dates et vos services pour une expérience spirituelle sereine.

@@ -6,6 +6,7 @@ import { Textarea } from '../../../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
 import { Image as ImageIcon, X } from 'lucide-react';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
+import { toast } from 'react-toastify';
 import type { Trip, TripType } from '../../../Types';
 
 interface TripFormProps {
@@ -58,8 +59,8 @@ const TripForm: React.FC<TripFormProps> = ({
                     </Select>
                 </div>
 
-                <div>p
-                    <Label>Destination</Label>
+                <div>
+                    <Label>{['religieuse', 'omra'].includes(currentTrip.type?.toLowerCase() || '') ? 'Catégorie Omra' : 'Destination'}</Label>
                     {(() => {
                         const type = currentTrip.type?.toLowerCase() || 'national';
 
@@ -74,12 +75,18 @@ const TripForm: React.FC<TripFormProps> = ({
                             );
                         } else if (['religieuse', 'omra'].includes(type)) {
                             return (
-                                <Input
-                                    required
-                                    placeholder="Catégorie Omra"
-                                    value={currentTrip.omra_category || ''}
-                                    onChange={(e) => setCurrentTrip({ ...currentTrip, omra_category: e.target.value })}
-                                />
+                                <Select
+                                    value={currentTrip.omra_type || 'classic'}
+                                    onValueChange={(val: 'classic' | 'vip') => setCurrentTrip({ ...currentTrip, omra_type: val, omra_category: val })}
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Choisir la catégorie" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="classic">Omra Classic</SelectItem>
+                                        <SelectItem value="vip">Omra VIP</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             );
                         } else {
                             // Default to national
@@ -128,7 +135,7 @@ const TripForm: React.FC<TripFormProps> = ({
                     <Label>Liste d'équipements (Optionnel, séparés par virgule)</Label>
                     <Input
                         placeholder="Sac à dos, Chaussures de marche..."
-                        value={currentTrip.equipment_list?.join(', ') || ''}
+                        value={Array.isArray(currentTrip.equipment_list) ? currentTrip.equipment_list.join(', ') : ''}
                         onChange={(e) => setCurrentTrip({ ...currentTrip, equipment_list: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })}
                     />
                 </div>
@@ -153,7 +160,7 @@ const TripForm: React.FC<TripFormProps> = ({
                     <div className="space-y-2">
                         <Label className="text-xs text-slate-500">Images actuelles</Label>
                         <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
-                            {currentTrip.images.map((img, index) => (
+                            {Array.isArray(currentTrip.images) && currentTrip.images.map((img, index) => (
                                 <div key={index} className="relative group rounded-lg overflow-hidden border border-slate-200 aspect-square">
                                     <img
                                         src={img.startsWith('http') ? img : `http://localhost:3000/api${img}`}
@@ -184,7 +191,18 @@ const TripForm: React.FC<TripFormProps> = ({
                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                             onChange={(e) => {
                                 if (e.target.files) {
-                                    setImageFiles([...imageFiles, ...Array.from(e.target.files)]);
+                                    const newFiles = Array.from(e.target.files);
+                                    const currentCount = (currentTrip.images?.length || 0) + imageFiles.length;
+
+                                    if (currentCount + newFiles.length > 8) {
+                                        toast.warning("Un voyage ne peut pas avoir plus de 8 images.");
+                                        const allowed = 8 - currentCount;
+                                        if (allowed > 0) {
+                                            setImageFiles([...imageFiles, ...newFiles.slice(0, allowed)]);
+                                        }
+                                        return;
+                                    }
+                                    setImageFiles([...imageFiles, ...newFiles]);
                                 }
                             }}
                         />

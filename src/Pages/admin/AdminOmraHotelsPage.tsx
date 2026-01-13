@@ -9,13 +9,20 @@ import LoadingSpinner from '../../components/Shared/LoadingSpinner';
 import { toast } from 'react-toastify';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
+import { addHotelImages, deleteHotelImages } from '../../api';
+import { X, Image as ImageIcon, Upload } from 'lucide-react';
 
 const AdminOmraHotelsPage = () => {
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [currentHotel, setCurrentHotel] = useState<Partial<Hotel>>({});
+  const [creationStep, setCreationStep] = useState(1);
+  const [createdHotelId, setCreatedHotelId] = useState<string | null>(null);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [deletedImages, setDeletedImages] = useState<string[]>([]);
 
   const fetchHotels = async () => {
     setLoading(true);
@@ -36,20 +43,63 @@ const AdminOmraHotelsPage = () => {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSaving(true);
 
     try {
       if (isEditing && currentHotel.id) {
+        // 1. Update Hotel Info
         await updateHotel(currentHotel.id, currentHotel);
-        toast.success("Hôtel modifié avec succès !");
+
+        // 2. Add New Images if any
+        if (imageFiles.length > 0) {
+          const imgFormData = new FormData();
+          imageFiles.forEach(file => imgFormData.append('images', file));
+          await addHotelImages(currentHotel.id, imgFormData);
+        }
+
+        // 3. Delete Removed Images if any
+        if (deletedImages.length > 0) {
+          const namesToDelete = deletedImages.map(path => {
+            const parts = path.split('/');
+            return parts[parts.length - 1];
+          });
+          await deleteHotelImages(currentHotel.id, namesToDelete);
+        }
+
+        toast.success("Hôtel mis à jour avec succès !");
+        setIsModalOpen(false);
+        fetchHotels();
       } else {
-        await createHotel(currentHotel);
-        toast.success("Hôtel créé avec succès !");
+        const newHotel = await createHotel(currentHotel);
+        setCreatedHotelId(newHotel.id);
+        toast.success("Infos enregistrées ! Passons aux photos.");
+        setCreationStep(2);
       }
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.message || "Erreur lors de l'enregistrement");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSaveImages = async () => {
+    if (!createdHotelId) return;
+    setIsSaving(true);
+    try {
+      if (imageFiles.length > 0) {
+        const imgFormData = new FormData();
+        imageFiles.forEach(file => imgFormData.append('images', file));
+        await addHotelImages(createdHotelId, imgFormData);
+      }
+      toast.success("Hôtel créé avec succès !");
       setIsModalOpen(false);
       fetchHotels();
     } catch (error: any) {
       console.error(error);
-      toast.error(error.message || "Erreur lors de l'enregistrement de l'hôtel");
+      toast.error("Erreur lors de l'ajout des images");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -82,16 +132,54 @@ const AdminOmraHotelsPage = () => {
     setCurrentHotel({
       stars: 3,
       city: 'Makkah',
-      type: 'Makah'
+      type: 'makka'
     });
+    setImageFiles([]);
+    setDeletedImages([]);
+    setCreationStep(1);
+    setCreatedHotelId(null);
     setIsEditing(false);
     setIsModalOpen(true);
   };
 
   const openEditModal = (hotel: Hotel) => {
     setCurrentHotel({ ...hotel });
+    setImageFiles([]);
+    setDeletedImages([]);
+    setCreationStep(1);
     setIsEditing(true);
     setIsModalOpen(true);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files);
+      const currentCount = (currentHotel.images?.length || 0) + imageFiles.length;
+
+      if (currentCount + newFiles.length > 1) {
+        toast.warning("Un hôtel ne peut avoir qu'une seule image.");
+        // Only add if we have space (count < 1)
+        if (currentCount === 0) {
+          setImageFiles([newFiles[0]]);
+        }
+        return;
+      }
+      setImageFiles([...imageFiles, ...newFiles]);
+    }
+  };
+
+  const removeNewImage = (index: number) => {
+    setImageFiles(imageFiles.filter((_, i) => i !== index));
+  };
+
+  const removeExistingImage = (path: string) => {
+    setDeletedImages([...deletedImages, path]);
+    if (currentHotel.images) {
+      setCurrentHotel({
+        ...currentHotel,
+        images: currentHotel.images.filter(img => img !== path)
+      });
+    }
   };
 
   return (
@@ -154,76 +242,178 @@ const AdminOmraHotelsPage = () => {
       )}
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{isEditing ? "Modifier l'hôtel" : "Ajouter un nouvel hôtel"}</DialogTitle>
+            <DialogTitle>
+              {isEditing
+                ? "Modifier l'hôtel"
+                : creationStep === 1
+                  ? "Ajouter un hôtel (1/2)"
+                  : "Ajouter des images (2/2)"}
+            </DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleSave} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
-                <Label>Nom de l'hôtel</Label>
-                <Input
-                  required
-                  value={currentHotel.name || ''}
-                  onChange={(e) => setCurrentHotel({ ...currentHotel, name: e.target.value })}
-                />
+
+          {creationStep === 1 ? (
+            <form onSubmit={handleSave} className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2">
+                  <Label>Nom de l'hôtel</Label>
+                  <Input
+                    required
+                    value={currentHotel.name || ''}
+                    onChange={(e) => setCurrentHotel({ ...currentHotel, name: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label>Type / Catégorie</Label>
+                  <Select
+                    value={currentHotel.type}
+                    onValueChange={(val) => setCurrentHotel({ ...currentHotel, type: val })}
+                  >
+                    <SelectTrigger><SelectValue placeholder="Selectionner" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="makka">Makkah</SelectItem>
+                      <SelectItem value="madina">Madinah</SelectItem>
+                      <SelectItem value="tourisme">Tourisme</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label>Ville</Label>
+                  <Input
+                    required
+                    value={currentHotel.city || ''}
+                    onChange={(e) => setCurrentHotel({ ...currentHotel, city: e.target.value })}
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <Label>Adresse</Label>
+                  <Input
+                    value={currentHotel.address || ''}
+                    onChange={(e) => setCurrentHotel({ ...currentHotel, address: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label>Nombre d'étoiles (1-5)</Label>
+                  <Input
+                    type="number"
+                    min="1"
+                    max="5"
+                    required
+                    value={currentHotel.stars || 3}
+                    onChange={(e) => setCurrentHotel({ ...currentHotel, stars: parseInt(e.target.value) })}
+                  />
+                </div>
+
+                <div>
+                  <Label>Lien Google Maps</Label>
+                  <Input
+                    type="url"
+                    value={currentHotel.maps_url || ''}
+                    onChange={(e) => setCurrentHotel({ ...currentHotel, maps_url: e.target.value })}
+                  />
+                </div>
               </div>
 
-              <div>
-                <Label>Type / Catégorie</Label>
-                <Select
-                  value={currentHotel.type}
-                  onValueChange={(val) => setCurrentHotel({ ...currentHotel, type: val })}
-                >
-                  <SelectTrigger><SelectValue placeholder="Selectionner" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="makka">Makkah</SelectItem>
-                    <SelectItem value="madina">Madinah</SelectItem>
-                    <SelectItem value="tourisme">tourisme</SelectItem>
-                  </SelectContent>
-                </Select>
+              {isEditing && (
+                <div className="space-y-4 pt-4 border-t border-slate-100">
+                  <Label className="font-bold flex items-center gap-2">
+                    <ImageIcon className="w-4 h-4" /> Gestion des Images
+                  </Label>
+
+                  {/* Current Images */}
+                  {currentHotel.images && currentHotel.images.length > 0 && (
+                    <div className="grid grid-cols-3 gap-2">
+                      {currentHotel.images.map((path, idx) => (
+                        <div key={idx} className="relative aspect-square rounded-lg overflow-hidden group">
+                          <img
+                            src={path.startsWith('http') ? path : `http://localhost:3000/api${path}`}
+                            className="w-full h-full object-cover"
+                            alt=""
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeExistingImage(path)}
+                            className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* New Images to add while editing */}
+                  <div className="space-y-2">
+                    <Label className="text-xs text-slate-500">Ajouter de nouvelles photos</Label>
+                    <div className="grid grid-cols-4 gap-2">
+                      {imageFiles.map((_, idx) => (
+                        <div key={idx} className="relative aspect-square rounded-lg bg-slate-100 flex items-center justify-center border border-slate-200">
+                          <ImageIcon className="w-6 h-6 text-slate-300" />
+                          <button
+                            type="button"
+                            onClick={() => removeNewImage(idx)}
+                            className="absolute -top-1 -right-1 bg-slate-800 text-white p-0.5 rounded-full"
+                          >
+                            <X className="w-2 h-2" />
+                          </button>
+                        </div>
+                      ))}
+                      <label className="aspect-square rounded-lg border-2 border-dashed border-slate-200 flex flex-col items-center justify-center cursor-pointer hover:border-primary hover:bg-slate-50 transition-all">
+                        <Upload className="w-4 h-4 text-slate-400" />
+                        <input type="file" className="hidden" onChange={handleFileChange} accept="image/*" />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <Button type="submit" className="w-full" disabled={isSaving}>
+                {isSaving ? <LoadingSpinner className="w-4 h-4" /> : isEditing ? "Enregistrer les modifications" : "Continuer"}
+              </Button>
+            </form>
+          ) : (
+            <div className="space-y-6">
+              <div className="flex flex-col items-center justify-center py-8 px-4 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50">
+                <Upload className="w-12 h-12 text-slate-300 mb-4" />
+                <p className="text-sm text-slate-600 font-medium mb-1">Téléverser les photos de l'hôtel</p>
+                <p className="text-xs text-slate-400 mb-4 text-center">Sélectionnez une photo pour illustrer l'établissement</p>
+                <Button variant="outline" size="sm" asChild>
+                  <label className="cursor-pointer">
+                    Choisir des fichiers
+                    <input type="file" className="hidden" onChange={handleFileChange} accept="image/*" />
+                  </label>
+                </Button>
               </div>
 
-              <div>
-                <Label>Ville</Label>
-                <Input
-                  required
-                  value={currentHotel.city || ''}
-                  onChange={(e) => setCurrentHotel({ ...currentHotel, city: e.target.value })}
-                />
-              </div>
+              {imageFiles.length > 0 && (
+                <div className="grid grid-cols-4 gap-3">
+                  {imageFiles.map((file, idx) => (
+                    <div key={idx} className="relative aspect-square rounded-lg bg-white shadow-sm border border-slate-200 overflow-hidden">
+                      <img src={URL.createObjectURL(file)} className="w-full h-full object-cover" alt="" />
+                      <button
+                        onClick={() => removeNewImage(idx)}
+                        className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full shadow-lg"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
 
-              <div className="col-span-2">
-                <Label>Adresse</Label>
-                <Input
-                  value={currentHotel.address || ''}
-                  onChange={(e) => setCurrentHotel({ ...currentHotel, address: e.target.value })}
-                />
-              </div>
-
-              <div>
-                <Label>Nombre d'étoiles (1-5)</Label>
-                <Input
-                  type="number"
-                  min="1"
-                  max="5"
-                  required
-                  value={currentHotel.stars || 3}
-                  onChange={(e) => setCurrentHotel({ ...currentHotel, stars: parseInt(e.target.value) })}
-                />
-              </div>
-
-              <div>
-                <Label>Lien Google Maps</Label>
-                <Input
-                  type="url"
-                  value={currentHotel.maps_url || ''}
-                  onChange={(e) => setCurrentHotel({ ...currentHotel, maps_url: e.target.value })}
-                />
+              <div className="flex gap-3">
+                <Button variant="outline" className="flex-1" onClick={() => setIsModalOpen(false)}>Plus tard</Button>
+                <Button className="flex-1" onClick={handleSaveImages} disabled={isSaving}>
+                  {isSaving ? <LoadingSpinner className="w-4 h-4" /> : "Enregistrer l'hôtel"}
+                </Button>
               </div>
             </div>
-            <Button type="submit" className="w-full">Enregistrer</Button>
-          </form>
+          )}
         </DialogContent>
       </Dialog>
     </div>

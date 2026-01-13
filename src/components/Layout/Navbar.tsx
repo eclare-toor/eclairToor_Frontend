@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { toast } from 'react-toastify';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, User, Bell, LogIn, Plane, Hotel, Map, Phone, LogOut, LayoutDashboard } from 'lucide-react';
 import { Button } from '../ui/button';
@@ -22,12 +23,15 @@ import { cn } from '../../lib/utils';
 import logo from '../../assets/logo.png';
 import { useAuth } from '../../Context/AuthContext';
 
-import { getNotifications, getUnreadNotificationsCount, markNotificationAsRead, markAllNotificationsAsRead } from '../../api';
+import { getNotifications, getUnreadNotificationsCount, markNotificationAsRead, markAllNotificationsAsRead, deleteNotification } from '../../api';
 import type { AppNotification } from '../../Types';
-import { Check, CheckCheck } from 'lucide-react';
+import { Check, CheckCheck, ShieldCheck, Calendar, Zap, Trash2, ArrowRight, Languages, Globe } from 'lucide-react';
 import algeriaFlag from '../../assets/algeria.webp';
+import iataLogo from '../../assets/IATA.png';
+import { useTranslation } from 'react-i18next';
 
 const Navbar = () => {
+    const { t, i18n } = useTranslation();
     const [isScrolled, setIsScrolled] = useState(false);
     const { isAuthenticated, logout } = useAuth();
     const location = useLocation();
@@ -38,29 +42,11 @@ const Navbar = () => {
     const fetchNotificationsData = async () => {
         if (isAuthenticated) {
             const [notifs, count] = await Promise.all([
-                getNotifications(),
+                getNotifications({ limit: 10 }),
                 getUnreadNotificationsCount()
             ]);
 
-            // Senior logic: Always ensure the latest notifications are at the top.
-            // If the API provides them oldest first, reverse them. 
-            // If we have dates, use them. If not, just reverse the array structure.
             let processedNotifs = Array.isArray(notifs) ? [...notifs] : [];
-
-            // Check if we have valid dates for sorting
-            const hasDates = processedNotifs.some(n => n.created_at);
-
-            if (hasDates) {
-                processedNotifs.sort((a, b) => {
-                    const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
-                    const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
-                    return dateB - dateA;
-                });
-            } else {
-                // If no dates, the last one in the response is likely the newest, so reverse
-                processedNotifs.reverse();
-            }
-
             setNotifications(processedNotifs);
             setUnreadCount(count || 0);
         }
@@ -84,7 +70,7 @@ const Navbar = () => {
         if (isAuthenticated) {
             fetchNotificationsData();
             // Polling for new notifications every 30 seconds
-            const interval = setInterval(fetchNotificationsData, 30000);
+            const interval = setInterval(fetchNotificationsData, 900000); // 15 minutes
             return () => clearInterval(interval);
         }
     }, [isAuthenticated]);
@@ -100,6 +86,17 @@ const Navbar = () => {
         fetchNotificationsData();
     };
 
+    const handleDeleteNotification = async (id: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        try {
+            await deleteNotification(id);
+            toast.success("Notification supprimée");
+            fetchNotificationsData();
+        } catch (error) {
+            toast.error("Erreur lors de la suppression");
+        }
+    };
+
     const handleNotificationClick = async (notif: AppNotification) => {
         if (!notif.is_read) {
             await markNotificationAsRead(notif.id);
@@ -112,68 +109,87 @@ const Navbar = () => {
     };
 
     const navLinks = [
-        { name: 'Voyages', path: '/voyages', icon: Map },
-        { name: 'Hôtels', path: '/request-hotel', icon: Hotel },
-        { name: 'Vols', path: '/request-flight', icon: Plane },
-        { name: 'Contact', path: '/contact', icon: Phone },
+        { name: t('nav.trips'), path: '/voyages', icon: Map },
+        { name: t('nav.hotels'), path: '/request-hotel', icon: Hotel },
+        { name: t('nav.flights'), path: '/request-flight', icon: Plane },
+        { name: t('nav.contact'), path: '/contact', icon: Phone },
     ];
 
     return (
         <header
             className={cn(
-                'fixed left-0 right-0 z-50 transition-all duration-500 ease-in-out px-4 md:px-8',
+                'fixed left-0 right-0 z-50 px-4 md:px-8',
                 isScrolled
                     ? 'top-4'
                     : 'top-6'
             )}
         >
             <div className={cn(
-                "container mx-auto transition-all duration-500",
+                "container mx-auto",
                 isScrolled
-                    ? "bg-white/90 backdrop-blur-2xl shadow-2xl shadow-primary/5 rounded-[2.5rem] py-3 px-8 border border-white/20"
-                    : "bg-white/40 backdrop-blur-xl rounded-[3rem] py-5 px-10 border border-white/30 shadow-xl shadow-black/5"
+                    ? "bg-white/70 backdrop-blur-2xl shadow-2xl shadow-primary/10 rounded-[2.5rem] py-3 px-8 border border-white/20"
+                    : "bg-white/10 backdrop-blur-md rounded-[3rem] py-5 px-10 border border-white/10 shadow-xl shadow-black/5"
             )}>
                 <div className="flex items-center justify-between">
-                    {/* Logo Section - Bigger & Better */}
-                    <Link to="/" className="flex items-center gap-4 group">
+                    {/* Logo Section - Truly Grand as requested */}
+                    <Link to="/" className="flex items-center gap-6 group">
                         <div className="relative flex items-center">
                             <motion.div
-                                whileHover={{ scale: 1.05, rotate: 5 }}
+                                whileHover={{ scale: 1.05, rotate: 2 }}
                                 whileTap={{ scale: 0.95 }}
                                 className="relative z-10"
                             >
                                 <img
                                     src={logo}
                                     alt="Eclair Travel Logo"
-                                    className="w-14 h-14 md:w-16 md:h-16 rounded-xl object-cover shadow-lg border-2 border-white/20 group-hover:border-primary/50 transition-colors"
+                                    className={cn(
+                                        "rounded-2xl object-cover shadow-2xl border-4 border-white/20 group-hover:border-primary/50",
+                                        isScrolled ? "w-16 h-16 md:w-20 md:h-20" : "w-24 h-24 md:w-28 md:h-28"
+                                    )}
                                 />
                             </motion.div>
-                            {/* Algerian Flag Badge */}
-                            <div className="absolute -right-2 -bottom-1 w-6 h-6 rounded-full border-2 border-white shadow-md overflow-hidden z-20">
+                            {/* Larger Algerian Flag Badge */}
+                            <div className={cn(
+                                "absolute -right-4 -bottom-2 rounded-full border-4 border-white shadow-2xl overflow-hidden z-20",
+                                isScrolled ? "w-8 h-8" : "w-12 h-12"
+                            )}>
                                 <img src={algeriaFlag} alt="Algérie" className="w-full h-full object-cover" />
                             </div>
-                            <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full scale-0 group-hover:scale-150 transition-transform duration-500 -z-0"></div>
+                            <div className="absolute inset-0 bg-primary/30 blur-3xl rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 -z-0"></div>
                         </div>
                         <div className="flex flex-col">
                             <span className={cn(
-                                "font-black text-xl md:text-2xl tracking-tighter transition-colors leading-none",
+                                "font-black tracking-tighter leading-none italic",
+                                isScrolled ? "text-xl md:text-2xl" : "text-2xl md:text-3xl",
                                 "text-slate-900"
                             )}>
-                                ECLAIR<span className="text-primary italic">TRAVEL</span>
+                                ECLAIR<span className="text-primary">TRAVEL</span>
                             </span>
                             <span className={cn(
-                                "text-[9px] font-black uppercase tracking-[0.3em] mt-1 opacity-70",
+                                "font-black uppercase tracking-[0.4em] mt-1.5",
+                                isScrolled ? "text-[8px]" : "text-[10px]",
                                 "text-slate-500"
                             )}>
                                 Fierté Algérienne
                             </span>
+                        </div>
+                        {/* IATA Logo */}
+                        <div className="flex items-center gap-4 ml-6 pl-6 border-l border-slate-200/50">
+                            <img
+                                src={iataLogo}
+                                alt="IATA Certified"
+                                className={cn(
+                                    "object-contain",
+                                    isScrolled ? "h-8 md:h-10" : "h-12 md:h-20"
+                                )}
+                            />
                         </div>
                     </Link>
 
                     {/* Desktop Navigation - Centered & Premium */}
                     <nav className="hidden lg:flex items-center justify-center flex-1 mx-12">
                         <div className={cn(
-                            "flex items-center gap-1 p-1 rounded-full transition-all duration-500",
+                            "flex items-center gap-1 p-1 rounded-full",
                             "bg-white/40 backdrop-blur-md border border-white/20"
                         )}>
                             {navLinks.map((link) => (
@@ -206,41 +222,68 @@ const Navbar = () => {
 
                     {/* Right Section (Auth/Profile) */}
                     <div className="hidden md:flex items-center gap-4">
+                        {/* Language Switcher */}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className={cn(
+                                    "rounded-full hover:bg-white/20 h-12 w-12 text-slate-900 border border-transparent hover:border-white/20",
+                                    isScrolled ? "text-slate-900" : "text-slate-900"
+                                )}>
+                                    <Globe className="w-7 h-7" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-[150px] rounded-xl border-slate-100 shadow-xl p-1.5 backdrop-blur-xl bg-white/90">
+                                <DropdownMenuItem onClick={() => i18n.changeLanguage('ar')} className={cn("rounded-lg px-3 py-2 cursor-pointer font-bold font-arabic", i18n.language === 'ar' && "bg-primary/10 text-primary")}>
+                                    🇩🇿 العربية
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => i18n.changeLanguage('fr')} className={cn("rounded-lg px-3 py-2 cursor-pointer font-bold", i18n.language === 'fr' && "bg-primary/10 text-primary")}>
+                                    🇫🇷 Français
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => i18n.changeLanguage('en')} className={cn("rounded-lg px-3 py-2 cursor-pointer font-bold", i18n.language === 'en' && "bg-primary/10 text-primary")}>
+                                    🇬🇧 English
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
                         {isAuthenticated ? (
                             <>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <Button variant="ghost" size="icon" className={cn(
-                                            "relative overflow-visible",
+                                            "relative overflow-visible h-12 w-12 rounded-full",
                                             "text-slate-900 hover:bg-white/20"
                                         )}>
-                                            <Bell className="w-5 h-5" />
+                                            <Bell className="w-7 h-7" />
                                             {unreadCount > 0 && (
-                                                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-600 rounded-full border-2 border-white flex items-center justify-center text-[10px] text-white font-black z-[60] shadow-sm">
+                                                <span className="absolute top-1 right-1 min-w-[20px] h-[20px] px-1 bg-red-600 rounded-full border-2 border-white flex items-center justify-center text-[10px] text-white font-black z-[60] shadow-sm">
                                                     {unreadCount}
                                                 </span>
                                             )}
                                         </Button>
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end" className="w-80 p-0 overflow-hidden rounded-2xl border-slate-200">
-                                        <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                                            <DropdownMenuLabel className="p-0 text-sm font-bold">Notifications</DropdownMenuLabel>
+                                    <DropdownMenuContent align="end" className="w-[400px] p-0 overflow-hidden rounded-[2rem] border-slate-200/50 shadow-2xl backdrop-blur-3xl bg-white/95">
+                                        <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-white/50">
+                                            <div>
+                                                <DropdownMenuLabel className="p-0 text-lg font-black text-slate-900">{t('nav.notifications')}</DropdownMenuLabel>
+                                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Live Updates</p>
+                                            </div>
                                             {unreadCount > 0 && (
                                                 <Button
                                                     variant="ghost"
                                                     size="sm"
-                                                    className="h-7 px-2 text-[10px] text-primary hover:text-primary hover:bg-primary/10 gap-1"
+                                                    className="h-8 px-3 text-[11px] font-bold text-primary hover:text-primary hover:bg-primary/10 rounded-full border border-primary/20 gap-1.5"
                                                     onClick={handleMarkAllAsRead}
                                                 >
-                                                    <CheckCheck className="w-3 h-3" /> Tout marquer comme lu
+                                                    <CheckCheck className="w-3.5 h-3.5" /> {t('nav.mark_all_read')}
                                                 </Button>
                                             )}
                                         </div>
                                         <div className="max-h-80 overflow-y-auto">
                                             {notifications.length === 0 ? (
-                                                <div className="p-8 text-center text-slate-400">
-                                                    <Bell className="w-8 h-8 mx-auto mb-2 opacity-20" />
-                                                    <p className="text-xs">Aucune notification</p>
+                                                <div className="p-12 text-center text-slate-400">
+                                                    <Bell className="w-12 h-12 mx-auto mb-3 opacity-20" />
+                                                    <p className="text-sm font-bold">{t('nav.no_notifications')}</p>
+                                                    <p className="text-[10px] uppercase tracking-tighter mt-1 opacity-60">Check back later</p>
                                                 </div>
                                             ) : (
                                                 <div className="py-2">
@@ -254,39 +297,62 @@ const Navbar = () => {
                                                             onClick={() => handleNotificationClick(notif)}
                                                         >
                                                             <div className={cn(
-                                                                "w-10 h-10 rounded-full flex items-center justify-center shrink-0",
-                                                                notif.type.includes('payment') ? "bg-green-100 text-green-600" :
+                                                                "w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm transition-transform group-hover:scale-110",
+                                                                notif.type.includes('payment') ? "bg-emerald-100 text-emerald-600" :
                                                                     notif.type.includes('booking') ? "bg-blue-100 text-blue-600" :
-                                                                        "bg-primary/10 text-primary"
+                                                                        "bg-indigo-100 text-indigo-600"
                                                             )}>
-                                                                <Bell className="w-4 h-4" />
+                                                                {notif.type.includes('payment') ? <ShieldCheck className="w-5 h-5" /> :
+                                                                    notif.type.includes('booking') ? <Calendar className="w-5 h-5" /> :
+                                                                        <Zap className="w-5 h-5" />}
                                                             </div>
                                                             <div className="flex-1 min-w-0 pr-4">
-                                                                <p className="text-xs font-bold text-slate-900 truncate pr-4">{notif.title}</p>
-                                                                <p className="text-[11px] text-slate-500 line-clamp-2 mt-0.5">{notif.message}</p>
-                                                                <p className="text-[9px] text-slate-400 mt-1">
-                                                                    {notif.created_at ? new Date(notif.created_at).toLocaleDateString() : 'Aujourd\'hui'}
-                                                                </p>
+                                                                <div className="flex items-center justify-between gap-2">
+                                                                    <p className="text-[13px] font-black text-slate-900 truncate">{notif.title}</p>
+                                                                    <p className="text-[9px] font-bold text-slate-400 whitespace-nowrap">
+                                                                        {notif.created_at ? new Date(notif.created_at).toLocaleDateString() : 'Aujourd\'hui'}
+                                                                    </p>
+                                                                </div>
+                                                                <p className="text-[11px] text-slate-500 line-clamp-2 mt-1 font-medium leading-relaxed">{notif.message}</p>
                                                             </div>
-                                                            {!notif.is_read && (
+
+                                                            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all z-10">
+                                                                {!notif.is_read && (
+                                                                    <button
+                                                                        title="Marquer comme lu"
+                                                                        className="p-1.5 bg-white border border-slate-100 shadow-sm rounded-md text-slate-400 hover:text-primary transition-all"
+                                                                        onClick={(e) => handleMarkAsRead(notif.id, e)}
+                                                                    >
+                                                                        <Check className="w-3.5 h-3.5" />
+                                                                    </button>
+                                                                )}
                                                                 <button
-                                                                    title="Marquer comme lu"
-                                                                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 opacity-0 group-hover:opacity-100 hover:bg-white border border-slate-100 shadow-sm rounded-md transition-all text-slate-400 hover:text-primary z-10"
-                                                                    onClick={(e) => handleMarkAsRead(notif.id, e)}
+                                                                    title="Supprimer"
+                                                                    className="p-1.5 bg-white border border-slate-100 shadow-sm rounded-md text-slate-400 hover:text-red-500 transition-all"
+                                                                    onClick={(e) => handleDeleteNotification(notif.id, e)}
                                                                 >
-                                                                    <Check className="w-3.5 h-3.5" />
+                                                                    <Trash2 className="w-3.5 h-3.5" />
                                                                 </button>
+                                                            </div>
+
+                                                            {!notif.is_read && (
+                                                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r-full" />
                                                             )}
                                                             {!notif.is_read && (
-                                                                <div className="absolute right-2 top-4 w-2 h-2 bg-primary rounded-full group-hover:opacity-0 transition-opacity" />
+                                                                <div className="absolute right-3 top-3 w-2.5 h-2.5 bg-primary rounded-full border-2 border-white shadow-sm group-hover:opacity-0 transition-opacity" />
                                                             )}
                                                         </div>
                                                     ))}
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="p-2 border-t border-slate-100 bg-slate-50/30 text-center">
-                                            <p className="text-[9px] uppercase tracking-wider font-bold text-slate-400">Fin des notifications</p>
+                                        <div className="p-3 border-t border-slate-100 bg-slate-50/50">
+                                            <Link
+                                                to="/notifications"
+                                                className="flex items-center justify-center gap-2 text-xs font-black text-primary hover:gap-3 transition-all"
+                                            >
+                                                {t('nav.view_all')} <ArrowRight className="w-3.5 h-3.5" />
+                                            </Link>
                                         </div>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
@@ -294,27 +360,27 @@ const Navbar = () => {
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <Button variant="ghost" size="icon" className={cn(
-                                            "rounded-full border-2 border-transparent hover:border-primary transition-all",
+                                            "rounded-full border-2 border-transparent hover:border-primary transition-all h-12 w-12",
                                             "text-slate-900 hover:bg-white/20"
                                         )}>
-                                            <User className="w-5 h-5" />
+                                            <User className="w-7 h-7" />
                                         </Button>
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end" className="w-56 overflow-hidden rounded-2xl border-slate-200">
-                                        <DropdownMenuLabel>Mon Compte</DropdownMenuLabel>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuItem onClick={() => navigate('/mon-compte')} className="rounded-xl mx-1 my-1">
-                                            <LayoutDashboard className="mr-2 h-4 w-4" />
-                                            <span>Tableau de bord</span>
+                                    <DropdownMenuContent align="end" className="w-64 overflow-hidden rounded-[1.5rem] border-slate-200/50 shadow-2xl p-2 bg-white/95 backdrop-blur-xl">
+                                        <DropdownMenuLabel className="px-4 py-3 text-sm font-black text-slate-900 uppercase tracking-widest text-[10px] opacity-50">Mon Compte</DropdownMenuLabel>
+                                        <DropdownMenuSeparator className="mx-2" />
+                                        <DropdownMenuItem onClick={() => navigate('/mon-compte')} className="rounded-xl px-4 py-3 focus:bg-primary/5 focus:text-primary transition-colors cursor-pointer group">
+                                            <LayoutDashboard className="mr-3 h-5 w-5 text-slate-400 group-focus:text-primary transition-colors" />
+                                            <span className="font-bold">{t('nav.dashboard')}</span>
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem onClick={() => navigate('/profile')} className="rounded-xl mx-1 my-1">
-                                            <User className="mr-2 h-4 w-4" />
-                                            <span>Profil</span>
+                                        <DropdownMenuItem onClick={() => navigate('/profile')} className="rounded-xl px-4 py-3 focus:bg-primary/5 focus:text-primary transition-colors cursor-pointer group">
+                                            <User className="mr-3 h-5 w-5 text-slate-400 group-focus:text-primary transition-colors" />
+                                            <span className="font-bold">{t('nav.profile')}</span>
                                         </DropdownMenuItem>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuItem onClick={handleLogout} className="text-red-600 rounded-xl mx-1 my-1">
-                                            <LogOut className="mr-2 h-4 w-4" />
-                                            <span>Se déconnecter</span>
+                                        <DropdownMenuSeparator className="mx-2" />
+                                        <DropdownMenuItem onClick={handleLogout} className="text-red-600 rounded-xl px-4 py-3 focus:bg-red-50 focus:text-red-600 transition-colors cursor-pointer group">
+                                            <LogOut className="mr-3 h-5 w-5 text-red-400 group-focus:text-red-600 transition-colors" />
+                                            <span className="font-bold">{t('nav.logout')}</span>
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
@@ -326,7 +392,7 @@ const Navbar = () => {
                                     className="font-semibold"
                                 >
                                     <LogIn className="w-4 h-4 mr-2" />
-                                    Connexion
+                                    {t('nav.login')}
                                 </Button>
                             </Link>
                         )}
@@ -362,24 +428,24 @@ const Navbar = () => {
                                     <div className="border-t pt-6">
                                         {isAuthenticated ? (
                                             <div className="flex flex-col gap-3">
-                                                <Button variant="outline" className="w-full justify-start" onClick={() => navigate('/dashboard')}>
+                                                <Button variant="outline" className="w-full justify-start" onClick={() => navigate('/mon-compte')}>
                                                     <LayoutDashboard className="w-4 h-4 mr-2" />
-                                                    Tableau de bord
+                                                    {t('nav.dashboard')}
                                                 </Button>
                                                 <Button variant="outline" className="w-full justify-start" onClick={() => navigate('/profile')}>
                                                     <User className="w-4 h-4 mr-2" />
-                                                    Mon Profil
+                                                    {t('nav.profile')}
                                                 </Button>
                                                 <Button variant="ghost" className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10" onClick={handleLogout}>
                                                     <LogOut className="w-4 h-4 mr-2" />
-                                                    Se déconnecter
+                                                    {t('nav.logout')}
                                                 </Button>
                                             </div>
                                         ) : (
                                             <Link to="/login">
                                                 <Button className="w-full">
                                                     <LogIn className="w-4 h-4 mr-2" />
-                                                    Connexion
+                                                    {t('nav.login')}
                                                 </Button>
                                             </Link>
                                         )}

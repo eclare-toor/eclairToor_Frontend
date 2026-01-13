@@ -24,7 +24,7 @@ const registerSchema = z.object({
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 const RegisterPage = () => {
-  const navigate = useNavigate();             
+  const navigate = useNavigate();
   const { login } = useAuth();
   const [loading, setLoading] = useState(false);
 
@@ -82,7 +82,7 @@ const RegisterPage = () => {
       console.log('✅ Registration successful:', { message, user });
 
       // 2. Show success toast
-      toast.success(message || 'Inscription réussie !');
+      toast.success(message || t('auth.register_success'));
 
       // 3. Login via Context 
       login(token, user);
@@ -91,7 +91,7 @@ const RegisterPage = () => {
       navigate('/');
     } catch (err) {
       console.error('❌ Registration error:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Une erreur est survenue lors de l\'inscription.';
+      const errorMessage = err instanceof Error ? err.message : t('auth.errors.generic');
       console.error('Error message:', errorMessage);
       toast.error(errorMessage);
     } finally {
@@ -113,10 +113,10 @@ const RegisterPage = () => {
             <img src={logo} alt="Eclair Travel" className="h-20 w-20 rounded-2xl object-cover mx-auto" />
           </Link>
           <h2 className="mt-2 text-3xl font-heading font-bold text-foreground">
-            Créer un compte
+            {t('auth.register_title')}
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Rejoignez Eclair Travel et commencez votre aventure
+            {t('auth.register_subtitle')}
           </p>
         </div>
 
@@ -125,7 +125,7 @@ const RegisterPage = () => {
 
             {/* Nom */}
             <div className="space-y-2">
-              <Label htmlFor="nom">Nom *</Label>
+              <Label htmlFor="nom">{t('auth.nom_label')}</Label>
               <div className="relative">
                 <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -148,7 +148,7 @@ const RegisterPage = () => {
 
             {/* Prenom */}
             <div className="space-y-2">
-              <Label htmlFor="prenom">Prénom *</Label>
+              <Label htmlFor="prenom">{t('auth.prenom_label')}</Label>
               <div className="relative">
                 <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -171,7 +171,7 @@ const RegisterPage = () => {
 
             {/* Email */}
             <div className="space-y-2">
-              <Label htmlFor="email">Email *</Label>
+              <Label htmlFor="email">{t('auth.email_label')}</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -179,7 +179,7 @@ const RegisterPage = () => {
                   name="email"
                   type="email"
                   className={`pl-10 ${fieldErrors.email ? 'border-destructive focus-visible:ring-destructive' : ''}`}
-                  placeholder="exemple@email.com"
+                  placeholder={t('auth.email_placeholder')}
                   value={formData.email}
                   onChange={handleChange}
                 />
@@ -194,7 +194,7 @@ const RegisterPage = () => {
 
             {/* Phone */}
             <div className="space-y-2">
-              <Label htmlFor="phone">Numéro de téléphone *</Label>
+              <Label htmlFor="phone">{t('auth.phone_label')}</Label>
               <div className="relative">
                 <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -217,7 +217,7 @@ const RegisterPage = () => {
 
             {/* Nationality */}
             <div className="space-y-2">
-              <Label htmlFor="nationalite">Nationalité *</Label>
+              <Label htmlFor="nationalite">{t('auth.nationality_label')}</Label>
               <div className="relative">
                 <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -240,7 +240,7 @@ const RegisterPage = () => {
 
             {/* Facebook Link */}
             <div className="space-y-2">
-              <Label htmlFor="linkFacebook">Lien Facebook (Optionnel)</Label>
+              <Label htmlFor="linkFacebook">{t('auth.facebook_label')}</Label>
               <div className="relative">
                 <Facebook className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -263,7 +263,7 @@ const RegisterPage = () => {
 
             {/* Password */}
             <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe *</Label>
+              <Label htmlFor="password">{t('auth.password_label')}</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -271,7 +271,7 @@ const RegisterPage = () => {
                   name="password"
                   type="password"
                   className={`pl-10 ${fieldErrors.password ? 'border-destructive focus-visible:ring-destructive' : ''}`}
-                  placeholder="••••••••"
+                  placeholder={t('auth.password_placeholder')}
                   value={formData.password}
                   onChange={handleChange}
                 />
@@ -290,17 +290,17 @@ const RegisterPage = () => {
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Inscription en cours...
+                {t('auth.register_loading')}
               </>
             ) : (
-              "S'inscrire"
+              t('auth.register_btn')
             )}
           </Button>
 
           <div className="text-center text-sm">
-            <span className="text-muted-foreground">Déjà un compte ? </span>
+            <span className="text-muted-foreground">{t('auth.already_account')} </span>
             <Link to="/connexion" className="font-medium text-primary hover:text-primary/80 underline-offset-4 hover:underline">
-              Se connecter
+              {t('auth.login_link')}
             </Link>
           </div>
         </form>

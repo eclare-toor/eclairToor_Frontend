@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Map, BedDouble, TrendingUp, Calendar, Bell, Clock, AlertCircle } from 'lucide-react';
-import { getNotifications } from '../../api';
-import type { AppNotification } from '../../Types';
+import { Users, Map, BedDouble, TrendingUp, Calendar, Bell, Clock, AlertCircle, Plus, User, Plane, Users as UsersIcon, ChevronRight, Hash } from 'lucide-react';
+import { getNotifications, getTrips, adminCreateBooking } from '../../api';
+import type { AppNotification, Trip } from '../../Types';
 import LoadingSpinner from '../../components/Shared/LoadingSpinner';
 import { cn } from '../../lib/utils';
+import { Button } from '../../components/ui/button';
+import { toast } from 'react-toastify';
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter
+} from '../../components/ui/dialog';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 
 const StatCard = ({ icon: Icon, title, value, subtext, color }: { icon: any, title: string, value: string, subtext: string, color: string }) => (
   <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-start justify-between hover:shadow-md transition-shadow">
@@ -21,29 +29,66 @@ const StatCard = ({ icon: Icon, title, value, subtext, color }: { icon: any, tit
 function AdminDashboardPage() {
   const [activities, setActivities] = useState<AppNotification[]>([]);
   const [loading, setLoading] = useState(true);
+  const [trips, setTrips] = useState<Trip[]>([]);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [bookingForm, setBookingForm] = useState({
+    user_id: '',
+    trip_id: '',
+    passengers_adult: 1,
+    passengers_child: 0,
+    passengers_baby: 0
+  });
 
   useEffect(() => {
-    const fetchActivities = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        const data = await getNotifications();
+        const [notifsData, tripsData] = await Promise.all([
+          getNotifications(),
+          getTrips()
+        ]);
+
         // Sort by latest first and take top 5
-        const lastFive = (data || []).sort((a, b) => {
+        const lastFive = (notifsData || []).sort((a, b) => {
           const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
           const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
           return dateB - dateA;
         }).slice(0, 5);
 
         setActivities(lastFive);
+        setTrips(tripsData);
       } catch (error) {
-        console.error('Error fetching dashboard activities:', error);
+        console.error('Error fetching dashboard data:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchActivities();
+    fetchData();
   }, []);
+
+  const handleCreateBooking = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!bookingForm.user_id || !bookingForm.trip_id) {
+      toast.error("Veuillez remplir tous les champs obligatoires");
+      return;
+    }
+
+    try {
+      await adminCreateBooking(bookingForm);
+      toast.success("Réservation créée avec succès");
+      setIsBookingModalOpen(false);
+      setBookingForm({
+        user_id: '',
+        trip_id: '',
+        passengers_adult: 1,
+        passengers_child: 0,
+        passengers_baby: 0
+      });
+    } catch (error: any) {
+      toast.error(error.message || "Erreur lors de la création de la réservation");
+    }
+  };
 
   const getActivityIcon = (type: string) => {
     if (type.includes('payment')) return { icon: TrendingUp, bg: 'bg-green-100', text: 'text-green-600' };
@@ -54,9 +99,102 @@ function AdminDashboardPage() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h2 className="text-2xl font-bold text-slate-900">Tableau de bord</h2>
-        <p className="text-slate-500">Bienvenue sur votre espace d'administration.</p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <h2 className="text-4xl font-black text-slate-900 tracking-tight">Admin <span className="text-primary italic">Dashboard</span></h2>
+          <p className="text-slate-500 font-bold mt-1 uppercase tracking-widest text-[10px]">Bienvenue sur votre espace d'administration.</p>
+        </div>
+
+        <Dialog open={isBookingModalOpen} onOpenChange={setIsBookingModalOpen}>
+          <DialogTrigger asChild>
+            <Button className="h-12 px-6 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-black uppercase tracking-widest shadow-lg shadow-slate-200 flex items-center gap-3 transition-all hover:scale-[1.02]">
+              <Plus className="w-5 h-5 border-2 border-white/30 rounded-full" />
+              Nouvelle Réservation
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[550px] rounded-[2.5rem] p-8">
+            <DialogHeader>
+              <DialogTitle className="text-3xl font-black text-slate-900 mb-6">Créer une <span className="text-primary italic">Réservation</span></DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleCreateBooking} className="space-y-6">
+              <div className="space-y-2">
+                <Label className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">ID de l'Utilisateur</Label>
+                <div className="relative">
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Input
+                    required
+                    placeholder="Coller l'ID utilisateur ici..."
+                    value={bookingForm.user_id}
+                    onChange={e => setBookingForm({ ...bookingForm, user_id: e.target.value })}
+                    className="h-14 pl-12 rounded-2xl bg-slate-50 border-slate-100 font-bold focus:bg-white transition-colors shadow-sm"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Sélectionner le Voyage</Label>
+                <div className="relative">
+                  <Plane className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-10" />
+                  <Select
+                    onValueChange={(val) => setBookingForm({ ...bookingForm, trip_id: val })}
+                    value={bookingForm.trip_id}
+                  >
+                    <SelectTrigger className="h-14 pl-12 rounded-2xl bg-slate-50 border-slate-100 font-bold focus:bg-white transition-colors shadow-sm text-left">
+                      <SelectValue placeholder="Choisir un voyage dans la liste..." />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-2xl border-slate-100 shadow-2xl">
+                      {trips.map(trip => (
+                        <SelectItem key={trip.id} value={trip.id} className="p-4 focus:bg-primary/5 rounded-xl cursor-pointer">
+                          <div className="flex flex-col">
+                            <span className="font-black text-slate-900 uppercase tracking-tight italic">{trip.title}</span>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{trip.type} • {Number(trip.base_price).toLocaleString()} DZD</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4 p-6 bg-slate-50 rounded-[2rem] border border-slate-100">
+                <div className="space-y-2 text-center">
+                  <Label className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">Adultes</Label>
+                  <Input
+                    type="number" min="1" required
+                    value={bookingForm.passengers_adult}
+                    onChange={e => setBookingForm({ ...bookingForm, passengers_adult: parseInt(e.target.value) })}
+                    className="h-12 text-center rounded-xl bg-white border-slate-200 font-black text-primary"
+                  />
+                </div>
+                <div className="space-y-2 text-center">
+                  <Label className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">Enfants</Label>
+                  <Input
+                    type="number" min="0" required
+                    value={bookingForm.passengers_child}
+                    onChange={e => setBookingForm({ ...bookingForm, passengers_child: parseInt(e.target.value) })}
+                    className="h-12 text-center rounded-xl bg-white border-slate-200 font-black text-emerald-500"
+                  />
+                </div>
+                <div className="space-y-2 text-center">
+                  <Label className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">Bébés</Label>
+                  <Input
+                    type="number" min="0" required
+                    value={bookingForm.passengers_baby}
+                    onChange={e => setBookingForm({ ...bookingForm, passengers_baby: parseInt(e.target.value) })}
+                    className="h-12 text-center rounded-xl bg-white border-slate-200 font-black text-orange-500"
+                  />
+                </div>
+              </div>
+
+              <DialogFooter className="mt-8">
+                <Button type="submit" className="w-full h-16 rounded-[1.5rem] font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:shadow-primary/40 transition-all flex items-center justify-center gap-3">
+                  Confirmer la réservation
+                  <ChevronRight className="w-5 h-5" />
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Stats Grid */}

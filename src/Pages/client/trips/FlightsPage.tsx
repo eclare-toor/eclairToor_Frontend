@@ -60,20 +60,26 @@ const FlightsPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-transparent pt-40 pb-12 px-4">
-            <div className="container mx-auto max-w-3xl">
+        <div className="min-h-screen bg-transparent pb-12">
+            {/* Hero Section */}
+            <div className="relative h-[500px] w-full flex items-center justify-center overflow-hidden mb-[-100px]">
+                <div
+                    className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 scale-105"
+                    style={{ backgroundImage: 'url("/src/assets/flight.webp")' }}
 
-                <div className="text-center mb-10">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-sky-100 text-sky-600 mb-4">
-                        <Plane className="w-8 h-8" />
-                    </div>
-                    <h1 className="text-3xl md:text-4xl font-heading font-bold text-slate-900 mb-4">
-                        Réservez votre Vol
+                />
+                <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px]" />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#f8fafc]" />
+
+                <div className="relative z-10 text-center px-4">
+
+                    <h1 className="text-5xl md:text-7xl font-black text-white italic tracking-tighter drop-shadow-2xl">
+                        VOTRE <span className="text-sky-400">PROCHAIN</span> VOL
                     </h1>
-                    <p className="text-slate-600 max-w-2xl mx-auto">
-                        Comparez et réservez vos billets d'avion au meilleur prix pour toutes destinations.
-                    </p>
                 </div>
+            </div>
+
+            <div className="container mx-auto max-w-3xl relative z-20 px-4">
 
                 <div className="bg-white/70 backdrop-blur-2xl rounded-[2.5rem] shadow-2xl shadow-blue-900/10 border border-white/50 overflow-hidden">
                     <div className="h-2 bg-gradient-to-r from-sky-500 to-indigo-600"></div>

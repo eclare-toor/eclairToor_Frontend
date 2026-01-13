@@ -28,6 +28,7 @@ import AdminUsersPage from "./Pages/admin/AdminUsersPage";
 import AdminLayout from "./components/Layout/AdminLayout";
 import Profile from "./Pages/client/Profile";
 import AdminProfilePage from "./Pages/admin/AdminProfilePage";
+import AdminNotificationsPage from "./Pages/admin/AdminNotificationsPage";
 import OnboardingLoader from "./components/Shared/OnboardingLoader";
 
 
@@ -37,10 +38,17 @@ import { useAuth } from "./Context/AuthContext";
 import { useEffect, useState } from "react";
 import CustomTripPage from "./Pages/client/trips/CustomTripPage";
 
-function App() {
+import { useTranslation } from 'react-i18next';
 
+function App() {
+  const { i18n } = useTranslation();
   const { isLoading, user } = useAuth();
   const [showOnboarding, setShowOnboarding] = useState(true);
+
+  useEffect(() => {
+    document.documentElement.dir = i18n.language === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = i18n.language;
+  }, [i18n.language]);
 
   useEffect(() => {
     // Hide onboarding after the animation duration (2.2s + fade room)
@@ -99,6 +107,7 @@ function App() {
             <Route path="messages" element={<AdminRequestContact />} />
             <Route path="users" element={<AdminUsersPage />} />
             <Route path="profile" element={<AdminProfilePage />} />
+            <Route path="notifications" element={<AdminNotificationsPage />} />
           </Route>
         )}
       </Routes>

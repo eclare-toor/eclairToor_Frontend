@@ -131,6 +131,7 @@ export const MOCK_TRIPS: Trip[] = [
 ];
 
 // --- TRIP ITINERARIES ---
+/**
 export const MOCK_ITINERARIES: TripItinerary[] = [
     // National 1 (5 days)
     { id: 'it-n1-1', trip_id: 'trip-nat-1', day_number: 1, activities: ['Arrival in Adrar', 'Check-in at hotel', 'Welcome dinner'] },
@@ -180,32 +181,34 @@ export const MOCK_ITINERARIES: TripItinerary[] = [
     { id: 'it-o3-1', trip_id: 'trip-omra-3', day_number: 1, activities: ['Arrival', 'First Taraweeh'] },
     // ...
 ];
+ */
 
 // --- TRIP HOTELS ---
 export const MOCK_REVIEWS = [
     {
         id: 'rev-1',
-        user_name: 'Amine Benali',
+        user_name: 'MAYA RITA',
         rating: 5,
-        comment: "Une expérience inoubliable avec Eclair Travel ! L'organisation était parfaite du début à la fin.",
-        date: '2023-11-15'
+        comment: "Équipe formidable, orientée solution et toujours à l'écoute",
+        date: '2024-05-15'
     },
     {
         id: 'rev-2',
-        user_name: 'Sarah Khelil',
+        user_name: 'RIAD',
         rating: 5,
-        comment: "Le service client est très réactif. J'ai adoré mon séjour en Turquie, les hôtels étaient superbes.",
-        date: '2023-12-02'
+        comment: "Lahi barek surtout Nazim EclairTravel magnifique agence",
+        date: '2024-06-02'
     },
     {
         id: 'rev-3',
-        user_name: 'Karim Ziani',
-        rating: 4,
-        comment: "Bon rapport qualité/prix pour la Omra. Les guides étaient très compétents.",
-        date: '2024-01-10'
+        user_name: 'ymerine ymerine',
+        rating: 5,
+        comment: "Bon accueil, et le service était très professionnel",
+        date: '2024-07-10'
     }
 ];
 
+/**
 export const MOCK_TRIP_HOTELS: TripHotel[] = [
     // National
     { trip_id: 'trip-nat-1', hotel_id: 'hotel-adrar' },
@@ -257,6 +260,7 @@ export const MOCK_BOOKINGS: Booking[] = [
         created_at: '2025-12-09T09:00:00Z'
     }
 ];
+ */
 
 export const MOCK_CUSTOM_REQUESTS: CustomRequest[] = [
     {

@@ -1,5 +1,5 @@
 import { MOCK_TRIPS, MOCK_USERS, MOCK_CUSTOM_REQUESTS, MOCK_HOTEL_REQUESTS, MOCK_FLIGHT_REQUESTS, MOCK_MESSAGES } from './mock_data';
-import type { Trip, TripItinerary, Hotel, User, Booking, BookingItem, CustomRequest, HotelRequest, FlightRequest, ContactMessage, ContactMessageStatus, BookingStatus, CustomRequestStatus, UnifiedRequest, AppNotification } from './Types/index';
+import type { Trip, TripItinerary, Hotel, TripHotel, User, Booking, BookingItem, CustomRequest, HotelRequest, FlightRequest, ContactMessage, ContactMessageStatus, BookingStatus, CustomRequestStatus, UnifiedRequest, AppNotification } from './Types/index';
 
 // Simulate API delay
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -55,7 +55,7 @@ export const getTripItinerary = async (tripId: string): Promise<TripItinerary[]>
     }
 };
 
-export const getTripHotels = async (tripId: string): Promise<Hotel[]> => {
+export const getTripHotels = async (tripId: string): Promise<TripHotel[]> => {
     try {
         const response = await fetch(`http://localhost:3000/api/trips/${tripId}/hotels`);
         if (!response.ok) {
@@ -148,6 +148,53 @@ export const deleteTrip = async (id: string): Promise<void> => {
     }
 };
 
+export const addTripImages = async (tripId: string, imagesData: FormData): Promise<any> => {
+    const token = Cookies.get('token');
+    try {
+        const response = await fetch(`http://localhost:3000/api/trips/${tripId}/images`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: imagesData
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Failed to add images');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error adding trip images:', error);
+        throw error;
+    }
+};
+
+export const deleteTripImages = async (tripId: string, names: string[]): Promise<any> => {
+    const token = Cookies.get('token');
+    try {
+        const response = await fetch(`http://localhost:3000/api/trips/${tripId}/images`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ names })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Failed to delete images');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error deleting trip images:', error);
+        throw error;
+    }
+};
+
 export interface CreateItineraryPayload {
     day_date: string;
     activities: string;
@@ -181,6 +228,96 @@ export interface TripHotelLink {
     hotel_id: string;
     description?: string;
 }
+
+export const updateTripItinerary = async (tripId: string, itineraryId: string, data: Partial<CreateItineraryPayload>): Promise<any> => {
+    const token = Cookies.get('token');
+    try {
+        const response = await fetch(`http://localhost:3000/api/trips/${tripId}/itinerary/${itineraryId}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Failed to update itinerary');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error updating itinerary:', error);
+        throw error;
+    }
+};
+
+export const deleteTripItinerary = async (tripId: string, itineraryId: string): Promise<any> => {
+    const token = Cookies.get('token');
+    try {
+        const response = await fetch(`http://localhost:3000/api/trips/${tripId}/itinerary/${itineraryId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Failed to delete itinerary');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error deleting itinerary:', error);
+        throw error;
+    }
+};
+
+export const deleteAllTripItineraries = async (tripId: string): Promise<any> => {
+    const token = Cookies.get('token');
+    try {
+        const response = await fetch(`http://localhost:3000/api/trips/${tripId}/itinerary`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Failed to delete all itineraries');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error deleting all itineraries:', error);
+        throw error;
+    }
+};
+
+export const deleteTripHotel = async (tripId: string, hotelId: string): Promise<any> => {
+    const token = Cookies.get('token');
+    try {
+        const response = await fetch(`http://localhost:3000/api/trips/${tripId}/hotels/${hotelId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Failed to delete trip hotel linkage');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error deleting trip hotel:', error);
+        throw error;
+    }
+};
 
 export const linkTripHotels = async (tripId: string, hotels: TripHotelLink[]): Promise<any> => {
     const token = Cookies.get('token');
@@ -303,6 +440,53 @@ export const deleteHotel = async (id: string): Promise<void> => {
     }
 };
 
+export const addHotelImages = async (hotelId: string, imagesData: FormData): Promise<any> => {
+    const token = Cookies.get('token');
+    try {
+        const response = await fetch(`http://localhost:3000/api/hotels/${hotelId}/images`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            body: imagesData
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Failed to add hotel images');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error adding hotel images:', error);
+        throw error;
+    }
+};
+
+export const deleteHotelImages = async (hotelId: string, names: string[]): Promise<any> => {
+    const token = Cookies.get('token');
+    try {
+        const response = await fetch(`http://localhost:3000/api/hotels/${hotelId}/images`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ names })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Failed to delete hotel images');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error deleting hotel images:', error);
+        throw error;
+    }
+};
+
 
 // --- AUTH & USERS ---
 export interface AuthResponse {
@@ -387,15 +571,45 @@ export const getUserById = async (id: string): Promise<User | null> => {
 };
 
 export const getUsers = async (): Promise<User[]> => {
-    await delay(800);
-    return MOCK_USERS;
+    const token = Cookies.get('token');
+    try {
+        const response = await fetch('http://localhost:3000/api/auth/users', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Failed to fetch users');
+        }
+
+        const result = await response.json();
+        return result.users;
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        throw error;
+    }
 };
 
 export const deleteUser = async (id: string): Promise<void> => {
-    await delay(800);
-    const index = MOCK_USERS.findIndex(u => u.id === id);
-    if (index !== -1) {
-        MOCK_USERS.splice(index, 1);
+    const token = Cookies.get('token');
+    try {
+        const response = await fetch(`http://localhost:3000/api/auth/users/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Failed to delete user');
+        }
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        throw error;
     }
 };
 
@@ -404,6 +618,7 @@ export const deleteUser = async (id: string): Promise<void> => {
 // Backend response matches Booking interface.
 export interface CreateBookingPayload {
     trip_id: string;
+    user_id?: string; // Optional for admin to specify a user
     passengers_adult: number;
     passengers_child: number;
     passengers_baby: number;
@@ -412,11 +627,6 @@ export interface CreateBookingPayload {
 export const createReservation = async (data: CreateBookingPayload): Promise<Booking> => {
     const token = Cookies.get('token');
     try {
-        // We do NOT send total_price or user_id (inferred from token) in the body based on the user request description,
-        // but the previous code sent user_id. The prompt says:
-        // body be { "trip_id": ..., "passengers_adult": ..., ... }
-        // So we follow that.
-
         const response = await fetch('http://localhost:3000/api/bookings', {
             method: 'POST',
             headers: {
@@ -426,16 +636,22 @@ export const createReservation = async (data: CreateBookingPayload): Promise<Boo
             body: JSON.stringify(data)
         });
 
+        const result = await response.json();
+
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to create reservation');
+            throw new Error(result.error || result.message || 'Failed to create reservation');
         }
 
-        return await response.json();
+        return result;
     } catch (error) {
         console.error('Error creating reservation:', error);
         throw error;
     }
+};
+
+export const adminCreateBooking = async (data: CreateBookingPayload): Promise<Booking> => {
+    // Re-using createReservation since the endpoint is the same and depends on token
+    return createReservation(data);
 };
 
 // Replaced mock getAllBookings with real fetch
@@ -725,6 +941,28 @@ export const getUserRequests = async (): Promise<UnifiedRequest[]> => {
     }
 };
 
+export const getRequestDetails = async (id: string): Promise<UnifiedRequest> => {
+    const token = Cookies.get('token');
+    try {
+        const response = await fetch(`http://localhost:3000/api/requests/${id}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        // The API returns { success: true, data: [...] }
+        return result.data[0];
+    } catch (error) {
+        console.error('Error fetching request details:', error);
+        throw error;
+    }
+};
+
 export const submitRequestResponse = async (requestId: string, offer: string): Promise<any> => {
     const token = Cookies.get('token');
     try {
@@ -810,10 +1048,25 @@ export const getContactMessages = async (): Promise<ContactMessage[]> => {
 };
 
 // --- NOTIFICATIONS ---
-export const getNotifications = async (): Promise<AppNotification[]> => {
+export interface NotificationFilters {
+    limit?: number;
+    offset?: number;
+    unread_only?: boolean;
+    include_expired?: boolean;
+}
+
+export const getNotifications = async (filters: NotificationFilters = {}): Promise<AppNotification[]> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch('http://localhost:3000/api/notif', {
+        const { limit = 10, offset = 0, unread_only = false, include_expired = false } = filters;
+        const queryParams = new URLSearchParams({
+            limit: limit.toString(),
+            offset: offset.toString(),
+            unread_only: unread_only.toString(),
+            include_expired: include_expired.toString()
+        });
+
+        const response = await fetch(`http://localhost:3000/api/notif?${queryParams}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -825,6 +1078,22 @@ export const getNotifications = async (): Promise<AppNotification[]> => {
     } catch (error) {
         console.error('Error fetching notifications:', error);
         return [];
+    }
+};
+
+export const deleteNotification = async (id: string): Promise<void> => {
+    const token = Cookies.get('token');
+    try {
+        const response = await fetch(`http://localhost:3000/api/notif/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (!response.ok) throw new Error('Failed to delete notification');
+    } catch (error) {
+        console.error('Error deleting notification:', error);
+        throw error;
     }
 };
 

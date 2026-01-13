@@ -9,7 +9,10 @@ import { Loader2, Mail, Lock } from 'lucide-react';
 import logo from '../../assets/logo.png';
 import { toast } from 'react-toastify';
 
+import { useTranslation } from 'react-i18next';
+
 const LoginPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { login } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -40,7 +43,7 @@ const LoginPage = () => {
       console.log('✅ Login successful:', { message, user });
 
       // 2. Show success toast
-      toast.success(message || 'Connexion réussie !');
+      toast.success(message || t('auth.login_success'));
 
       // 3. Login Context
       login(token, user);
@@ -55,7 +58,7 @@ const LoginPage = () => {
       }
     } catch (err) {
       console.error('❌ Login error:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Une erreur est survenue lors de la connexion.';
+      const errorMessage = err instanceof Error ? err.message : t('auth.errors.generic');
       console.error('Error message:', errorMessage);
       toast.error(errorMessage);
     } finally {
@@ -77,10 +80,10 @@ const LoginPage = () => {
             <img src={logo} alt="Eclair Travel" className="h-20 w-20 rounded-2xl object-cover mx-auto" />
           </Link>
           <h2 className="mt-2 text-3xl font-heading font-bold text-foreground">
-            Bon retour !
+            {t('auth.welcome_back')}
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Connectez-vous pour accéder à votre compte
+            {t('auth.subtitle_login')}
           </p>
         </div>
 
@@ -89,7 +92,7 @@ const LoginPage = () => {
 
             {/* Email */}
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('auth.email_label')}</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -98,7 +101,7 @@ const LoginPage = () => {
                   type="email"
                   required
                   className="pl-10"
-                  placeholder="exemple@email.com"
+                  placeholder={t('auth.email_placeholder')}
                   value={formData.email}
                   onChange={handleChange}
                 />
@@ -108,9 +111,9 @@ const LoginPage = () => {
             {/* Password */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">Mot de passe</Label>
+                <Label htmlFor="password">{t('auth.password_label')}</Label>
                 <Link to="#" className="text-xs text-primary hover:underline">
-                  Mot de passe oublié ?
+                  {t('auth.forgot_password')}
                 </Link>
               </div>
               <div className="relative">
@@ -121,7 +124,7 @@ const LoginPage = () => {
                   type="password"
                   required
                   className="pl-10"
-                  placeholder="••••••••"
+                  placeholder={t('auth.password_placeholder')}
                   value={formData.password}
                   onChange={handleChange}
                 />
@@ -134,17 +137,17 @@ const LoginPage = () => {
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Connexion...
+                {t('auth.login_loading')}
               </>
             ) : (
-              "Se connecter"
+              t('auth.login_btn')
             )}
           </Button>
 
           <div className="text-center text-sm">
-            <span className="text-muted-foreground">Pas encore de compte ? </span>
+            <span className="text-muted-foreground">{t('auth.no_account')} </span>
             <Link to="/inscription" className="font-medium text-primary hover:text-primary/80 underline-offset-4 hover:underline">
-              Créer un compte
+              {t('auth.register_link')}
             </Link>
           </div>
         </form>

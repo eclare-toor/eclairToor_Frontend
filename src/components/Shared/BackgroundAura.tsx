@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 
 const BackgroundAura = () => {
@@ -16,7 +15,7 @@ const BackgroundAura = () => {
                     scale: [1, 1.4, 0.8, 1],
                 }}
                 transition={{
-                    duration: 35,
+                    duration: 18,
                     repeat: Infinity,
                     ease: "easeInOut"
                 }}
@@ -32,7 +31,7 @@ const BackgroundAura = () => {
                     scale: [1, 1.2, 1.5, 1],
                 }}
                 transition={{
-                    duration: 40,
+                    duration: 22,
                     repeat: Infinity,
                     ease: "easeInOut"
                 }}
@@ -46,7 +45,7 @@ const BackgroundAura = () => {
                     scale: [0.8, 1.1, 0.8],
                 }}
                 transition={{
-                    duration: 25,
+                    duration: 15,
                     repeat: Infinity,
                     ease: "easeInOut"
                 }}
@@ -60,7 +59,7 @@ const BackgroundAura = () => {
                     y: [0, 400, -200, 0],
                 }}
                 transition={{
-                    duration: 45,
+                    duration: 25,
                     repeat: Infinity,
                     ease: "linear"
                 }}

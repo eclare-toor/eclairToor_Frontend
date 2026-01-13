@@ -7,7 +7,10 @@ import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { toast } from 'react-toastify';
 
+import { useTranslation } from 'react-i18next';
+
 const Profile = () => {
+    const { t } = useTranslation();
     const { } = useAuth();
     const [profile, setProfile] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
@@ -19,7 +22,7 @@ const Profile = () => {
                 setProfile(data);
             } catch (error) {
                 console.error("Failed to load profile", error);
-                toast.error("Impossible de charger le profil utilisateur");
+                toast.error(t('profile.error'));
             } finally {
                 setLoading(false);
             }
@@ -32,7 +35,7 @@ const Profile = () => {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh]">
                 <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
-                <p className="text-muted-foreground">Chargement de votre profil...</p>
+                <p className="text-muted-foreground">{t('profile.loading')}</p>
             </div>
         );
     }
@@ -40,8 +43,8 @@ const Profile = () => {
     if (!profile) {
         return (
             <div className="container mx-auto px-4 py-8 text-center">
-                <p className="text-red-500 mb-4">Erreur lors du chargement du profil.</p>
-                <Button onClick={() => window.location.reload()}>Réessayer</Button>
+                <p className="text-red-500 mb-4">{t('profile.error')}</p>
+                <Button onClick={() => window.location.reload()}>{t('profile.retry')}</Button>
             </div>
         );
     }
@@ -52,8 +55,8 @@ const Profile = () => {
         : 'bg-green-100 text-green-700 border-green-200';
 
     return (
-        <div className="min-h-screen bg-transparent pt-40 pb-24">
-            <div className="container mx-auto px-4 max-w-4xl">
+        <div className="min-h-screen bg-transparent pt-32 pb-24 px-4">
+            <div className="container mx-auto max-w-5xl">
 
                 {/* Header Section */}
                 <div className="bg-white/70 backdrop-blur-2xl rounded-2xl shadow-xl shadow-blue-900/5 border border-white/40 p-8 mb-8 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
@@ -71,11 +74,11 @@ const Profile = () => {
                     <div className="flex-1 text-center md:text-left z-10 pt-4 md:pt-0">
                         <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-4">
                             <div>
-                                <h1 className="text-3xl font-heading font-bold text-gray-900 capitalize">
+                                <h1 className="text-3xl md:text-4xl font-heading font-black text-slate-900 capitalize tracking-tight">
                                     {profile.prenom} {profile.nom}
                                 </h1>
-                                <p className="text-muted-foreground flex items-center justify-center md:justify-start gap-2 mt-2">
-                                    <Mail className="w-4 h-4" />
+                                <p className="text-slate-500 font-medium flex items-center justify-center md:justify-start gap-2 mt-2">
+                                    <Mail className="w-4 h-4 text-primary" />
                                     {profile.email}
                                 </p>
                             </div>
@@ -88,46 +91,48 @@ const Profile = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {/* Main Info */}
-                    <Card className="md:col-span-2 border-none shadow-md">
-                        <CardHeader>
-                            <CardTitle className="text-xl flex items-center gap-2">
-                                <UserCircle className="w-5 h-5 text-primary" />
-                                Informations Personnelles
+                    <Card className="md:col-span-2 border-none shadow-xl shadow-slate-200/50 bg-white/80 backdrop-blur-xl">
+                        <CardHeader className="border-b border-slate-100 pb-4">
+                            <CardTitle className="text-xl font-bold flex items-center gap-3 text-slate-800">
+                                <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                                    <UserCircle className="w-6 h-6" />
+                                </div>
+                                {t('profile.personal_info')}
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-6">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <CardContent className="space-y-8 pt-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
                                 <div className="space-y-1">
-                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Nom</label>
+                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('profile.nom')}</label>
                                     <p className="font-medium text-gray-900 border-b pb-2">{profile.nom}</p>
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Prénom</label>
+                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('profile.prenom')}</label>
                                     <p className="font-medium text-gray-900 border-b pb-2">{profile.prenom}</p>
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</label>
+                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('profile.email')}</label>
                                     <div className="flex items-center gap-2 border-b pb-2">
                                         <Mail className="w-4 h-4 text-gray-400" />
                                         <p className="font-medium text-gray-900">{profile.email}</p>
                                     </div>
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Téléphone</label>
+                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('profile.phone')}</label>
                                     <div className="flex items-center gap-2 border-b pb-2">
                                         <Phone className="w-4 h-4 text-gray-400" />
-                                        <p className="font-medium text-gray-900">{profile.phone || 'Non renseigné'}</p>
+                                        <p className="font-medium text-gray-900">{profile.phone || t('profile.not_provided')}</p>
                                     </div>
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Nationalité</label>
+                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('profile.nationality')}</label>
                                     <div className="flex items-center gap-2 border-b pb-2">
                                         <MapPin className="w-4 h-4 text-gray-400" />
-                                        <p className="font-medium text-gray-900 capitalize">{profile.nationalite || 'Non renseignée'}</p>
+                                        <p className="font-medium text-gray-900 capitalize">{profile.nationalite || t('profile.not_provided')}</p>
                                     </div>
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Date d'inscription</label>
+                                    <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('profile.joined_date')}</label>
                                     <div className="flex items-center gap-2 border-b pb-2">
                                         <Calendar className="w-4 h-4 text-gray-400" />
                                         <p className="font-medium text-gray-900">
@@ -144,23 +149,23 @@ const Profile = () => {
                     </Card>
 
                     {/* Sidebar / Extra Info */}
-                    <div className="space-y-8">
-                        <Card className="border-none shadow-md bg-white">
+                    <div className="space-y-6">
+                        <Card className="border-none shadow-xl shadow-slate-200/50 bg-white/80 backdrop-blur-xl">
                             <CardHeader>
                                 <CardTitle className="text-lg flex items-center gap-2">
                                     <Shield className="w-5 h-5 text-primary" />
-                                    Statut du Compte
+                                    {t('profile.account_status')}
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="flex items-center gap-3">
                                     <div className={`w-3 h-3 rounded-full ${profile.is_active ? 'bg-green-500' : 'bg-red-500'}`}></div>
                                     <span className="font-medium text-gray-700">
-                                        {profile.is_active ? 'Actif' : 'Inactif'}
+                                        {profile.is_active ? t('profile.active') : t('profile.inactive')}
                                     </span>
                                 </div>
                                 <p className="text-sm text-muted-foreground mt-2">
-                                    Votre compte est {profile.is_active ? 'pleinement opérationnel' : 'désactivé'}.
+                                    {profile.is_active ? t('profile.status_desc_active') : t('profile.status_desc_inactive')}
                                 </p>
                             </CardContent>
                         </Card>
@@ -171,14 +176,14 @@ const Profile = () => {
                                     <Facebook className="w-8 h-8 text-white" />
                                 </div>
                                 <CardContent className="pt-6 text-center">
-                                    <p className="font-medium text-gray-900 mb-4">Lié à Facebook</p>
+                                    <p className="font-medium text-gray-900 mb-4">{t('profile.linked_facebook')}</p>
                                     <a
                                         href={profile.linkfacebook}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="text-sm text-primary hover:underline break-all"
                                     >
-                                        Voir le profil
+                                        {t('profile.view_profile')}
                                     </a>
                                 </CardContent>
                             </Card>

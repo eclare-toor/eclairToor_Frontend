@@ -89,14 +89,14 @@ const CustomTripPage = () => {
                 onClick={() => setFormData({ ...formData, type: 'national' })}
                 className={`py-2.5 rounded-lg text-sm font-bold transition-all ${formData.type === 'national' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
               >
-                Voyage National
+                Tourisme National
               </button>
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, type: 'international' })}
                 className={`py-2.5 rounded-lg text-sm font-bold transition-all ${formData.type === 'international' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
               >
-                Voyage International
+                Tourisme International
               </button>
             </div>
 
