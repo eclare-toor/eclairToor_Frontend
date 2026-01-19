@@ -90,10 +90,10 @@ const Navbar = () => {
         e.stopPropagation();
         try {
             await deleteNotification(id);
-            toast.success("Notification supprimée");
+            toast.success(t('nav.notif_deleted'));
             fetchNotificationsData();
         } catch (error) {
-            toast.error("Erreur lors de la suppression");
+            toast.error(t('nav.error_deleting'));
         }
     };
 
@@ -118,14 +118,14 @@ const Navbar = () => {
     return (
         <header
             className={cn(
-                'fixed left-0 right-0 z-50 px-4 md:px-8',
+                'fixed left-0 right-0 z-50 px-4 md:px-8 transition-all duration-500 ease-in-out',
                 isScrolled
                     ? 'top-4'
                     : 'top-6'
             )}
         >
             <div className={cn(
-                "container mx-auto",
+                "container mx-auto transition-all duration-500 ease-in-out",
                 isScrolled
                     ? "bg-white/70 backdrop-blur-2xl shadow-2xl shadow-primary/10 rounded-[2.5rem] py-3 px-8 border border-white/20"
                     : "bg-white/10 backdrop-blur-md rounded-[3rem] py-5 px-10 border border-white/10 shadow-xl shadow-black/5"
@@ -143,8 +143,8 @@ const Navbar = () => {
                                     src={logo}
                                     alt="Eclair Travel Logo"
                                     className={cn(
-                                        "rounded-2xl object-cover shadow-2xl border-4 border-white/20 group-hover:border-primary/50",
-                                        isScrolled ? "w-16 h-16 md:w-20 md:h-20" : "w-24 h-24 md:w-28 md:h-28"
+                                        "rounded-2xl object-cover shadow-2xl border-4 border-white/20 group-hover:border-primary/50 transition-all duration-500",
+                                        isScrolled ? "w-16 h-16 md:w-20 md:h-20" : "w-16 h-16 md:w-24 md:h-24"
                                     )}
                                 />
                             </motion.div>
@@ -170,7 +170,7 @@ const Navbar = () => {
                                 isScrolled ? "text-[8px]" : "text-[10px]",
                                 "text-slate-500"
                             )}>
-                                Fierté Algérienne
+                                {t('nav.pride_algerian')}
                             </span>
                         </div>
                         {/* IATA Logo */}
@@ -265,7 +265,7 @@ const Navbar = () => {
                                         <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-white/50">
                                             <div>
                                                 <DropdownMenuLabel className="p-0 text-lg font-black text-slate-900">{t('nav.notifications')}</DropdownMenuLabel>
-                                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Live Updates</p>
+                                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{t('nav.notifications_live')}</p>
                                             </div>
                                             {unreadCount > 0 && (
                                                 <Button
@@ -283,7 +283,7 @@ const Navbar = () => {
                                                 <div className="p-12 text-center text-slate-400">
                                                     <Bell className="w-12 h-12 mx-auto mb-3 opacity-20" />
                                                     <p className="text-sm font-bold">{t('nav.no_notifications')}</p>
-                                                    <p className="text-[10px] uppercase tracking-tighter mt-1 opacity-60">Check back later</p>
+                                                    <p className="text-[10px] uppercase tracking-tighter mt-1 opacity-60">{t('nav.check_back_later')}</p>
                                                 </div>
                                             ) : (
                                                 <div className="py-2">
@@ -310,7 +310,7 @@ const Navbar = () => {
                                                                 <div className="flex items-center justify-between gap-2">
                                                                     <p className="text-[13px] font-black text-slate-900 truncate">{notif.title}</p>
                                                                     <p className="text-[9px] font-bold text-slate-400 whitespace-nowrap">
-                                                                        {notif.created_at ? new Date(notif.created_at).toLocaleDateString() : 'Aujourd\'hui'}
+                                                                        {notif.created_at ? new Date(notif.created_at).toLocaleDateString(i18n.language) : t('nav.today')}
                                                                     </p>
                                                                 </div>
                                                                 <p className="text-[11px] text-slate-500 line-clamp-2 mt-1 font-medium leading-relaxed">{notif.message}</p>
@@ -319,7 +319,7 @@ const Navbar = () => {
                                                             <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all z-10">
                                                                 {!notif.is_read && (
                                                                     <button
-                                                                        title="Marquer comme lu"
+                                                                        title={t('nav.mark_read')}
                                                                         className="p-1.5 bg-white border border-slate-100 shadow-sm rounded-md text-slate-400 hover:text-primary transition-all"
                                                                         onClick={(e) => handleMarkAsRead(notif.id, e)}
                                                                     >
@@ -327,7 +327,7 @@ const Navbar = () => {
                                                                     </button>
                                                                 )}
                                                                 <button
-                                                                    title="Supprimer"
+                                                                    title={t('nav.delete')}
                                                                     className="p-1.5 bg-white border border-slate-100 shadow-sm rounded-md text-slate-400 hover:text-red-500 transition-all"
                                                                     onClick={(e) => handleDeleteNotification(notif.id, e)}
                                                                 >
@@ -367,7 +367,7 @@ const Navbar = () => {
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-64 overflow-hidden rounded-[1.5rem] border-slate-200/50 shadow-2xl p-2 bg-white/95 backdrop-blur-xl">
-                                        <DropdownMenuLabel className="px-4 py-3 text-sm font-black text-slate-900 uppercase tracking-widest text-[10px] opacity-50">Mon Compte</DropdownMenuLabel>
+                                        <DropdownMenuLabel className="px-4 py-3 text-sm font-black text-slate-900 uppercase tracking-widest text-[10px] opacity-50">{t('nav.my_account')}</DropdownMenuLabel>
                                         <DropdownMenuSeparator className="mx-2" />
                                         <DropdownMenuItem onClick={() => navigate('/mon-compte')} className="rounded-xl px-4 py-3 focus:bg-primary/5 focus:text-primary transition-colors cursor-pointer group">
                                             <LayoutDashboard className="mr-3 h-5 w-5 text-slate-400 group-focus:text-primary transition-colors" />

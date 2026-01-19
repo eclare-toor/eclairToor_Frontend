@@ -46,15 +46,15 @@ const Footer = () => {
                         <ul className="space-y-4 text-sm">
                             <li className="flex items-start gap-3">
                                 <MapPin className="w-5 h-5 text-primary shrink-0" />
-                                <span>Hydra, Algiers, Algeria</span>
+                                <span>{t('footer.address')}</span>
                             </li>
                             <li className="flex items-center gap-3">
                                 <Phone className="w-5 h-5 text-primary shrink-0" />
-                                <span>044011889</span>
+                                <span>{t('footer.phone')}</span>
                             </li>
                             <li className="flex items-center gap-3">
                                 <Mail className="w-5 h-5 text-primary shrink-0" />
-                                <span>eclairtravel@gmail.com</span>
+                                <span>{t('footer.email')}</span>
                             </li>
                         </ul>
                     </div>

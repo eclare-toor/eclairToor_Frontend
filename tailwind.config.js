@@ -50,10 +50,10 @@ export default {
                 }
             },
             fontFamily: {
-                sans: ['Lato', 'sans-serif'],
-                heading: ['Poppins', 'sans-serif'],
-                } ,
-            
+                sans: ['Inter', 'Noto Sans Arabic', 'IBM Plex Sans Arabic', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                heading: ['Poppins', 'Noto Sans Arabic', 'sans-serif'],
+            },
+
             borderRadius: {
                 lg: 'var(--radius)',
                 md: 'calc(var(--radius) - 2px)',

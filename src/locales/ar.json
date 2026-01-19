@@ -1,4 +1,17 @@
 {
+    "common": {
+        "days": "أيام",
+        "loading": "جاري التحميل...",
+        "error": "حدث خطأ ما",
+        "success": "نجاح",
+        "save": "حفظ",
+        "cancel": "إلغاء",
+        "delete": "حذف",
+        "edit": "تعديل",
+        "confirm_delete": "هل أنت متأكد أنك تريد الحذف؟",
+        "confirm_action": "هل أنت متأكد أنك تريد القيام بهذا الإجراء؟",
+        "confirm": "تأكيد"
+    },
     "nav": {
         "home": "الرئيسية",
         "trips": "الرحلات",
@@ -9,10 +22,20 @@
         "profile": "الملف الشخصي",
         "logout": "تسجيل الخروج",
         "login": "تسجيل الدخول",
-        "notifications": "الإشعارات",
+        "notifications": "التنبيهات",
         "mark_all_read": "تحديد الكل كمقروء",
-        "no_notifications": "لا توجد إشعارات",
-        "view_all": "عرض كل الإشعارات"
+        "no_notifications": "لا توجد تنبيهات",
+        "view_all": "عرض الكل",
+        "notifications_live": "تحديثات مباشرة",
+        "check_back_later": "عد لاحقاً",
+        "today": "اليوم",
+        "mark_read": "تحديد كمقروء",
+        "delete": "حذف",
+        "my_account": "حسابي",
+        "pride_algerian": "فخر الجزائر",
+        "notif_deleted": "تم حذف التنبيه",
+        "error_deleting": "خطأ أثناء الحذف",
+        "promotions": "العروض"
     },
     "footer": {
         "desc": "شريكك الموثوق لرحلات لا تُنسى. اكتشف العالم براحة وهدوء.",
@@ -25,6 +48,9 @@
         "phone_label": "الهاتف",
         "email_label": "البريد الإلكتروني",
         "hours_label": "ساعات العمل",
+        "address": "حيدرة، الجزائر العاصمة، الجزائر",
+        "phone": "044 01 18 89",
+        "email": "eclairtravel@gmail.com",
         "copyright": "© {{year}} إكلير ترافيل. جميع الحقوق محفوظة."
     },
     "hero": {
@@ -90,7 +116,12 @@
         "success_title": "تم إرسال الرسالة!",
         "success_desc": "شكراً لاتصالك بنا.",
         "new_message_btn": "إرسال رسالة جديدة",
-        "hours_val": "السبت - الخميس: 09:00 - 18:00\nالجمعة: مغلق"
+        "hours_val": "السبت - الخميس: 09:00 - 18:00\nالجمعة: مغلق",
+        "agency_label": "وكالتنا",
+        "agency_address": "123 شارع الشهداء\nوسط الجزائر، الجزائر",
+        "phone_label": "الهاتف",
+        "email_label": "البريد الإلكتروني",
+        "hours_label": "ساعات العمل"
     },
     "profile": {
         "loading": "جاري تحميل ملفك الشخصي...",
@@ -110,7 +141,11 @@
         "status_desc_active": "حسابك يعمل بشكل كامل.",
         "status_desc_inactive": "حسابك معطل.",
         "linked_facebook": "مرتبط بفيسبوك",
-        "view_profile": "عرض الملف الشخصي"
+        "view_profile": "عرض الملف الشخصي",
+        "roles": {
+            "admin": "مسؤول",
+            "user": "مستخدم"
+        }
     },
     "trips": {
         "title": "رحلاتنا",
@@ -130,9 +165,26 @@
             }
         },
         "filters": {
-            "search_placeholder": "إلى أين تريد الذهاب؟",
-            "max_duration": "المدة القصوى"
+            "title": "الفلاتر",
+            "search_label": "إلى أين تريد الذهاب؟",
+            "search_placeholder": "بلد، مدينة...",
+            "duration_label": "المدة القصوى",
+            "categories_label": "الأصناف"
         },
+        "help": {
+            "title": "تحتاج مساعدة؟",
+            "desc": "فريقنا هنا لمساعدتك في اختيار رحلة أحلامك.",
+            "button": "اتصل بنا"
+        },
+        "card": {
+            "from": "ابتداءً من",
+            "new": "جديد",
+            "days": "أيام",
+            "guarantee": "تألق مضمون",
+            "discover": "اكتشف"
+        },
+        "count_prefix": "لقد وجدنا",
+        "count_suffix": "جوهرة لك",
         "results_count": "نتائج",
         "loading": "جاري تحميل مغامرتك القادمة...",
         "empty": {
@@ -140,14 +192,7 @@
             "desc": "جرب تعديل الفلاتر لاكتشاف آفاق جديدة.",
             "reset": "إعادة تعيين البحث"
         },
-        "subtitle": "اكتشف مجموعتنا المختارة من الرحلات المنظمة",
-        "filter_national": "سياحة داخلية",
-        "filter_international": "سياحة دولية",
-        "filter_religious": "سياحة دينية",
-        "search_placeholder": "ابحث عن وجهة...",
-        "duration": "المدة",
-        "price_from": "ابتداءً من",
-        "details_btn": "عرض التفاصيل"
+        "subtitle": "اكتشف مجموعتنا المختارة من الرحلات المنظمة"
     },
     "trip_details": {
         "not_found": "الرحلة غير موجودة",
@@ -183,16 +228,6 @@
         "unspecified": "غير محدد",
         "maps_btn": "مسار خرائط جوجل",
         "equipment_title": "المعدات الموصى بها"
-    },
-    "common": {
-        "loading": "جاري التحميل...",
-        "error": "حدث خطأ ما",
-        "success": "نجاح",
-        "save": "حفظ",
-        "cancel": "إلغاء",
-        "delete": "حذف",
-        "edit": "تعديل",
-        "confirm_delete": "هل أنت متأكد أنك تريد الحذف؟"
     },
     "home": {
         "hero": {
@@ -235,5 +270,250 @@
             "title_part1": "موقعنا",
             "title_part2": "الجغرافي"
         }
+    },
+    "reservation": {
+        "step_title": "الخطوة النهائية",
+        "title_start": "تأكيد",
+        "title_span": "حجزك",
+        "description": "يرجى التحقق من معلوماتك وعدد الركاب قبل تأكيد مغادرتك لهذه المغامرة الرائعة.",
+        "sections": {
+            "details": "معلومات الاتصال الخاصة بك",
+            "profile_info": "معلومات الملف الشخصي",
+            "passenger_count": "عدد الركاب"
+        },
+        "fields": {
+            "full_name": "الاسم الكامل",
+            "email": "البريد الإلكتروني",
+            "phone": "الهاتف",
+            "nationality": "الجنسية"
+        },
+        "passengers": {
+            "adults": "بالغون",
+            "adults_desc": "+12 سنة",
+            "children": "أطفال",
+            "children_desc": "من 2 إلى 12 سنة",
+            "babies": "رضع",
+            "babies_desc": "-2 سنة"
+        },
+        "summary": {
+            "duration": "المدة",
+            "cost_breakdown": "ملخص التكاليف",
+            "total": "الإجمالي العام",
+            "secure_platform": "منصة آمنة 100%",
+            "customer_service": "خدمة العملاء متاحة 24/7"
+        },
+        "confirm_button": "تأكيد الحجز",
+        "back_to_trips": "العودة إلى قائمة الرحلات",
+        "errors": {
+            "fullscreen_title": "عذراً! حدث خطأ ما",
+            "not_found": "الرحلة غير موجودة",
+            "load_failed": "خطأ في تحميل البيانات",
+            "generic": "حدث خطأ أثناء الحجز."
+        },
+        "omra": {
+            "room_selection": "اختيار الغرف",
+            "double_room": "غرفة مزدوجة",
+            "triple_room": "غرفة ثلاثية",
+            "quadruple_room": "غرفة رباعية",
+            "capacity_insufficient": "سعة غير كافية: {{count}} أماكن مفقودة.",
+            "selection_valid": "خيار صالح",
+            "capacity_warning": "تحذير: لقد حددت أماكن أكثر من عدد الركاب."
+        }
+    },
+    "dashboard": {
+        "sidebar": {
+            "verified": "حساب موثق",
+            "bookings": "حجوزاتي",
+            "requests": "طلباتي",
+            "logout": "تسجيل الخروج"
+        },
+        "tabs": {
+            "bookings_title": "حجوزاتي",
+            "requests_title": "طلباتي",
+            "bookings_desc": "تجد هنا جميع حجوزات الرحلات الخاصة بك.",
+            "requests_desc": "تتبع حالة طلبات العروض المخصصة."
+        },
+        "bookings": {
+            "empty_title": "لا توجد حجوزات",
+            "empty_desc": "لم تقم بأي حجز بعد.",
+            "empty_button": "اكتشف رحلاتنا",
+            "passengers": "الركاب",
+            "total_price": "السعر المطلوب دفعه",
+            "reservation_date": "تاريخ الحجز",
+            "reference": "المرجع",
+            "download_ticket": "تحميل التذكرة",
+            "modify": "تعديل",
+            "cancel": "إلغاء الحجز",
+            "cancel_success": "تم إلغاء الحجز بنجاح!",
+            "cancel_error": "خطأ أثناء إلغاء الحجز.",
+            "status": {
+                "confirmed": "مؤكد",
+                "pending": "قيد الانتظار",
+                "cancelled": "ملغى",
+                "rejected": "مرفوض",
+                "paid": "مدفوع",
+                "processed": "تمت المعالجة"
+            },
+            "edit_modal": {
+                "title": "تعديل الحجز",
+                "adults": "بالغون",
+                "children": "أطفال",
+                "babies": "رضع",
+                "save": "حفظ",
+                "success": "تم تحديث الحجز بنجاح!",
+                "error": "خطأ في تحديث الحجز."
+            }
+        },
+        "requests": {
+            "empty_title": "لا توجد طلبات",
+            "empty_desc": "ليس لديك أي طلبات مخصصة بعد.",
+            "category_labels": {
+                "voyage": "طلب رحلة",
+                "omra": "طلب عمرة",
+                "hotel": "طلب فندق",
+                "vol": "طلب طيران"
+            },
+            "status_processing": "جاري المعالجة...",
+            "status_ready": "العرض جاهز",
+            "last_update": "آخر تحديث",
+            "view_offer": "عرض العرض",
+            "view_details": "التفاصيل",
+            "details": {
+                "duration": "المدة",
+                "start": "البداية",
+                "accommodation": "الإقامة",
+                "type": "النوع",
+                "hotels": "الفنادق",
+                "dates": "التواريخ",
+                "stars": "النجوم",
+                "passengers": "الركاب",
+                "wilaya": "الولاية",
+                "flight_type": "النوع",
+                "dep_ret": "ذهاب/إياب",
+                "class": "الدرجة"
+            },
+            "modal": {
+                "title": "عرض إكلير ترافيل",
+                "subtitle": "يسعدنا أن نقدم لكم هذا الاقتراح المخصص",
+                "label": "عرضكم",
+                "request_details": "تفاصيل الطلب",
+                "agency_response": "رد الوكالة",
+                "date_label": "تاريخ الرد",
+                "not_available": "تفاصيل العرض غير متوفرة.",
+                "no_response": "لا يوجد رد من الإدارة بعد.",
+                "close": "إغلاق",
+                "contact": "اتصل بنا"
+            }
+        },
+        "errors": {
+            "load_failed": "تعذر تحميل بياناتك.",
+            "offer_fetch_failed": "خطأ في استرجاع الرد.",
+            "ticket_popup_blocked": "تعذر فتح التذكرة. يرجى السماح بالنوافذ المنبثقة."
+        },
+        "ticket": {
+            "title": "تذكرة إلكترونية",
+            "destination": "الوجهة",
+            "date": "تاريخ الحجز",
+            "passengers": "الركاب",
+            "type": "نوع الرحلة",
+            "status": "حالة الحجز",
+            "total": "السعر الإجمالي",
+            "footer_1": "إكلير ترافيل - شريكك الموثوق.",
+            "footer_2": "يرجى تقديم هذه الوثيقة عند المغادرة.",
+            "unspecified": "غير محدد",
+            "confirmed": "مؤكد"
+        }
+    },
+    "congratulation": {
+        "title": "مبروك!",
+        "subtitle": "تم تأكيد حجزك بنجاح.",
+        "reservation_id": "رقم الحجز",
+        "trip_summary": {
+            "total_paid": "الإجمالي المدفوع",
+            "travelers": "مسافرين"
+        },
+        "download_btn": "تحميل التذكرة",
+        "my_bookings_btn": "عرض حجوزاتي",
+        "home_link": "العودة للرئيسية",
+        "not_found_title": "الحجز غير موجود",
+        "redirect_message": "جاري إعادة التوجيه للرئيسية..."
+    },
+    "admin": {
+        "requests": {
+            "title": "إدارة الطلبات",
+            "subtitle": "الإشراف والرد على الحجوزات والطلب المخصص.",
+            "total_requests": "إجمالي الطلبات",
+            "tabs": {
+                "bookings": "الحجوزات",
+                "custom": "رحلات على المقاس",
+                "services": "رحلات جوية وفنادق"
+            },
+            "table": {
+                "client": "الزبون",
+                "voyage": "الرحلة",
+                "date": "التاريخ",
+                "status": "الحالة",
+                "type_category": "النوع / الفئة",
+                "no_requests": "لم يتم العثور على طلبات.",
+                "search_placeholder": "البحث عن طريق الزبون...",
+                "filter_placeholder": "تصفية حسب الاسم أو اللقب..."
+            },
+            "status": {
+                "pending": "في الانتظار",
+                "confirmed": "مؤكدة",
+                "paid": "مدفوعة",
+                "processed": "تمت المعالجة",
+                "rejected": "مرفوضة",
+                "cancelled": "ملغاة"
+            },
+            "modal": {
+                "dossier": "ملف",
+                "treatment": "معالجة الطلب",
+                "rejected_title": "طلب مرفوض",
+                "rejected_desc": "تم إغلاق هذا الطلب ولا يمكنه تلقي عرض بعد الآن.",
+                "cancelled_title": "طلب ملغى",
+                "cancelled_desc": "ألغى الزبون هذا الطلب. لا يمكن اتخاذ أي إجراء.",
+                "offer_title": "اقتراحك المخصص",
+                "interface_label": "واجهة الكتابة",
+                "textarea_placeholder": "اكتب تفاصيل العرض هنا (السعر، الخدمات المشمولة، تفاصيل الرحلة...)",
+                "offer_hint": "سيرى المستخدم هذا العرض فوراً في لوحة التحكم الخاصة به. كن دقيقاً بشأن الأسعار والشروط.",
+                "delete_offer": "حذف العرض",
+                "reject_dossier": "رفض الطلب",
+                "send_offer": "إرسال العرض للزبون",
+                "update_offer": "تحديث العرض",
+                "confirm_delete_offer": "هل أنت متأكد أنك تريد حذف هذا العرض؟",
+                "offer_deleted": "تم حذف العرض بنجاح",
+                "offer_sent": "تم إرسال العرض بنجاح للزبون!",
+                "refusal_confirmed": "تم رفض الطلب",
+                "confirm_refusal": "هل أنت متأكد أنك تريد رفض هذا الطلب؟",
+                "errors": {
+                    "send_failed": "خطأ في إرسال العرض",
+                    "delete_failed": "خطأ في حذف العرض",
+                    "refusal_failed": "خطأ في رفض الطلب"
+                }
+            },
+            "details": {
+                "destination": "الوجهة",
+                "dates_accommodation": "التواريخ والإقامة",
+                "options": "الخيارات",
+                "parcours": "المسار",
+                "hotels": "الفنادق",
+                "preferences": "التفضيلات",
+                "hotel": "الفندق",
+                "stay": "الإقامة",
+                "travelers": "المسافرون",
+                "trajet": "المسار",
+                "calendar": "التقويم",
+                "precisions": "التفاصيل"
+            }
+        }
+    },
+    "promotions": {
+        "title": "العروض",
+        "subtitle": "استفد من عروضنا بأسعار مخفضة",
+        "badge": "عروض محدودة",
+        "no_promotions": "لا توجد عروض متاحة",
+        "check_back": "تحقق مرة أخرى قريبًا لاكتشاف عروضنا الجديدة!",
+        "available_offers": "عروض متاحة"
     }
 }

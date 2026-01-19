@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getTrip, getTripItinerary, getTripHotels } from '../../../api';
 import type { Trip, TripItinerary, TripHotel } from '../../../Types';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 import { Button } from '../../../components/ui/button';
-import { Calendar, MapPin, Clock, CheckCircle2, Hotel as HotelIcon, ArrowLeft, Share2, Heart, ExternalLink, ShieldCheck, Zap, Star, X, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
+import { MapPin, Clock, CheckCircle2, Hotel as HotelIcon, ArrowLeft, Share2, Heart, ExternalLink, ShieldCheck, Zap, Star, X, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
 import { cn } from '../../../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -497,11 +497,25 @@ const TripDetailsPage = () => {
                 {t('trip_details.equipment_title')}
               </h4>
               <div className="flex flex-wrap gap-2">
-                {Array.isArray(trip.equipment_list) && trip.equipment_list.map((item, idx) => (
-                  <span key={idx} className="bg-slate-100 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-200 transition-colors cursor-default">
-                    {item}
-                  </span>
-                ))}
+                {(() => {
+                  let equipment: string[] = [];
+                  if (Array.isArray(trip.equipment_list)) {
+                    equipment = trip.equipment_list;
+                  } else if (typeof trip.equipment_list === 'string') {
+                    try {
+                      const parsed = JSON.parse(trip.equipment_list);
+                      equipment = Array.isArray(parsed) ? parsed : [trip.equipment_list];
+                    } catch {
+                      equipment = trip.equipment_list.split(',').map(s => s.trim()).filter(Boolean);
+                    }
+                  }
+
+                  return equipment.map((item, idx) => (
+                    <span key={idx} className="bg-slate-100 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-200 transition-colors cursor-default">
+                      {item}
+                    </span>
+                  ));
+                })()}
               </div>
             </div>
 

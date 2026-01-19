@@ -2,18 +2,14 @@ import { useEffect } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { CheckCircle2, MapPin, Calendar, Users, Download, ArrowRight, Home } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
-import { useAuth } from '../../../Context/AuthContext';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
-// Extend jsPDF type to include autoTable
-interface jsPDFWithAutoTable extends jsPDF {
-  autoTable: (options: any) => void;
-}
+import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
+import logo from '../../../assets/logo.png';
 
 const CongratulationReservation = () => {
+  const { t, i18n } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();
   const { reservationId, trip, totalPrice, passengers } = location.state || {}; // Receive data
 
   // Redirect if accessed directly without state
@@ -28,89 +24,132 @@ const CongratulationReservation = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-slate-800">Réservation introuvable</h2>
-          <p>Redirection vers l'accueil...</p>
+          <h2 className="text-2xl font-bold text-slate-800">{t('congratulation.not_found_title')}</h2>
+          <p>{t('congratulation.redirect_message')}</p>
         </div>
       </div>
     );
   }
 
   const handleDownloadTicket = () => {
-    const doc = new jsPDF() as jsPDFWithAutoTable;
-
-    // Header
-    doc.setFillColor(68, 190, 199); // Primary color (cyan-ish)
-    doc.rect(0, 0, 210, 40, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(22);
-    doc.text('ECLAIR TRAVEL', 105, 20, { align: 'center' });
-    doc.setFontSize(12);
-    doc.text('BILLET DE RÉSERVATION', 105, 30, { align: 'center' });
-
-    // Reservation Info
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(12);
-    doc.text(`ID Réservation: ${reservationId}`, 20, 60);
-    doc.text(`Date de réservation: ${new Date().toLocaleDateString()}`, 20, 68);
-    doc.text(`Status: CONFIRMÉE`, 20, 76);
-
-    // Client Info
-    if (user) {
-      doc.setFontSize(14);
-      doc.setTextColor(68, 190, 199);
-      doc.text('INFORMATIONS CLIENT', 20, 95);
-      doc.line(20, 97, 190, 97);
-
-      doc.setFontSize(11);
-      doc.setTextColor(0, 0, 0);
-      doc.text(`Nom complet: ${user.nom} ${user.prenom}`, 20, 105);
-      doc.text(`Email: ${user.email}`, 20, 112);
-      if (user.phone) doc.text(`Téléphone: ${user.phone}`, 20, 119);
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      toast.error(t('dashboard.errors.ticket_popup_blocked'));
+      return;
     }
 
-    // Trip Info
-    const startY = user ? 135 : 95;
-    doc.setFontSize(14);
-    doc.setTextColor(68, 190, 199);
-    doc.text('DÉTAILS DU VOYAGE', 20, startY);
-    doc.line(20, startY + 2, 190, startY + 2);
+    const date = new Date();
+    const booking = {
+      id: reservationId,
+      title: trip?.title || 'Voyage',
+      destination_country: trip?.destination_wilaya || trip?.destination_country || trip?.omra_category || trip?.type,
+      created_at: date.toISOString(),
+      passengers_adult: passengers?.adults || 0,
+      passengers_child: passengers?.children || 0,
+      passengers_baby: passengers?.babies || 0,
+      type: trip?.type,
+      total_price: totalPrice,
+      status: 'PENDING'
+    };
 
-    doc.setFontSize(11);
-    doc.setTextColor(0, 0, 0);
-    const destination = trip?.destination_wilaya || trip?.destination_country || trip?.omra_category || trip?.type || 'N/A';
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Billet - ${booking.title}</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+          body { font-family: 'Inter', sans-serif; padding: 40px; color: #1e293b; max-width: 800px; margin: 0 auto; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          @page { margin: 0; size: auto; }
+          @media print { body { padding: 40px; margin: 20px auto; } }
+          
+          .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 40px; }
+          .logo-section { display: flex; align-items: center; gap: 15px; }
+          .logo-img { height: 60px; width: auto; object-fit: contain; }
+          .brand { font-size: 24px; font-weight: 900; letter-spacing: -1px; line-height: 1; }
+          .brand span { color: #2563eb; }
+          .ticket-type { background: #f1f5f9; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #64748b; border: 1px solid #e2e8f0; }
+          
+          .trip-title { font-size: 32px; font-weight: 800; margin-bottom: 10px; color: #0f172a; line-height: 1.2; }
+          .ref { color: #64748b; font-size: 14px; font-weight: 500; margin-bottom: 40px; font-family: monospace; background: #f8fafc; display: inline-block; padding: 4px 12px; border-radius: 6px; border: 1px solid #e2e8f0; }
+          
+          .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-bottom: 40px; }
+          .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; font-weight: 700; margin-bottom: 8px; }
+          .value { font-size: 18px; font-weight: 600; color: #334155; }
+          
+          .status-box { background: #f8fafc; padding: 24px; border-radius: 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e2e8f0; }
+          .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 99px; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+          .status-confirmed { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+          .status-pending { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+          
+          .price-large { font-size: 28px; font-weight: 800; color: #2563eb; letter-spacing: -0.5px; }
+          
+          .footer { margin-top: 60px; padding-top: 30px; border-top: 1px dashed #cbd5e1; text-align: center; color: #94a3b8; font-size: 12px; }
+          .footer p { margin: 4px 0; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+            <div class="logo-section">
+                <img src="${window.location.origin}${logo}" class="logo-img" alt="Logo" onerror="this.style.display='none'"/>
+                <div class="brand">ECLAIR<span>TRAVEL</span></div>
+            </div>
+            <div class="ticket-type">${t('dashboard.ticket.title')}</div>
+        </div>
+        
+        <h1 class="trip-title">Billet - ${booking.title || t('dashboard.ticket.unspecified')}</h1>
+        <div class="ref">RÉF: #${booking.id.slice(0, 8).toUpperCase()}</div>
 
-    doc.text(`Titre: ${trip?.title || ''}`, 20, startY + 10);
-    doc.text(`Destination: ${destination}`, 20, startY + 17);
-    doc.text(`Départ: ${trip ? new Date(trip.start_date).toLocaleDateString() : 'N/A'}`, 20, startY + 24);
-    doc.text(`Retour: ${trip ? new Date(trip.end_date).toLocaleDateString() : 'N/A'}`, 120, startY + 24);
+        <div class="grid">
+            <div>
+                <div class="label">${t('dashboard.ticket.destination')}</div>
+                <div class="value">${booking.destination_country || booking.title || t('dashboard.ticket.unspecified')}</div>
+            </div>
+            <div>
+                <div class="label">${t('dashboard.ticket.date')}</div>
+                <div class="value">${new Date(booking.created_at || Date.now()).toLocaleDateString(i18n.language, { year: 'numeric', month: 'long', day: 'numeric' })}</div>
+            </div>
+            <div>
+                <div class="label">${t('dashboard.ticket.passengers')}</div>
+                <div class="value">
+                    ${booking.passengers_adult} ${t('reservation.passengers.adults')}
+                    ${booking.passengers_child > 0 ? `, ${booking.passengers_child} ${t('reservation.passengers.children')}` : ''}
+                    ${booking.passengers_baby > 0 ? `, ${booking.passengers_baby} ${t('reservation.passengers.babies')}` : ''}
+                </div>
+            </div>
+            <div>
+                <div class="label">${t('dashboard.ticket.type')}</div>
+                <div class="value" style="text-transform: capitalize;">${booking.type || t('dashboard.ticket.unspecified')}</div>
+            </div>
+        </div>
 
-    // Passengers Table
-    if (passengers) {
-      doc.autoTable({
-        startY: startY + 35,
-        head: [['Type', 'Nombre']],
-        body: [
-          ['Adultes', passengers.adults || 0],
-          ['Enfants', passengers.children || 0],
-          ['Bébés', passengers.babies || 0],
-        ],
-        theme: 'grid',
-        headStyles: { fillColor: [68, 190, 199] }
-      });
-    }
+        <div class="status-box">
+            <div>
+                <div class="label">${t('dashboard.ticket.status')}</div>
+                <div class="status-badge status-pending">
+                    <span>●</span> ${t('dashboard.bookings.status.pending')}
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <div class="label">${t('dashboard.ticket.total')}</div>
+                <div class="price-large">${(booking.total_price || 0).toLocaleString()} DZD</div>
+            </div>
+        </div>
 
-    // Total
-    const finalY = (doc as any).lastAutoTable?.finalY || (startY + 40);
-    doc.setFontSize(16);
-    doc.setTextColor(0, 0, 0);
-    doc.text(`TOTAL PAYÉ: ${totalPrice?.toLocaleString() || 0} DZD`, 190, finalY + 20, { align: 'right' });
+        <div class="footer">
+            <p>${t('dashboard.ticket.footer_1')}</p>
+            <p>${t('dashboard.ticket.footer_2')}</p>
+        </div>
+        
+        <script>
+            window.onload = function() { window.print(); }
+        </script>
+      </body>
+      </html>
+    `;
 
-    // Footer
-    doc.setFontSize(10);
-    doc.setTextColor(150, 150, 150);
-    doc.text('Ce document est une preuve de réservation. Veuillez le présenter lors de votre départ.', 105, 280, { align: 'center' });
-
-    doc.save(`Billet_EclairTravel_${reservationId}.pdf`);
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
   };
 
   return (
@@ -132,13 +171,13 @@ const CongratulationReservation = () => {
 
           <div className="space-y-4">
             <h1 className="text-4xl md:text-5xl font-heading font-bold text-slate-900">
-              Félicitations !
+              {t('congratulation.title')}
             </h1>
             <p className="text-xl text-slate-600">
-              Votre réservation a été confirmée avec succès.
+              {t('congratulation.subtitle')}
             </p>
             <div className="inline-block bg-slate-100 px-4 py-2 rounded-lg border border-slate-200 text-sm font-mono text-slate-600 mt-2">
-              ID Réservation: <span className="font-bold text-slate-900">{reservationId}</span>
+              {t('congratulation.reservation_id')}: <span className="font-bold text-slate-900">{reservationId}</span>
             </div>
           </div>
 
@@ -159,16 +198,16 @@ const CongratulationReservation = () => {
                   </div>
                   <div className="flex items-center gap-1">
                     <Calendar className="w-4 h-4" />
-                    {new Date(trip.start_date).toLocaleDateString()}
+                    {new Date(trip.start_date).toLocaleDateString(i18n.language)}
                   </div>
                   <div className="flex items-center gap-1">
                     <Users className="w-4 h-4" />
-                    {passengers.adults + passengers.children + passengers.babies} Voyageurs
+                    {passengers.adults + passengers.children + passengers.babies} {t('congratulation.trip_summary.travelers')}
                   </div>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm text-slate-500">Total payé</p>
+                <p className="text-sm text-slate-500">{t('congratulation.trip_summary.total_paid')}</p>
                 <p className="text-2xl font-bold text-primary">{totalPrice.toLocaleString()} DZD</p>
               </div>
             </div>
@@ -178,18 +217,18 @@ const CongratulationReservation = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <Button className="w-full sm:w-auto gap-2" size="lg" onClick={handleDownloadTicket}>
               <Download className="w-4 h-4" />
-              Télécharger le billet
+              {t('congratulation.download_btn')}
             </Button>
             <Link to="/mon-compte">
               <Button variant="outline" className="w-full sm:w-auto gap-2" size="lg">
-                Voir mes réservations <ArrowRight className="w-4 h-4" />
+                {t('congratulation.my_bookings_btn')} <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
           </div>
 
           <Link to="/" className="inline-block text-slate-400 hover:text-slate-600 text-sm mt-4 flex items-center justify-center gap-1">
             <Home className="w-3 h-3" />
-            Retour à l'accueil
+            {t('congratulation.home_link')}
           </Link>
 
         </div>

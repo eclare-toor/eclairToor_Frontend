@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { getTrip, createReservation } from '../../../api';
@@ -14,16 +15,24 @@ const Reservation = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const location = useLocation();
-  const { user: authUser, isAuthenticated, isLoading: isAuthLoading } = useAuth();
+  const { user: authUser, isLoading: isAuthLoading } = useAuth();
 
+  const { t } = useTranslation();
   const [trip, setTrip] = useState<Trip | null>(location.state?.trip || null);
   const [loading, setLoading] = useState(!location.state?.trip);
-  const [error, setError] = useState<string | null>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [reservationError, setReservationError] = useState<string | null>(null);
+  const [isShaking, setIsShaking] = useState(false);
 
   // Passenger counts
   const [adults, setAdults] = useState(1);
-  const [children, setChildren] = useState(0); // 2-12 years (-30%)
+  const [children, setChildren] = useState(0); // 2-12 years (-20%)
   const [babies, setBabies] = useState(0); // < 2 years (-70%)
+
+  // Omra Room Counts
+  const [rooms2, setRooms2] = useState(0);
+  const [rooms3, setRooms3] = useState(0);
+  const [rooms4, setRooms4] = useState(0);
 
   useEffect(() => {
     // If we already have the trip from location state, we don't need to fetch it
@@ -39,12 +48,12 @@ const Reservation = () => {
         // Fallback fetch if accessed directly
         const tripData = await getTrip(id);
         if (!tripData) {
-          setError('Voyage non trouvé');
+          setFetchError(t('reservation.errors.not_found'));
         } else {
           setTrip(tripData);
         }
       } catch (err) {
-        setError('Erreur lors du chargement des données');
+        setFetchError(t('reservation.errors.load_failed'));
       } finally {
         setLoading(false);
       }
@@ -56,18 +65,18 @@ const Reservation = () => {
   }, [id, trip]);
 
   if (loading || isAuthLoading) return <div className="min-h-screen pt-52 flex justify-center"><LoadingSpinner /></div>;
-  if (error || !trip) return (
+  if (fetchError || !trip) return (
     <div className="min-h-screen pt-52 flex flex-col items-center justify-center gap-8 px-4">
       <div className="bg-red-50 border-2 border-red-100 rounded-[2rem] p-8 md:p-12 max-w-2xl w-full text-center shadow-2xl shadow-red-900/5">
         <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6 text-red-600">
           <ShieldCheck className="w-10 h-10" />
         </div>
-        <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-4 italic uppercase tracking-tight">Oups ! Une erreur est survenue</h2>
-        <p className="text-red-500 font-bold text-lg mb-8 leading-relaxed">{error || "Nous n'avons pas pu trouver ce voyage."}</p>
+        <h2 className="text-2xl md:text-3xl font-black text-slate-900 mb-4 italic uppercase tracking-tight">{t('reservation.errors.fullscreen_title')}</h2>
+        <p className="text-red-500 font-bold text-lg mb-8 leading-relaxed">{fetchError || t('reservation.errors.not_found')}</p>
         <Link to="/voyages">
           <Button variant="default" className="h-14 px-8 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-black uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] flex items-center gap-3 mx-auto">
             <ArrowLeft className="w-5 h-5" />
-            Retour à la liste des voyages
+            {t('reservation.back_to_trips')}
           </Button>
         </Link>
       </div>
@@ -75,14 +84,75 @@ const Reservation = () => {
   );
 
   // Pricing Logic
-  const priceAdult = trip.base_price;
-  const priceChild = trip.base_price * 0.8; // -20% AS REQUESTED
-  const priceBaby = trip.base_price * 0.3; // -70% => pay 30%
+  const isOmra = trip.type?.toLowerCase() === 'religieuse' || trip.type?.toLowerCase() === 'omra';
+  let totalPrice = 0;
+  let totalAdults = 0;
+  let totalChildren = 0;
+  let totalBabies = 0;
 
-  const totalAdults = adults * priceAdult;
-  const totalChildren = children * priceChild;
-  const totalBabies = babies * priceBaby;
-  const totalPrice = totalAdults + totalChildren + totalBabies;
+  if (isOmra) {
+    // Omra Calculation Logic
+    const slots: number[] = [];
+    if (trip.options?.prix_2_chmpre) {
+      for (let i = 0; i < rooms2; i++) { slots.push(trip.options.prix_2_chmpre); slots.push(trip.options.prix_2_chmpre); }
+    }
+    if (trip.options?.prix_3_chmpre) {
+      for (let i = 0; i < rooms3; i++) { slots.push(trip.options.prix_3_chmpre); slots.push(trip.options.prix_3_chmpre); slots.push(trip.options.prix_3_chmpre); }
+    }
+    if (trip.options?.prix_4_chmpre) {
+      for (let i = 0; i < rooms4; i++) { slots.push(trip.options.prix_4_chmpre); slots.push(trip.options.prix_4_chmpre); slots.push(trip.options.prix_4_chmpre); slots.push(trip.options.prix_4_chmpre); }
+    }
+
+    // Sort slots descending (assign best/most expensive rooms first)
+    slots.sort((a, b) => b - a);
+
+    let currentSlotIndex = 0;
+
+    // 1. Assign Adults
+    for (let i = 0; i < adults; i++) {
+      // STRICT: Use slot price. If no slot available (overflow), use 0 or handle error.
+      // In practice, validation prevents overflow. 
+      // Logic: Pay for the assigned slot.
+      const price = slots[currentSlotIndex] || 0;
+      totalAdults += price;
+      currentSlotIndex++;
+    }
+
+    // 2. Assign Children (20% off)
+    for (let i = 0; i < children; i++) {
+      const price = slots[currentSlotIndex] || 0;
+      totalChildren += price * 0.8;
+      currentSlotIndex++;
+    }
+
+    // 3. Babies (70% off cheapest SELECTED room)
+    // Find cheapest selected room price to apply the baby discount logic
+    let cheapestSelectedPrice = 0;
+    const selectedPrices = [];
+    if (rooms4 > 0 && trip.options?.prix_4_chmpre) selectedPrices.push(trip.options.prix_4_chmpre);
+    if (rooms3 > 0 && trip.options?.prix_3_chmpre) selectedPrices.push(trip.options.prix_3_chmpre);
+    if (rooms2 > 0 && trip.options?.prix_2_chmpre) selectedPrices.push(trip.options.prix_2_chmpre);
+
+    // Sort ascending to get cheapest
+    if (selectedPrices.length > 0) {
+      selectedPrices.sort((a, b) => a - b);
+      cheapestSelectedPrice = selectedPrices[0];
+    }
+
+    totalBabies = babies * cheapestSelectedPrice * 0.3;
+
+    totalPrice = totalAdults + totalChildren + totalBabies;
+  } else {
+    // Standard Calculation
+    const priceAdult = trip.base_price;
+    const priceChild = trip.base_price * 0.8;
+    const priceBaby = trip.base_price * 0.3;
+
+    totalAdults = adults * priceAdult;
+    totalChildren = children * priceChild;
+    totalBabies = babies * priceBaby;
+    totalPrice = totalAdults + totalChildren + totalBabies;
+  }
 
   const handleConfirm = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,17 +161,41 @@ const Reservation = () => {
       return;
     }
 
+    // Validation for Omra
+    if (isOmra) {
+      const totalCapacity = (rooms2 * 2) + (rooms3 * 3) + (rooms4 * 4);
+      const totalBedPeople = adults + children;
+
+      if (totalCapacity < totalBedPeople) {
+        setReservationError(t('reservation.omra.capacity_insufficient', { count: totalBedPeople - totalCapacity }));
+        setIsShaking(true);
+        setTimeout(() => setIsShaking(false), 500);
+        return;
+      }
+    }
+
     setLoading(true);
+    setReservationError(null);
     try {
-      const reservationData = {
+      const reservationData: any = {
         trip_id: id || '',
         passengers_adult: adults,
         passengers_child: children,
-        passengers_baby: babies
+        passengers_baby: babies,
+        prix_calculer: totalPrice,
+        options: isOmra ? {
+          "champre-2": rooms2,
+          "champre-3": rooms3,
+          "champre-4": rooms4
+        } : null
       };
 
+      if (isOmra) {
+        // We do NOT touch prix_vrai_paye, backend handles it or it's not sent
+      }
+
       const result = await createReservation(reservationData);
-      navigate(`/voyages/${id}/congratulationReservation`, {
+      navigate('/congratulation', {
         state: {
           reservationId: result.id,
           trip,
@@ -111,8 +205,11 @@ const Reservation = () => {
       });
     } catch (err: any) {
       console.error("Reservation Error:", err);
-      const backendMessage = err.response?.data?.error || err.message;
-      setError(backendMessage || "Une erreur est survenue lors de la réservation.");
+      // Since api.ts now throws descriptive errors, err.message contains the backend message
+      const errorMessage = err.message || t('reservation.errors.generic');
+      setReservationError(errorMessage);
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 500);
       setLoading(false);
     }
   };
@@ -131,12 +228,12 @@ const Reservation = () => {
             className="flex items-center gap-3 text-primary mb-4"
           >
             <div className="h-px w-8 bg-primary" />
-            <span className="text-[10px] font-black uppercase tracking-[0.3em]">Étape Finale</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.3em]">{t('reservation.step_title')}</span>
           </motion.div>
           <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter leading-none mb-4">
-            Finaliser votre <span className="text-primary italic">Réservation</span>
+            {t('reservation.title_start')} <span className="text-primary italic">{t('reservation.title_span')}</span>
           </h1>
-          <p className="text-slate-500 font-bold max-w-2xl">Veuillez vérifier vos informations et le nombre de passagers avant de confirmer votre départ pour cette magnifique aventure.</p>
+          <p className="text-slate-500 font-bold max-w-2xl">{t('reservation.description')}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
@@ -155,16 +252,16 @@ const Reservation = () => {
                   <div className="p-3 bg-primary/10 rounded-2xl">
                     <UserIcon className="w-6 h-6 text-primary" />
                   </div>
-                  Vos Coordonnées
+                  {t('reservation.sections.details')}
                 </h2>
                 <div className="hidden md:block px-4 py-1.5 bg-slate-50 rounded-full border border-slate-100">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Informations du profil</span>
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('reservation.sections.profile_info')}</span>
                 </div>
               </div>
 
               <form className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-3">
-                  <Label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Nom complet</Label>
+                  <Label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">{t('reservation.fields.full_name')}</Label>
                   <div className="relative group">
                     <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 group-focus-within:text-primary transition-colors" />
                     <Input id="fullName" value={authUser?.nom || (authUser ? `${authUser.nom} ${authUser.prenom}` : '')} readOnly={!!authUser} className="h-14 pl-12 bg-slate-50/50 border-slate-200 rounded-2xl font-bold focus:ring-primary focus:border-primary" />
@@ -185,7 +282,7 @@ const Reservation = () => {
                   </div>
                 </div>
                 <div className="space-y-3">
-                  <Label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Nationalité</Label>
+                  <Label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">{t('reservation.fields.nationality')}</Label>
                   <div className="relative group">
                     <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 group-focus-within:text-primary transition-colors" />
                     <Input id="nationality" value={authUser?.nationalite || ''} readOnly={!!authUser} className="h-14 pl-12 bg-slate-50/50 border-slate-200 rounded-2xl font-bold focus:ring-primary focus:border-primary" />
@@ -205,15 +302,16 @@ const Reservation = () => {
                 <div className="p-3 bg-primary/10 rounded-2xl">
                   <Users className="w-6 h-6 text-primary" />
                 </div>
-                Nombre de passagers
+                {t('reservation.sections.passenger_count')}
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Adultes */}
                 <div className="p-6 bg-slate-50 rounded-[2rem] border border-slate-100 hover:border-primary/20 transition-colors group">
                   <div className="mb-6 text-center">
-                    <p className="font-black text-slate-900 text-lg uppercase tracking-tight">Adultes</p>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">+12 Ans</p>
+                    <div className="h-[26px] mb-2" /> {/* Spacer for alignment */}
+                    <p className="font-black text-slate-900 text-lg uppercase tracking-tight">{t('reservation.passengers.adults')}</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('reservation.passengers.adults_desc')}</p>
                   </div>
                   <div className="flex items-center justify-between bg-white rounded-2xl p-2 border shadow-sm">
                     <Button
@@ -238,8 +336,8 @@ const Reservation = () => {
                 <div className="p-6 bg-slate-50 rounded-[2rem] border border-slate-100 hover:border-primary/20 transition-colors group">
                   <div className="mb-6 text-center">
                     <div className="inline-block px-2 py-0.5 bg-emerald-100 text-emerald-600 text-[10px] font-black rounded-md mb-2">-20%</div>
-                    <p className="font-black text-slate-900 text-lg uppercase tracking-tight">Enfants</p>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">2 à 12 Ans</p>
+                    <p className="font-black text-slate-900 text-lg uppercase tracking-tight">{t('reservation.passengers.children')}</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('reservation.passengers.children_desc')}</p>
                   </div>
                   <div className="flex items-center justify-between bg-white rounded-2xl p-2 border shadow-sm">
                     <Button
@@ -264,8 +362,8 @@ const Reservation = () => {
                 <div className="p-6 bg-slate-50 rounded-[2rem] border border-slate-100 hover:border-primary/20 transition-colors group">
                   <div className="mb-6 text-center">
                     <div className="inline-block px-2 py-0.5 bg-orange-100 text-orange-600 text-[10px] font-black rounded-md mb-2">-70%</div>
-                    <p className="font-black text-slate-900 text-lg uppercase tracking-tight">Bébés</p>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">-2 Ans</p>
+                    <p className="font-black text-slate-900 text-lg uppercase tracking-tight">{t('reservation.passengers.babies')}</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('reservation.passengers.babies_desc')}</p>
                   </div>
                   <div className="flex items-center justify-between bg-white rounded-2xl p-2 border shadow-sm">
                     <Button
@@ -287,6 +385,83 @@ const Reservation = () => {
                 </div>
               </div>
             </motion.div>
+
+            {/* Omra Room Selection Step */}
+            {trip && (trip.type.toLowerCase() === 'religieuse' || trip.type.toLowerCase() === 'omra') && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={isShaking && reservationError?.includes(t('reservation.omra.capacity_insufficient', { count: 0 }).split(':')[0]) ? { x: [-10, 10, -10, 10, 0], opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-2xl shadow-slate-200/50 border border-slate-100 space-y-8"
+              >
+                <h2 className="text-2xl font-black text-slate-900 flex items-center gap-4">
+                  <div className="p-3 bg-primary/10 rounded-2xl">
+                    <ShieldCheck className="w-6 h-6 text-primary" />
+                  </div>
+                  {t('reservation.omra.room_selection')}
+                </h2>
+
+                <div className="grid grid-cols-1 gap-4">
+                  {/* Chambre Double */}
+                  {trip.options?.prix_2_chmpre && (
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                      <div>
+                        <p className="font-black text-slate-900">{t('reservation.omra.double_room')}</p>
+                        <p className="text-xs font-bold text-primary">{trip.options.prix_2_chmpre.toLocaleString('fr-DZ')} DZD <span className="text-slate-400">/ pers</span></p>
+                      </div>
+                      <div className="flex items-center gap-3 bg-white px-2 py-1 rounded-xl shadow-sm border self-start sm:self-auto">
+                        <Button variant="ghost" size="icon" onClick={() => setRooms2(Math.max(0, rooms2 - 1))} className="h-8 w-8"><Minus className="w-4 h-4" /></Button>
+                        <span className="font-black w-4 text-center">{rooms2}</span>
+                        <Button variant="ghost" size="icon" onClick={() => setRooms2(rooms2 + 1)} className="h-8 w-8"><Plus className="w-4 h-4" /></Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Chambre Triple */}
+                  {trip.options?.prix_3_chmpre && (
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                      <div>
+                        <p className="font-black text-slate-900">{t('reservation.omra.triple_room')}</p>
+                        <p className="text-xs font-bold text-primary">{trip.options.prix_3_chmpre.toLocaleString('fr-DZ')} DZD <span className="text-slate-400">/ pers</span></p>
+                      </div>
+                      <div className="flex items-center gap-3 bg-white px-2 py-1 rounded-xl shadow-sm border self-start sm:self-auto">
+                        <Button variant="ghost" size="icon" onClick={() => setRooms3(Math.max(0, rooms3 - 1))} className="h-8 w-8"><Minus className="w-4 h-4" /></Button>
+                        <span className="font-black w-4 text-center">{rooms3}</span>
+                        <Button variant="ghost" size="icon" onClick={() => setRooms3(rooms3 + 1)} className="h-8 w-8"><Plus className="w-4 h-4" /></Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Chambre Quadruple */}
+                  {trip.options?.prix_4_chmpre && (
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                      <div>
+                        <p className="font-black text-slate-900">{t('reservation.omra.quadruple_room')}</p>
+                        <p className="text-xs font-bold text-primary">{trip.options.prix_4_chmpre.toLocaleString('fr-DZ')} DZD <span className="text-slate-400">/ pers</span></p>
+                      </div>
+                      <div className="flex items-center gap-3 bg-white px-2 py-1 rounded-xl shadow-sm border self-start sm:self-auto">
+                        <Button variant="ghost" size="icon" onClick={() => setRooms4(Math.max(0, rooms4 - 1))} className="h-8 w-8"><Minus className="w-4 h-4" /></Button>
+                        <span className="font-black w-4 text-center">{rooms4}</span>
+                        <Button variant="ghost" size="icon" onClick={() => setRooms4(rooms4 + 1)} className="h-8 w-8"><Plus className="w-4 h-4" /></Button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Validation Message */}
+                <div className="text-center">
+                  {(rooms2 * 2 + rooms3 * 3 + rooms4 * 4) < (adults + children) ? (
+                    <p className="text-red-500 font-bold text-sm">
+                      {t('reservation.omra.capacity_insufficient', { count: (adults + children) - (rooms2 * 2 + rooms3 * 3 + rooms4 * 4) })}
+                    </p>
+                  ) : (
+                    <p className="text-emerald-500 font-bold text-sm flex items-center justify-center gap-2">
+                      <ShieldCheck className="w-4 h-4" /> {t('reservation.omra.selection_valid')}
+                    </p>
+                  )}
+                </div>
+              </motion.div>
+            )}
 
           </div>
 
@@ -321,8 +496,8 @@ const Reservation = () => {
                     <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
                       <Calendar className="w-5 h-5 text-primary" />
                       <div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase">Durée</p>
-                        <p className="font-bold text-slate-900">{Math.ceil((new Date(trip.end_date).getTime() - new Date(trip.start_date).getTime()) / (86400000))} Jours</p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase">{t('reservation.summary.duration')}</p>
+                        <p className="font-bold text-slate-900">{Math.ceil((new Date(trip.end_date).getTime() - new Date(trip.start_date).getTime()) / (86400000))} {t('common.days')}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
@@ -336,7 +511,7 @@ const Reservation = () => {
 
                   {/* Price Breakdown - Beautifully Structured */}
                   <div className="space-y-4">
-                    <p className="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">Récapitulatif des coûts</p>
+                    <p className="text-xs font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-2">{t('reservation.summary.cost_breakdown')}</p>
 
                     <div className="flex justify-between items-center group">
                       <div className="flex items-center gap-4">
@@ -376,30 +551,50 @@ const Reservation = () => {
                   {/* Total & Button Section */}
                   <div className="pt-8 border-t-2 border-dashed border-slate-100 space-y-6">
                     <div className="flex justify-between items-center">
-                      <span className="text-lg font-black text-slate-900">Total Général</span>
+                      <span className="text-lg font-black text-slate-900">{t('reservation.summary.total')}</span>
                       <div className="text-right">
                         <p className="text-4xl font-black text-primary leading-none mb-1 tracking-tighter">
                           {totalPrice.toLocaleString('fr-DZ')}
                         </p>
-                        <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Dinars Algériens</p>
+                        <p className="text-xs font-black text-slate-400 uppercase tracking-widest">DZD</p>
                       </div>
                     </div>
 
-                    <Button
-                      onClick={handleConfirm}
-                      className="w-full h-16 text-lg font-black uppercase tracking-[0.15em] rounded-2xl shadow-xl shadow-primary/25 hover:shadow-primary/40 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-4"
+                    <motion.div
+                      animate={isShaking ? { x: [-10, 10, -10, 10, 0] } : {}}
+                      transition={{ duration: 0.4 }}
                     >
-                      <span>Valider la réservation</span>
-                      <ArrowRight className="w-6 h-6" />
-                    </Button>
+                      <Button
+                        onClick={handleConfirm}
+                        disabled={loading}
+                        className="w-full h-16 text-lg font-black uppercase tracking-[0.15em] rounded-2xl shadow-xl shadow-primary/25 hover:shadow-primary/40 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-4"
+                      >
+                        {loading ? <LoadingSpinner /> : (
+                          <>
+                            <span>{t('confirm_button', { defaultValue: 'Valider la réservation' })}</span>
+                            <ArrowRight className="w-6 h-6" />
+                          </>
+                        )}
+                      </Button>
+                    </motion.div>
+
+                    {reservationError && (
+                      <motion.p
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-red-500 text-sm font-bold text-center mt-2"
+                      >
+                        {reservationError}
+                      </motion.p>
+                    )}
 
                     <div className="flex items-center justify-center gap-3 py-4 bg-slate-50 rounded-2xl border border-slate-100">
                       <div className="p-1.5 bg-emerald-100 text-emerald-600 rounded-lg">
                         <ShieldCheck className="w-5 h-5" />
                       </div>
                       <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none">
-                        Plateforme 100% sécurisée<br />
-                        <span className="text-emerald-500">Service client disponible 24/7</span>
+                        {t('reservation.summary.secure_platform')}<br />
+                        <span className="text-emerald-500">{t('reservation.summary.customer_service')}</span>
                       </p>
                     </div>
                   </div>

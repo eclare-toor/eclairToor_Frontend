@@ -1,8 +1,32 @@
 import { MOCK_TRIPS, MOCK_USERS, MOCK_CUSTOM_REQUESTS, MOCK_HOTEL_REQUESTS, MOCK_FLIGHT_REQUESTS, MOCK_MESSAGES } from './mock_data';
-import type { Trip, TripItinerary, Hotel, TripHotel, User, Booking, BookingItem, CustomRequest, HotelRequest, FlightRequest, ContactMessage, ContactMessageStatus, BookingStatus, CustomRequestStatus, UnifiedRequest, AppNotification } from './Types/index';
+import type { Trip, TripItinerary, Hotel, TripHotel, User, Booking, BookingItem, CustomRequest, HotelRequest, FlightRequest, ContactMessage, ContactMessageStatus, BookingStatus, CustomRequestStatus, UnifiedRequest, AppNotification, DashboardData } from './Types/index';
 
 // Simulate API delay
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// --- DASHBOARD ---
+export const getDashboardStats = async (): Promise<DashboardData> => {
+    const token = Cookies.get('token');
+    try {
+        const response = await fetch('http://localhost:3000/api/dashbord', { // Note: using 'dashbord' as requested
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const result = await response.json();
+        if (!response.ok) {
+            throw new Error(result.error || result.message || 'Failed to fetch dashboard stats');
+        }
+
+        return result;
+    } catch (error) {
+        console.error('Error fetching dashboard stats:', error);
+        throw error;
+    }
+};
 
 // --- TRIPS ---
 export const getTrips = async (): Promise<Trip[]> => {
@@ -84,12 +108,12 @@ export const createTrip = async (tripData: FormData): Promise<Trip> => {
             body: tripData
         });
 
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to create trip');
+            throw new Error(result.error || result.message || 'Failed to create trip');
         }
 
-        return await response.json();
+        return result;
     } catch (error) {
         console.error('Error creating trip:', error);
         throw error;
@@ -109,19 +133,24 @@ export const updateTrip = async (id: string, tripData: FormData | Partial<Trip>)
     }
 
     try {
-        console.log('Sending update:', tripData, ' id ', id);
+        let body: any = tripData;
+        if (!isFormData) {
+            // Handle options if present in Partial<Trip>
+            const trip = tripData as Partial<Trip>;
+            body = JSON.stringify(trip);
+        }
+
         const response = await fetch(`http://localhost:3000/api/trips/${id}`, {
             method: 'PUT',
             headers: headers,
-            body: isFormData ? (tripData as FormData) : JSON.stringify(tripData)
+            body: body
         });
-
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to update trip');
+            throw new Error(result.error || 'Failed to update trip');
         }
 
-        return await response.json();
+        return result;
     } catch (error) {
         console.error('Error updating trip:', error);
         throw error;
@@ -139,8 +168,8 @@ export const deleteTrip = async (id: string): Promise<void> => {
         });
 
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to delete trip');
+            const result = await response.json().catch(() => ({}));
+            throw new Error(result.error || result.message || 'Failed to delete trip');
         }
     } catch (error) {
         console.error('Error deleting trip:', error);
@@ -159,12 +188,12 @@ export const addTripImages = async (tripId: string, imagesData: FormData): Promi
             body: imagesData
         });
 
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to add images');
+            throw new Error(result.error || result.message || 'Failed to add images');
         }
 
-        return await response.json();
+        return result;
     } catch (error) {
         console.error('Error adding trip images:', error);
         throw error;
@@ -183,12 +212,12 @@ export const deleteTripImages = async (tripId: string, names: string[]): Promise
             body: JSON.stringify({ names })
         });
 
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to delete images');
+            throw new Error(result.error || result.message || 'Failed to delete images');
         }
 
-        return await response.json();
+        return result;
     } catch (error) {
         console.error('Error deleting trip images:', error);
         throw error;
@@ -211,13 +240,12 @@ export const createTripItineraries = async (tripId: string, itineraries: CreateI
             },
             body: JSON.stringify({ itineraries })
         });
-
+        const result = await response.json()
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to create itineraries');
+            throw new Error(result.error || result.message || 'Failed to create itineraries');
         }
 
-        return await response.json();
+        return result;
     } catch (error) {
         console.error('Error creating itineraries:', error);
         throw error;
@@ -241,12 +269,12 @@ export const updateTripItinerary = async (tripId: string, itineraryId: string, d
             body: JSON.stringify(data)
         });
 
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to update itinerary');
+            throw new Error(result.error || result.message || 'Failed to update itinerary');
         }
 
-        return await response.json();
+        return result;
     } catch (error) {
         console.error('Error updating itinerary:', error);
         throw error;
@@ -263,12 +291,12 @@ export const deleteTripItinerary = async (tripId: string, itineraryId: string): 
             }
         });
 
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to delete itinerary');
+            throw new Error(result.error || result.message || 'Failed to delete itinerary');
         }
 
-        return await response.json();
+        return result;
     } catch (error) {
         console.error('Error deleting itinerary:', error);
         throw error;
@@ -285,12 +313,12 @@ export const deleteAllTripItineraries = async (tripId: string): Promise<any> => 
             }
         });
 
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to delete all itineraries');
+            throw new Error(result.error || result.message || 'Failed to delete all itineraries');
         }
 
-        return await response.json();
+        return result;
     } catch (error) {
         console.error('Error deleting all itineraries:', error);
         throw error;
@@ -307,12 +335,12 @@ export const deleteTripHotel = async (tripId: string, hotelId: string): Promise<
             }
         });
 
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to delete trip hotel linkage');
+            throw new Error(result.error || result.message || 'Failed to delete trip hotel linkage');
         }
 
-        return await response.json();
+        return result;
     } catch (error) {
         console.error('Error deleting trip hotel:', error);
         throw error;
@@ -331,12 +359,12 @@ export const linkTripHotels = async (tripId: string, hotels: TripHotelLink[]): P
             body: JSON.stringify({ hotels })
         });
 
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to link hotels to trip');
+            throw new Error(result.error || result.message || 'Failed to link hotels to trip');
         }
 
-        return await response.json();
+        return result;
     } catch (error) {
         console.error('Error linking hotels:', error);
         throw error;
@@ -353,6 +381,19 @@ export const getHotels = async (): Promise<Hotel[]> => {
         return await response.json();
     } catch (error) {
         console.error('Error fetching hotels:', error);
+        throw error;
+    }
+};
+
+export const getHotel = async (id: string): Promise<Hotel> => {
+    try {
+        const response = await fetch(`http://localhost:3000/api/hotels/${id}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching hotel:', error);
         throw error;
     }
 };
@@ -384,12 +425,12 @@ export const createHotel = async (hotel: Partial<Hotel>): Promise<Hotel> => {
             body: JSON.stringify(hotel)
         });
 
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to create hotel');
+            throw new Error(result.error || result.message || 'Failed to create hotel');
         }
 
-        return await response.json();
+        return result;
     } catch (error) {
         console.error('Error creating hotel:', error);
         throw error;
@@ -408,12 +449,12 @@ export const updateHotel = async (id: string, hotel: Partial<Hotel>): Promise<Ho
             body: JSON.stringify(hotel)
         });
 
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to update hotel');
+            throw new Error(result.error || result.message || 'Failed to update hotel');
         }
 
-        return await response.json();
+        return result;
     } catch (error) {
         console.error('Error updating hotel:', error);
         throw error;
@@ -431,8 +472,8 @@ export const deleteHotel = async (id: string): Promise<void> => {
         });
 
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to delete hotel');
+            const result = await response.json().catch(() => ({}));
+            throw new Error(result.error || result.message || 'Failed to delete hotel');
         }
     } catch (error) {
         console.error('Error deleting hotel:', error);
@@ -451,12 +492,12 @@ export const addHotelImages = async (hotelId: string, imagesData: FormData): Pro
             body: imagesData
         });
 
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to add hotel images');
+            throw new Error(result.error || result.message || 'Failed to add hotel images');
         }
 
-        return await response.json();
+        return result;
     } catch (error) {
         console.error('Error adding hotel images:', error);
         throw error;
@@ -475,12 +516,12 @@ export const deleteHotelImages = async (hotelId: string, names: string[]): Promi
             body: JSON.stringify({ names })
         });
 
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to delete hotel images');
+            throw new Error(result.error || result.message || 'Failed to delete hotel images');
         }
 
-        return await response.json();
+        return result;
     } catch (error) {
         console.error('Error deleting hotel images:', error);
         throw error;
@@ -546,15 +587,11 @@ export const login = async (email: string, password: string): Promise<AuthRespon
             body: JSON.stringify({ email, password }),
         });
 
-        console.log(response.status, response.statusText)
-
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'login failed');
+            throw new Error(result.error || result.message || 'login failed');
         }
 
-        const result = await response.json();
-        console.log(result)
         return result;
     } catch (error) {
         console.error('🔴 API: Fetch error:', error);
@@ -580,12 +617,11 @@ export const getUsers = async (): Promise<User[]> => {
             }
         });
 
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to fetch users');
+            throw new Error(result.error || result.message || 'Failed to fetch users');
         }
 
-        const result = await response.json();
         return result.users;
     } catch (error) {
         console.error('Error fetching users:', error);
@@ -604,11 +640,84 @@ export const deleteUser = async (id: string): Promise<void> => {
         });
 
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to delete user');
+            const result = await response.json().catch(() => ({}));
+            throw new Error(result.error || result.message || 'Failed to delete user');
         }
     } catch (error) {
         console.error('Error deleting user:', error);
+        throw error;
+    }
+};
+
+export const updateUserStatus = async (userId: string, status: boolean): Promise<any> => {
+    const token = Cookies.get('token');
+    try {
+        const response = await fetch('http://localhost:3000/api/auth/activate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ userId, status })
+        });
+
+        const result = await response.json();
+        if (!response.ok) {
+            throw new Error(result.error || result.message || 'Failed to update user status');
+        }
+
+        return result;
+    } catch (error) {
+        console.error('Error updating user status:', error);
+        throw error;
+    }
+};
+
+export const updateProfile = async (data: any): Promise<any> => {
+    const token = Cookies.get('token');
+    try {
+        const response = await fetch('http://localhost:3000/api/auth/update', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        if (!response.ok) {
+            throw new Error(result.error || result.message || 'Failed to update profile');
+        }
+
+        return result;
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        throw error;
+    }
+};
+
+
+export const adminUpdateUser = async (userId: string, data: any): Promise<any> => {
+    const token = Cookies.get('token');
+    try {
+        const response = await fetch('http://localhost:3000/api/auth/update', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ id_user: userId, ...data })
+        });
+
+        const result = await response.json();
+        if (!response.ok) {
+            throw new Error(result.error || result.message || 'Failed to update user');
+        }
+
+        return result;
+    } catch (error) {
+        console.error('Error updating user:', error);
         throw error;
     }
 };
@@ -622,6 +731,12 @@ export interface CreateBookingPayload {
     passengers_adult: number;
     passengers_child: number;
     passengers_baby: number;
+    prix_calculer?: number;
+    options?: {
+        "champre-2"?: number;
+        "champre-3"?: number;
+        "champre-4"?: number;
+    };
 }
 
 export const createReservation = async (data: CreateBookingPayload): Promise<Booking> => {
@@ -665,19 +780,19 @@ export const getAllBookings = async (): Promise<BookingItem[]> => {
             }
         });
 
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to fetch bookings');
+            throw new Error(result.error || result.message || 'Failed to fetch bookings');
         }
 
-        return await response.json();
+        return result;
     } catch (error) {
         console.error('Error fetching bookings:', error);
         throw error;
     }
 };
 
-export const updateBookingStatus = async (id: string, status: BookingStatus): Promise<Booking | null> => {
+export const updateBookingStatus = async (id: string, status: BookingStatus, extraData: any = {}): Promise<Booking | null> => {
     const token = Cookies.get('token');
     try {
         const response = await fetch(`http://localhost:3000/api/bookings/${id}`, {
@@ -686,17 +801,38 @@ export const updateBookingStatus = async (id: string, status: BookingStatus): Pr
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ status })
+            body: JSON.stringify({ status, ...extraData })
         });
 
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to update booking status');
+            throw new Error(result.error || result.message || 'Failed to update booking status');
         }
 
-        return await response.json();
+        return result;
     } catch (error) {
         console.error('Error updating booking status:', error);
+        throw error;
+    }
+};
+
+export const getTripBookings = async (tripId: string): Promise<any> => {
+    const token = Cookies.get('token');
+    try {
+        const response = await fetch(`http://localhost:3000/api/bookings/trip/${tripId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        const result = await response.json();
+        if (!response.ok) {
+            throw new Error(result.error || result.message || 'Failed to fetch trip bookings');
+        }
+
+        return result;
+    } catch (error) {
+        console.error('Error fetching trip bookings:', error);
         throw error;
     }
 };
@@ -712,12 +848,12 @@ export const getUserBookings = async (): Promise<BookingItem[]> => {
             }
         });
 
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to fetch user bookings');
+            throw new Error(result.error || result.message || 'Failed to fetch user bookings');
         }
 
-        return await response.json();
+        return result;
     } catch (error) {
         console.error('Error fetching user bookings:', error);
         throw error;
@@ -728,6 +864,11 @@ export interface UpdateBookingPayload {
     passengers_adult?: number;
     passengers_child?: number;
     passengers_baby?: number;
+    options?: {
+        "champre-2"?: number;
+        "champre-3"?: number;
+        "champre-4"?: number;
+    };
 }
 
 export const updateBooking = async (bookingId: string, data: UpdateBookingPayload): Promise<Booking> => {
@@ -742,12 +883,12 @@ export const updateBooking = async (bookingId: string, data: UpdateBookingPayloa
             body: JSON.stringify(data)
         });
 
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to update booking');
+            throw new Error(result.error || result.message || 'Failed to update booking');
         }
 
-        return await response.json();
+        return result;
     } catch (error) {
         console.error('Error updating booking:', error);
         throw error;
@@ -765,12 +906,11 @@ export const getUserProfile = async (): Promise<User> => {
             }
         });
 
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to fetch user profile');
+            throw new Error(result.error || result.message || 'Failed to fetch user profile');
         }
 
-        const result = await response.json();
         return result.user;
     } catch (error) {
         console.error('Error fetching user profile:', error);
@@ -859,12 +999,12 @@ export const createCustomTripRequest = async (data: CustomRequestPayload): Promi
             body: JSON.stringify(data)
         });
 
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to create request');
+            throw new Error(result.error || result.message || 'Failed to create request');
         }
 
-        return await response.json();
+        return result;
     } catch (error) {
         console.error('Error creating request:', error);
         throw error;
@@ -878,7 +1018,7 @@ export const getCustomRequests = async (): Promise<CustomRequest[]> => {
     return MOCK_CUSTOM_REQUESTS;
 };
 
-export const updateCustomRequestStatus = async (id: string, status: CustomRequestStatus): Promise<void> => {
+export const updateRequest = async (id: string, data: any): Promise<any> => {
     const token = Cookies.get('token');
     try {
         const response = await fetch(`http://localhost:3000/api/requests/${id}`, {
@@ -887,17 +1027,22 @@ export const updateCustomRequestStatus = async (id: string, status: CustomReques
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ status })
+            body: JSON.stringify(data)
         });
 
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to update request status');
+            throw new Error(result.error || result.message || 'Failed to update request');
         }
+        return result;
     } catch (error) {
-        console.error('Error updating request status:', error);
+        console.error('Error updating request:', error);
         throw error;
     }
+};
+
+export const updateCustomRequestStatus = async (id: string, status: CustomRequestStatus): Promise<void> => {
+    await updateRequest(id, { status });
 };
 
 export const getAllRequests = async (): Promise<UnifiedRequest[]> => {
@@ -975,14 +1120,58 @@ export const submitRequestResponse = async (requestId: string, offer: string): P
             body: JSON.stringify({ requestId, offer })
         });
 
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to submit response');
+            throw new Error(result.error || result.message || 'Failed to submit response');
         }
 
-        return await response.json();
+        return result;
     } catch (error) {
         console.error('Error submitting request response:', error);
+        throw error;
+    }
+};
+
+export const getAdminResponses = async (): Promise<any[]> => {
+    const token = Cookies.get('token');
+    try {
+        const response = await fetch('http://localhost:3000/api/responses', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        return result.data;
+    } catch (error) {
+        console.error('Error fetching admin responses:', error);
+        throw error;
+    }
+};
+
+export const deleteResponse = async (requestId: string): Promise<any> => {
+    const token = Cookies.get('token');
+    try {
+        const response = await fetch('http://localhost:3000/api/responses', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ ids: [requestId] })
+        });
+
+        const result = await response.json();
+        if (!response.ok) {
+            throw new Error(result.error || result.message || 'Failed to delete response');
+        }
+        return result;
+    } catch (error) {
+        console.error('Error deleting response:', error);
         throw error;
     }
 };
@@ -1014,12 +1203,12 @@ export const sendContactMessage = async (data: ContactPayload): Promise<any> => 
             body: JSON.stringify(data)
         });
 
+        const result = await response.json();
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.message || 'Failed to send contact message');
+            throw new Error(result.error || result.message || 'Failed to send contact message');
         }
 
-        return await response.json();
+        return result;
     } catch (error) {
         console.error('Error sending contact message:', error);
         throw error;
@@ -1090,7 +1279,10 @@ export const deleteNotification = async (id: string): Promise<void> => {
                 'Authorization': `Bearer ${token}`
             }
         });
-        if (!response.ok) throw new Error('Failed to delete notification');
+        if (!response.ok) {
+            const result = await response.json().catch(() => ({}));
+            throw new Error(result.error || result.message || 'Failed to delete notification');
+        }
     } catch (error) {
         console.error('Error deleting notification:', error);
         throw error;

@@ -3,6 +3,7 @@ import { getTrips } from '../../../api';
 import TripCard from '../../../components/Shared/TripCard';
 import type { Trip } from '../../../Types';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
+import BackgroundAura from '../../../components/Shared/BackgroundAura';
 
 import { Star } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
@@ -25,7 +26,7 @@ type TripCategory = 'NATIONAL' | 'INTERNATIONAL' | 'OMRA';
 import { useTranslation } from 'react-i18next';
 
 const TripsListPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<TripCategory | 'ALL'>('ALL');
 
@@ -87,21 +88,22 @@ const TripsListPage = () => {
   }, [categoryTrips, destinationFilter, maxDuration]);
 
   return (
-    <div className="pt-32 min-h-screen bg-[#f8fafc] pb-20 relative overflow-hidden">
-      {/* Decorative Background Elements */}
-      <div className="absolute top-0 left-0 w-full h-[600px] bg-gradient-to-b from-primary/5 to-transparent -z-10" />
-      <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10 animate-pulse" />
-      <div className="absolute top-1/2 -left-24 w-72 h-72 bg-blue-500/5 rounded-full blur-3xl -z-10" />
+    <div className="pt-40 min-h-screen pb-20 relative">
+      <BackgroundAura />
 
       <div className="container mx-auto px-4 max-w-[1600px]">
 
         {/* Header Section */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-12">
-          <div className="text-center md:text-left">
+          <div className={cn("text-center md:text-left w-full", i18n.language === 'ar' && "md:text-right")}>
             <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mb-2">
-              Nos <span className="text-primary italic">Voyages</span>
+              {i18n.language === 'ar' ? (
+                <>رحلاتنا <span className="text-primary italic">المتميزة</span></>
+              ) : (
+                <>Nos <span className="text-primary italic">Voyages</span></>
+              )}
             </h1>
-            <p className="text-slate-500 font-medium text-lg">Découvrez le monde avec élégance.</p>
+            <p className="text-slate-500 font-medium text-lg">{t('trips.subtitle')}</p>
           </div>
 
           {/* Voyage à la carte button */}
@@ -133,22 +135,22 @@ const TripsListPage = () => {
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8 items-start">
+        <div className={cn("flex flex-col lg:flex-row gap-8 items-start", i18n.language === 'ar' && "lg:flex-row-reverse")}>
           {/* Sidebar Filters */}
-          <aside className="w-full lg:w-80 shrink-0 space-y-8 sticky top-32">
+          <aside className="w-full lg:w-80 shrink-0 space-y-8 sticky top-28 self-start z-10">
             <div className="bg-white/80 backdrop-blur-xl border border-white/60 p-6 rounded-[2rem] shadow-xl shadow-slate-200/40">
               <div className="flex items-center gap-2 mb-6 text-slate-900">
                 <Filter className="w-5 h-5 text-primary" />
-                <span className="font-black uppercase tracking-widest text-sm">Filtres</span>
+                <span className="font-black uppercase tracking-widest text-sm sr-only">{t('trips.filters.title')}</span>
               </div>
 
               {/* Search */}
               <div className="mb-8">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 block">Recherche</label>
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 block sr-only">{t('trips.filters.search_label')}</label>
                 <div className="relative group">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-primary transition-colors" />
                   <Input
-                    placeholder="Destination..."
+                    placeholder={t('trips.filters.search_placeholder')}
                     className="pl-10 h-12 bg-slate-50 border-slate-100 focus:bg-white focus:border-primary/20 rounded-xl font-bold text-sm transition-all shadow-sm"
                     value={destinationFilter}
                     onChange={(e) => setDestinationFilter(e.target.value)}
@@ -157,10 +159,10 @@ const TripsListPage = () => {
               </div>
 
               {/* Duration Slider */}
-              <div className="mb-8">
+              <div className="mb-8 p-1">
                 <div className="flex items-center justify-between mb-4">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Durée Max</label>
-                  <span className="text-sm font-black text-primary bg-primary/10 px-2 py-0.5 rounded-md">{maxDuration} Jours</span>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest sr-only">{t('trips.filters.duration_label')}</label>
+                  <span className="text-sm font-black text-primary bg-primary/10 px-2 py-0.5 rounded-md">{maxDuration} {t('common.days')}</span>
                 </div>
                 <Slider
                   defaultValue={[30]}
@@ -175,14 +177,14 @@ const TripsListPage = () => {
 
               {/* Categories */}
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 block">Catégories</label>
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 block sr-only">{t('trips.filters.categories_label')}</label>
                 <div className="flex flex-col gap-2">
                   {categories.map((cat) => (
                     <button
                       key={cat.id}
                       onClick={() => setSelectedCategory(cat.id)}
                       className={cn(
-                        "relative w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all duration-300 flex items-center justify-between group overflow-hidden",
+                        "relative w-full text-start px-4 py-3 rounded-xl text-sm font-bold transition-all duration-300 flex items-center justify-between group overflow-hidden",
                         selectedCategory === cat.id
                           ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20"
                           : "bg-transparent text-slate-500 hover:bg-slate-50 hover:text-slate-900"
@@ -205,10 +207,10 @@ const TripsListPage = () => {
 
             <div className="bg-gradient-to-br from-primary to-blue-600 p-6 rounded-[2rem] text-white shadow-xl shadow-primary/20 relative overflow-hidden group hidden lg:block">
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16 transition-transform duration-700 group-hover:scale-150" />
-              <h3 className="font-black text-xl mb-2 relative z-10">Besoin d'aide ?</h3>
-              <p className="text-white/80 text-sm mb-6 relative z-10 font-medium leading-relaxed">Nos conseillers sont là pour organiser votre voyage de rêve.</p>
+              <h3 className="font-black text-xl mb-2 relative z-10">{t('trips.help.title')}</h3>
+              <p className="text-white/80 text-sm mb-6 relative z-10 font-medium leading-relaxed">{t('trips.help.desc')}</p>
               <Button variant="secondary" className="w-full bg-white text-primary hover:bg-blue-50 font-bold rounded-xl shadow-lg border-none" onClick={() => navigate('/contact')}>
-                Contactez-nous
+                {t('trips.help.button')}
               </Button>
             </div>
           </aside>
@@ -217,7 +219,7 @@ const TripsListPage = () => {
           <div className="flex-1 min-w-0">
             <div className="flex items-center justify-between mb-6">
               <p className="text-slate-500 font-medium text-sm">
-                Affichage de <span className="text-slate-900 font-bold">{filteredTrips.length}</span> voyages
+                {t('trips.count_prefix')} <span className="text-slate-900 font-bold">{filteredTrips.length}</span> {t('trips.count_suffix')}
               </p>
             </div>
 
@@ -243,7 +245,7 @@ const TripsListPage = () => {
                   <Search className="w-10 h-10 text-slate-200" />
                 </div>
                 <h3 className="text-2xl font-black text-slate-900 mb-2 tracking-tight italic">{t('trips.empty.title')}</h3>
-                <p className="text-slate-500 font-medium mb-8">{t('trips.empty.desc')}</p>
+                <p className="text-slate-500 font-medium mb-8 text-center px-4">{t('trips.empty.desc')}</p>
                 <Button
                   variant="outline"
                   className="rounded-full px-8 h-12 border-slate-200 font-bold hover:bg-slate-50 transition-all text-slate-600"

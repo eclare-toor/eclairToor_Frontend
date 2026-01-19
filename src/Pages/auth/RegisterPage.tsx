@@ -9,6 +9,7 @@ import { Loader2, Mail, Lock, User, Facebook, AlertCircle, Phone, Globe } from '
 import logo from '../../assets/logo.png';
 import { z } from 'zod';
 import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 
 // Define validation schema inline for simplicity as per user request for simple code
 const registerSchema = z.object({
@@ -25,6 +26,7 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 const RegisterPage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { login } = useAuth();
   const [loading, setLoading] = useState(false);
 

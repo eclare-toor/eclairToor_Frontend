@@ -38,11 +38,16 @@ export interface Trip {
   end_date: string;
   base_price: number;
   images: string[];
-  equipment_list?: string[];
+  equipment_list?: string[] | string;
   destination_wilaya?: string;
   destination_country?: string;
   omra_category?: string;
   omra_type?: 'classic' | 'vip';
+  options?: {
+    prix_2_chmpre?: number;
+    prix_3_chmpre?: number;
+    prix_4_chmpre?: number;
+  };
   created_at: string;
 }
 
@@ -86,11 +91,19 @@ export interface Booking {
   passengers_adult: number;
   passengers_child: number;
   passengers_baby: number;
-  total_price?: number; // Optional in response if backend calculates it, but good to keep
+  total_price?: number;
   status: BookingStatus;
   description?: string;
   created_at: string | null;
   updated_at: string | null;
+  // New columns for Omra/Parity
+  options?: {
+    "champre-2"?: number;
+    "champre-3"?: number;
+    "champre-4"?: number;
+  };
+  prix_calculer?: number | string;
+  prix_vrai_paye?: number | string;
 }
 
 export interface BookingItem extends Booking {
@@ -107,7 +120,7 @@ export interface BookingItem extends Booking {
 
 export type CustomRequestType = "NATIONAL" | "INTERNATIONAL" | "OMRA";
 
-export type CustomRequestStatus = "PENDING" | "PROCESSED" | "REJECTED";
+export type CustomRequestStatus = "PENDING" | "PROCESSED" | "REJECTED" | "CANCELLED";
 
 export type RequestCategory = 'voyage' | 'omra' | 'hotel' | 'vol';
 
@@ -225,4 +238,53 @@ export interface AppNotification {
   metadata?: any;
   created_at: string | null;
   expires_at?: string | null;
+}
+
+// --- DASHBOARD INTERFACES ---
+
+export interface DashboardKPIs {
+  total_users: string;
+  total_trips: string;
+  total_bookings: string;
+  pending_bookings: string;
+  confirmed_bookings: string;
+  paid_bookings: string;
+  cancelled_bookings: string;
+  total_revenue: string;
+}
+
+export interface MonthlyData {
+  month: string;
+  total: string | number;
+}
+
+export interface TypeData {
+  type: string;
+  total: string | number;
+}
+
+export interface StatusData {
+  status: string;
+  total: string | number;
+}
+
+export interface DestinationData {
+  destination_country: string | null;
+  bookings: string;
+}
+
+export interface ConversionData {
+  conversion_rate: string;
+}
+
+export interface DashboardData {
+  kpis: DashboardKPIs;
+  usersPerMonth: MonthlyData[];
+  bookingsPerMonth: MonthlyData[];
+  revenuePerMonth: MonthlyData[];
+  tripsByType: TypeData[];
+  bookingsByStatus: StatusData[];
+  revenueByTrip: any[]; // Adjust if you know the structure
+  topDestinations: DestinationData[];
+  conversion: ConversionData;
 }

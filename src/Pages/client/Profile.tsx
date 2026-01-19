@@ -1,35 +1,91 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../Context/AuthContext';
-import { getUserProfile } from '../../api';
+import { getUserProfile, updateProfile } from '../../api';
 import type { User } from '../../Types';
-import { UserCircle, Mail, Phone, MapPin, Calendar, Shield, Facebook, Loader2 } from 'lucide-react';
+import { UserCircle, Mail, Phone, MapPin, Calendar, Shield, Facebook, Loader2, Edit3, Globe } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
 import { toast } from 'react-toastify';
 
 import { useTranslation } from 'react-i18next';
 
 const Profile = () => {
-    const { t } = useTranslation();
-    const { } = useAuth();
+    const { t, i18n } = useTranslation();
+    useAuth();
     const [profile, setProfile] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editFormData, setEditFormData] = useState<Partial<User>>({
+        nom: '',
+        prenom: '',
+        email: '',
+        phone: '',
+        nationalite: '',
+        linkfacebook: ''
+    });
+
+    const fetchProfile = async () => {
+        try {
+            setLoading(true);
+            const data = await getUserProfile();
+            setProfile(data);
+            setEditFormData({
+                nom: data.nom || '',
+                prenom: data.prenom || '',
+                email: data.email || '',
+                phone: data.phone || '',
+                nationalite: data.nationalite || '',
+                linkfacebook: data.linkfacebook || ''
+            });
+        } catch (error) {
+            console.error("Failed to load profile", error);
+            toast.error(t('profile.error'));
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const data = await getUserProfile();
-                setProfile(data);
-            } catch (error) {
-                console.error("Failed to load profile", error);
-                toast.error(t('profile.error'));
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchProfile();
     }, []);
+
+    const handleUpdateSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!profile) return;
+
+        // Diffing: only send changed fields
+        const changes: any = {};
+        const fields: (keyof User)[] = ['nom', 'prenom', 'email', 'phone', 'nationalite', 'linkfacebook'];
+
+        fields.forEach(field => {
+            const newValue = (editFormData as any)[field];
+            const oldValue = (profile as any)[field];
+            if (newValue !== oldValue && (newValue !== '' || oldValue !== null)) {
+                changes[field] = newValue;
+            }
+        });
+
+        if (Object.keys(changes).length === 0) {
+            toast.info(t('profile.no_changes', { defaultValue: "Aucune modification détectée" }));
+            setIsEditModalOpen(false);
+            return;
+        }
+
+        try {
+            await updateProfile(changes);
+            toast.success(t('profile.update_success', { defaultValue: 'Profil mis à jour avec succès' }));
+            setIsEditModalOpen(false);
+            fetchProfile(); // Refresh profile data
+        } catch (error: any) {
+            toast.error(error.message || t('profile.update_error', { defaultValue: 'Erreur lors de la mise à jour' }));
+        }
+    };
+
+
+    // --- BOOKINGS LOGIC REMOVED ---
 
     if (loading) {
         return (
@@ -83,15 +139,22 @@ const Profile = () => {
                                 </p>
                             </div>
                             <div className={`px-4 py-1.5 rounded-full border text-sm font-semibold uppercase tracking-wide ${roleBadgeColor}`}>
-                                {profile.role}
+                                {t(`profile.roles.${profile.role}`, { defaultValue: profile.role })}
                             </div>
+                            <Button
+                                onClick={() => setIsEditModalOpen(true)}
+                                className="h-10 px-6 rounded-xl bg-white text-slate-900 border border-slate-200 hover:bg-slate-50 font-bold shadow-sm flex items-center gap-2"
+                            >
+                                <Edit3 className="w-4 h-4" />
+                                {t('profile.edit_button', { defaultValue: 'Modifier le profil' })}
+                            </Button>
                         </div>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {/* Main Info */}
-                    <Card className="md:col-span-2 border-none shadow-xl shadow-slate-200/50 bg-white/80 backdrop-blur-xl">
+                    <Card className="md:col-span-2 border-none shadow-xl shadow-slate-200/50 bg-white/80 backdrop-blur-xl h-fit">
                         <CardHeader className="border-b border-slate-100 pb-4">
                             <CardTitle className="text-xl font-bold flex items-center gap-3 text-slate-800">
                                 <div className="p-2 bg-primary/10 rounded-lg text-primary">
@@ -136,7 +199,7 @@ const Profile = () => {
                                     <div className="flex items-center gap-2 border-b pb-2">
                                         <Calendar className="w-4 h-4 text-gray-400" />
                                         <p className="font-medium text-gray-900">
-                                            {profile.created_at ? new Date(profile.created_at).toLocaleDateString('fr-FR', {
+                                            {profile.created_at ? new Date(profile.created_at).toLocaleDateString(i18n.language, {
                                                 year: 'numeric',
                                                 month: 'long',
                                                 day: 'numeric'
@@ -189,8 +252,107 @@ const Profile = () => {
                             </Card>
                         )}
                     </div>
+
+
                 </div>
             </div>
+
+            {/* Edit Profile Dialog */}
+            <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+                <DialogContent className="sm:max-w-[500px] rounded-[2rem] p-8">
+                    <DialogHeader>
+                        <DialogTitle className="text-2xl font-black text-slate-900 mb-6">
+                            {t('profile.edit_title', { defaultValue: 'Modifier mes informations' })}
+                        </DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleUpdateSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <Label className="text-xs font-black uppercase tracking-widest text-slate-400">
+                                {t('profile.nom', { defaultValue: 'Nom' })}
+                            </Label>
+                            <Input
+                                required
+                                value={editFormData.nom || ''}
+                                onChange={e => setEditFormData({ ...editFormData, nom: e.target.value })}
+                                className="h-12 rounded-xl bg-slate-50 border-slate-100 font-bold"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-xs font-black uppercase tracking-widest text-slate-400">
+                                {t('profile.prenom', { defaultValue: 'Prénom' })}
+                            </Label>
+                            <Input
+                                required
+                                value={editFormData.prenom || ''}
+                                onChange={e => setEditFormData({ ...editFormData, prenom: e.target.value })}
+                                className="h-12 rounded-xl bg-slate-50 border-slate-100 font-bold"
+                            />
+                        </div>
+                        <div className="space-y-2 col-span-1 md:col-span-2">
+                            <Label className="text-xs font-black uppercase tracking-widest text-slate-400">
+                                {t('profile.email', { defaultValue: 'Email' })}
+                            </Label>
+                            <div className="relative">
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <Input
+                                    type="email"
+                                    required
+                                    value={editFormData.email || ''}
+                                    onChange={e => setEditFormData({ ...editFormData, email: e.target.value })}
+                                    className="h-12 pl-12 rounded-xl bg-slate-50 border-slate-100 font-bold"
+                                />
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-xs font-black uppercase tracking-widest text-slate-400">
+                                {t('profile.phone', { defaultValue: 'Téléphone' })}
+                            </Label>
+                            <div className="relative">
+                                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <Input
+                                    value={editFormData.phone || ''}
+                                    onChange={e => setEditFormData({ ...editFormData, phone: e.target.value })}
+                                    className="h-12 pl-12 rounded-xl bg-slate-50 border-slate-100 font-bold"
+                                    placeholder="0555..."
+                                />
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="text-xs font-black uppercase tracking-widest text-slate-400">
+                                {t('profile.nationality', { defaultValue: 'Nationalité' })}
+                            </Label>
+                            <div className="relative">
+                                <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <Input
+                                    value={editFormData.nationalite || ''}
+                                    onChange={e => setEditFormData({ ...editFormData, nationalite: e.target.value })}
+                                    className="h-12 pl-12 rounded-xl bg-slate-50 border-slate-100 font-bold"
+                                />
+                            </div>
+                        </div>
+                        <div className="space-y-2 col-span-1 md:col-span-2">
+                            <Label className="text-xs font-black uppercase tracking-widest text-slate-400">
+                                {t('profile.linkfacebook', { defaultValue: 'Lien Facebook' })}
+                            </Label>
+                            <div className="relative">
+                                <Facebook className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <Input
+                                    value={editFormData.linkfacebook || ''}
+                                    onChange={e => setEditFormData({ ...editFormData, linkfacebook: e.target.value })}
+                                    className="h-12 pl-12 rounded-xl bg-slate-50 border-slate-100 font-bold"
+                                />
+                            </div>
+                        </div>
+                        <DialogFooter className="col-span-1 md:col-span-2 mt-6">
+                            <Button type="submit" className="w-full h-14 rounded-2xl font-black uppercase tracking-widest bg-primary text-white shadow-xl shadow-primary/20">
+                                {t('profile.save_button', { defaultValue: 'Enregistrer' })}
+                            </Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
+
+
         </div>
     );
 };

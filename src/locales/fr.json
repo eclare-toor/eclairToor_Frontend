@@ -1,4 +1,17 @@
 {
+    "common": {
+        "days": "Jours",
+        "loading": "Chargement...",
+        "error": "Une erreur est survenue",
+        "success": "Succès",
+        "save": "Enregistrer",
+        "cancel": "Annuler",
+        "delete": "Supprimer",
+        "edit": "Modifier",
+        "confirm_delete": "Êtes-vous sûr de vouloir supprimer ?",
+        "confirm_action": "Êtes-vous sûr de vouloir effectuer cette action ?",
+        "confirm": "Confirmer"
+    },
     "nav": {
         "home": "Accueil",
         "trips": "Voyages",
@@ -7,12 +20,21 @@
         "contact": "Contact",
         "dashboard": "Tableau de bord",
         "profile": "Profil",
-        "logout": "Se déconnecter",
+        "logout": "Déconnexion",
         "login": "Connexion",
         "notifications": "Notifications",
         "mark_all_read": "Tout marquer comme lu",
-        "no_notifications": "Aucune notification",
-        "view_all": "Voir toutes les notifications"
+        "no_notifications": "Pas de notifications",
+        "view_all": "Voir tout",
+        "notifications_live": "Actualités en direct",
+        "check_back_later": "Revenez plus tard",
+        "today": "Aujourd'hui",
+        "mark_read": "Marquer comme lu",
+        "delete": "Supprimer",
+        "my_account": "Mon Compte",
+        "pride_algerian": "Fierté Algérienne",
+        "notif_deleted": "Notification supprimée",
+        "error_deleting": "Erreur lors de la suppression"
     },
     "footer": {
         "desc": "Votre partenaire de confiance pour des voyages inoubliables. Découvrez le monde avec confort et sérénité.",
@@ -25,6 +47,9 @@
         "phone_label": "Téléphone",
         "email_label": "Email",
         "hours_label": "Horaires d'ouverture",
+        "address": "Hydra, Alger, Algérie",
+        "phone": "044 01 18 89",
+        "email": "eclairtravel@gmail.com",
         "copyright": "© {{year}} Eclair Travel. Tous droits réservés."
     },
     "hero": {
@@ -90,7 +115,12 @@
         "success_title": "Message Envoyé !",
         "success_desc": "Merci de nous avoir contacté.",
         "new_message_btn": "Envoyer un nouveau message",
-        "hours_val": "Sam - Jeu: 09:00 - 18:00\nVendredi: Fermé"
+        "hours_val": "Sam - Jeu: 09:00 - 18:00\nVendredi: Fermé",
+        "agency_label": "Notre Agence",
+        "agency_address": "123 Boulevard des Martyrs\nAlger Centre, Algérie",
+        "phone_label": "Téléphone",
+        "email_label": "Email",
+        "hours_label": "Horaires d'ouverture"
     },
     "profile": {
         "loading": "Chargement de votre profil...",
@@ -110,7 +140,11 @@
         "status_desc_active": "Votre compte est pleinement opérationnel.",
         "status_desc_inactive": "Votre compte est désactivé.",
         "linked_facebook": "Lié à Facebook",
-        "view_profile": "Voir le profil"
+        "view_profile": "Voir le profil",
+        "roles": {
+            "admin": "Administrateur",
+            "user": "Utilisateur"
+        }
     },
     "trips": {
         "title": "Nos Voyages",
@@ -130,24 +164,34 @@
             }
         },
         "filters": {
-            "search_placeholder": "Où voulez-vous aller ?",
-            "max_duration": "DURÉE MAX"
+            "title": "Filtres",
+            "search_label": "OÙ VOULEZ-VOUS ALLER ?",
+            "search_placeholder": "Pays, ville, wilaya...",
+            "duration_label": "DURÉE MAX",
+            "categories_label": "CATÉGORIES"
         },
+        "help": {
+            "title": "Besoin d'aide ?",
+            "desc": "Notre équipe est là pour vous accompagner dans le choix de votre voyage de rêve.",
+            "button": "Nous Contacter"
+        },
+        "card": {
+            "from": "À partir de",
+            "new": "Nouveau",
+            "days": "Jours",
+            "guarantee": "Éclat Garanti",
+            "discover": "Découvrir"
+        },
+        "count_prefix": "Nous avons trouvé",
+        "count_suffix": "pépites pour vous",
         "results_count": "Résultats",
-        "loading": "Chargement de votre prochaine aventure...",
+        "loading": "Chargement de votre aventure...",
         "empty": {
             "title": "Aucune pépite trouvée...",
             "desc": "Essayez d'ajuster vos filtres pour découvrir de nouveaux horizons.",
             "reset": "Réinitialiser la recherche"
         },
-        "subtitle": "Découvrez notre sélection de voyages organisés",
-        "filter_national": "Tourisme National",
-        "filter_international": "International",
-        "filter_religious": "Tourisme Religieux",
-        "search_placeholder": "Rechercher une destination...",
-        "duration": "Durée",
-        "price_from": "À partir de",
-        "details_btn": "Voir Détails"
+        "subtitle": "Découvrez notre sélection de voyages organisés"
     },
     "trip_details": {
         "not_found": "Voyage non trouvé",
@@ -183,16 +227,6 @@
         "unspecified": "Non spécifié",
         "maps_btn": "Itinéraire Google Maps",
         "equipment_title": "Équipement recommandé"
-    },
-    "common": {
-        "loading": "Chargement...",
-        "error": "Une erreur est survenue",
-        "success": "Succès",
-        "save": "Enregistrer",
-        "cancel": "Annuler",
-        "delete": "Supprimer",
-        "edit": "Modifier",
-        "confirm_delete": "Êtes-vous sûr de vouloir supprimer ?"
     },
     "home": {
         "hero": {
@@ -234,6 +268,260 @@
             "label": "Retrouvez-nous",
             "title_part1": "Notre",
             "title_part2": "Emplacement"
+        }
+    },
+    "reservation": {
+        "step_title": "Étape Finale",
+        "title_start": "Finaliser votre",
+        "title_span": "Réservation",
+        "description": "Veuillez vérifier vos informations et le nombre de passagers avant de confirmer votre départ pour cette magnifique aventure.",
+        "sections": {
+            "details": "Vos Coordonnées",
+            "profile_info": "Informations du profil",
+            "passenger_count": "Nombre de passagers"
+        },
+        "fields": {
+            "full_name": "Nom complet",
+            "email": "Email",
+            "phone": "Téléphone",
+            "nationality": "Nationalité"
+        },
+        "passengers": {
+            "adults": "Adultes",
+            "adults_desc": "+12 Ans",
+            "children": "Enfants",
+            "children_desc": "2 à 12 Ans",
+            "babies": "Bébés",
+            "babies_desc": "-2 Ans"
+        },
+        "summary": {
+            "duration": "Durée",
+            "cost_breakdown": "Récapitulatif des coûts",
+            "total": "Total Général",
+            "secure_platform": "Plateforme 100% sécurisée",
+            "customer_service": "Service client disponible 24/7"
+        },
+        "confirm_button": "Valider la réservation",
+        "back_to_trips": "Retour à la liste des voyages",
+        "errors": {
+            "fullscreen_title": "Oups ! Une erreur est survenue",
+            "not_found": "Voyage non trouvé",
+            "load_failed": "Erreur lors du chargement des données",
+            "generic": "Une erreur est survenue lors de la réservation."
+        },
+        "omra": {
+            "room_selection": "Choix des Chambres",
+            "double_room": "Chambre Double",
+            "triple_room": "Chambre Triple",
+            "quadruple_room": "Chambre Quadruple",
+            "capacity_insufficient": "Capacité insuffisante : {{count}} places manquantes.",
+            "selection_valid": "Sélection valide",
+            "capacity_warning": "Attention : Vous avez sélectionné plus de places que de passagers."
+        }
+    },
+    "dashboard": {
+        "sidebar": {
+            "verified": "Compte Vérifié",
+            "bookings": "Mes Réservations",
+            "requests": "Mes Demandes",
+            "logout": "Déconnexion"
+        },
+        "tabs": {
+            "bookings_title": "Mes Réservations",
+            "requests_title": "Mes Demandes",
+            "bookings_desc": "Retrouvez ici toutes vos réservations de voyages.",
+            "requests_desc": "Suivez l'état de vos demandes de devis sur mesure."
+        },
+        "bookings": {
+            "empty_title": "Aucune réservation",
+            "empty_desc": "Vous n'avez pas encore effectué de réservation.",
+            "empty_button": "Découvrir nos voyages",
+            "passengers": "Passagers",
+            "total_price": "Prix à payer",
+            "reservation_date": "Date réserv.",
+            "reference": "Référence",
+            "download_ticket": "Télécharger le billet",
+            "modify": "Modifier",
+            "cancel": "Annuler la réservation",
+            "cancel_success": "Réservation annulée avec succès !",
+            "cancel_error": "Erreur lors de l'annulation de la réservation.",
+            "status": {
+                "confirmed": "Confirmée",
+                "pending": "En attente",
+                "cancelled": "Annulée",
+                "rejected": "Refusée",
+                "paid": "Payée",
+                "processed": "Traitée"
+            },
+            "edit_modal": {
+                "title": "Modifier la réservation",
+                "adults": "Adultes",
+                "children": "Enfants",
+                "babies": "Bébés",
+                "save": "Enregistrer",
+                "success": "Réservation mise à jour avec succès !",
+                "error": "Erreur lors de la mise à jour de la réservation."
+            }
+        },
+        "requests": {
+            "empty_title": "Aucune demande",
+            "empty_desc": "Vous n'avez pas encore de demande sur mesure.",
+            "category_labels": {
+                "voyage": "Demande voyage",
+                "omra": "Demande omra",
+                "hotel": "Demande hôtel",
+                "vol": "Demande vol"
+            },
+            "modify": "Modifier",
+            "cancel_success": "Demande annulée avec succès !",
+            "cancel_error": "Erreur lors de l'annulation de la demande.",
+            "edit_modal": {
+                "title": "Modifier la demande",
+                "success": "Demande mise à jour avec succès !",
+                "error": "Erreur lors de la mise à jour de la demande."
+            },
+            "status_processing": "En cours de traitement...",
+            "status_ready": "Offre Prête",
+            "last_update": "Dernière mise à jour",
+            "view_offer": "Voir l'offre",
+            "view_details": "Détails",
+            "details": {
+                "duration": "Durée",
+                "start": "Début",
+                "accommodation": "Hébergement",
+                "type": "Type",
+                "hotels": "Hôtels",
+                "dates": "Dates",
+                "stars": "Étoiles",
+                "passengers": "Passagers",
+                "wilaya": "Wilaya",
+                "flight_type": "Type",
+                "dep_ret": "Dép/Ret",
+                "class": "Classe",
+                "hebergement_makka": "Hôtel à La Mecque",
+                "hebergement_madina": "Hôtel à Médine",
+                "date_debut": "Date de début",
+                "date_fin": "Date de fin",
+                "duree": "Durée (jours)",
+                "ville_depart": "Ville de départ",
+                "ville_arrivee": "Ville d'arrivée",
+                "nbre_etoile": "Étoiles (Nombre)",
+                "options": "Options"
+            },
+            "modal": {
+                "title": "OFFRE D'ECLAIR TRAVEL",
+                "subtitle": "Nous avons le plaisir de vous proposer cette offre personnalisée",
+                "label": "VOTRE OFFRE",
+                "request_details": "DÉTAILS DE LA DEMANDE",
+                "agency_response": "RÉPONSE DE L'AGENCE",
+                "date_label": "Date de réponse",
+                "not_available": "Détails de l'offre non disponibles.",
+                "no_response": "Pas encore de réponse de l'admin.",
+                "close": "Fermer",
+                "contact": "Nous contacter"
+            }
+        },
+        "errors": {
+            "load_failed": "Impossible de charger vos données.",
+            "offer_fetch_failed": "Erreur lors de la récupération de la réponse.",
+            "ticket_popup_blocked": "Impossible d'ouvrir le billet. Veuillez autoriser les pop-ups."
+        },
+        "ticket": {
+            "title": "BILLET ÉLECTRONIQUE",
+            "destination": "Destination",
+            "date": "Date de Réservation",
+            "passengers": "Passagers",
+            "type": "Type de Voyage",
+            "status": "Statut de la réservation",
+            "total": "Prix Total",
+            "footer_1": "Eclair Travel - Votre partenaire de confiance.",
+            "footer_2": "Merci de présenter ce document lors de votre départ.",
+            "unspecified": "Non spécifié",
+            "confirmed": "CONFIRMÉE"
+        }
+    },
+    "congratulation": {
+        "title": "Félicitations !",
+        "subtitle": "Votre réservation a été confirmée avec succès.",
+        "reservation_id": "ID Réservation",
+        "trip_summary": {
+            "total_paid": "Total payé",
+            "travelers": "Voyageurs"
+        },
+        "download_btn": "Télécharger le billet",
+        "my_bookings_btn": "Voir mes réservations",
+        "home_link": "Retour à l'accueil",
+        "not_found_title": "Réservation introuvable",
+        "redirect_message": "Redirection vers l'accueil..."
+    },
+    "admin": {
+        "requests": {
+            "title": "GESTION DES DEMANDES",
+            "subtitle": "Supervisez et répondez aux réservations et demandes sur mesure.",
+            "total_requests": "Total Demandes",
+            "tabs": {
+                "bookings": "Réservations",
+                "custom": "Voyage à la Carte",
+                "services": "Vols & Hôtels"
+            },
+            "table": {
+                "client": "Client",
+                "voyage": "Voyage",
+                "date": "Date",
+                "status": "Statut",
+                "type_category": "Type / Catégorie",
+                "no_requests": "Aucune demande trouvée.",
+                "search_placeholder": "Rechercher par client...",
+                "filter_placeholder": "Filtrer par nom ou prénom..."
+            },
+            "status": {
+                "pending": "En attente",
+                "confirmed": "Confirmée",
+                "paid": "Payée",
+                "processed": "Traitée",
+                "rejected": "Refusée",
+                "cancelled": "Annulée"
+            },
+            "modal": {
+                "dossier": "DOSSIER",
+                "treatment": "Traitement de la Demande",
+                "rejected_title": "Dossier Refusé",
+                "rejected_desc": "Cette demande a été clôturée et ne peut plus recevoir d'offre.",
+                "cancelled_title": "Dossier Annulé",
+                "cancelled_desc": "Le client a annulé cette demande. Aucune action n'est possible.",
+                "offer_title": "VOTRE PROPOSITION PERSONNALISÉE",
+                "interface_label": "Interface de Rédaction",
+                "textarea_placeholder": "Rédigez ici les détails de l'offre (Prix, services inclus, détails des vols...)",
+                "offer_hint": "L'utilisateur verra cette offre instantanément dans son tableau de bord client. Soyez précis sur les tarifs et les conditions.",
+                "delete_offer": "SUPPRIMER L'OFFRE",
+                "reject_dossier": "REJETER LE DOSSIER",
+                "send_offer": "ENVOYER L'OFFRE AU CLIENT",
+                "update_offer": "METTRE À JOUR L'OFFRE",
+                "confirm_delete_offer": "Êtes-vous sûr de vouloir supprimer cette offre ?",
+                "offer_deleted": "L'offre a été supprimée avec succès",
+                "offer_sent": "Offre envoyée avec succès au client !",
+                "refusal_confirmed": "La demande a été refusée",
+                "confirm_refusal": "Êtes-vous sûr de vouloir refuser cette demande ?",
+                "errors": {
+                    "send_failed": "Erreur lors de l'envoi de l'offre",
+                    "delete_failed": "Erreur lors de la suppression de l'offre",
+                    "refusal_failed": "Erreur lors du refus de la demande"
+                }
+            },
+            "details": {
+                "destination": "Destination",
+                "dates_accommodation": "Dates & Hébergement",
+                "options": "Options",
+                "parcours": "Parcours",
+                "hotels": "Hôtels",
+                "preferences": "Préférences",
+                "hotel": "Hôtel",
+                "stay": "Séjour",
+                "travelers": "Voyageurs",
+                "trajet": "Trajet",
+                "calendar": "Calendrier",
+                "precisions": "Précisions"
+            }
         }
     }
 }

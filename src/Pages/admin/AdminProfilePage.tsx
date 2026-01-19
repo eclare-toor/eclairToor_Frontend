@@ -15,27 +15,79 @@ import {
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
 import { toast } from 'react-toastify';
+import { updateProfile } from '../../api';
 
 const AdminProfilePage = () => {
     const [profile, setProfile] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editData, setEditData] = useState<Partial<User>>({});
+    const [updating, setUpdating] = useState(false);
+
+    const fetchProfile = async () => {
+        setLoading(true);
+        try {
+            const data = await getUserProfile();
+            setProfile(data);
+            setEditData({
+                nom: data.nom,
+                prenom: data.prenom,
+                email: data.email,
+                phone: data.phone || '',
+                nationalite: data.nationalite,
+                linkfacebook: data.linkfacebook || ''
+            });
+        } catch (error) {
+            console.error("Failed to load admin profile", error);
+            toast.error("Échec du chargement du profil administrateur");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const data = await getUserProfile();
-                setProfile(data);
-            } catch (error) {
-                console.error("Failed to load admin profile", error);
-                toast.error("Échec du chargement du profil administrateur");
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchProfile();
     }, []);
+
+    const handleUpdate = async () => {
+        if (!profile) return;
+
+        // On n'envoie que les champs qui ont réellement été modifiés
+        const changedFields: Partial<User> = {};
+        (Object.keys(editData) as Array<keyof typeof editData>).forEach(key => {
+            const originalValue = profile[key as keyof User] || '';
+            const currentValue = editData[key] || '';
+
+            if (currentValue !== originalValue) {
+                changedFields[key as keyof User] = editData[key] as any;
+            }
+        });
+
+        if (Object.keys(changedFields).length === 0) {
+            setIsEditing(false);
+            return;
+        }
+
+        setUpdating(true);
+        try {
+            await updateProfile(changedFields);
+            toast.success("Profil mis à jour avec succès");
+            setIsEditing(false);
+            await fetchProfile(); // Refresh profile data
+        } catch (error: any) {
+            console.error("Error updating profile:", error);
+            toast.error(error.message || "Erreur lors de la mise à jour du profil");
+        } finally {
+            setUpdating(false);
+        }
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setEditData(prev => ({ ...prev, [name]: value }));
+    };
 
     if (loading) {
         return (
@@ -127,24 +179,61 @@ const AdminProfilePage = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div className="space-y-1">
                                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nom</label>
-                                    <p className="text-slate-800 font-bold border-b border-slate-100 pb-2">{profile.nom}</p>
+                                    {isEditing ? (
+                                        <Input
+                                            name="nom"
+                                            value={editData.nom}
+                                            onChange={handleChange}
+                                            className="h-9 rounded-lg border-slate-200 focus:border-primary"
+                                        />
+                                    ) : (
+                                        <p className="text-slate-800 font-bold border-b border-slate-100 pb-2">{profile.nom}</p>
+                                    )}
                                 </div>
                                 <div className="space-y-1">
                                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Prénom</label>
-                                    <p className="text-slate-800 font-bold border-b border-slate-100 pb-2">{profile.prenom}</p>
+                                    {isEditing ? (
+                                        <Input
+                                            name="prenom"
+                                            value={editData.prenom}
+                                            onChange={handleChange}
+                                            className="h-9 rounded-lg border-slate-200 focus:border-primary"
+                                        />
+                                    ) : (
+                                        <p className="text-slate-800 font-bold border-b border-slate-100 pb-2">{profile.prenom}</p>
+                                    )}
                                 </div>
                                 <div className="space-y-1">
                                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Email Professionnel</label>
                                     <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
                                         <Mail className="w-4 h-4 text-slate-300" />
-                                        <p className="text-slate-800 font-bold">{profile.email}</p>
+                                        {isEditing ? (
+                                            <Input
+                                                name="email"
+                                                value={editData.email}
+                                                onChange={handleChange}
+                                                className="h-9 rounded-lg border-slate-200 focus:border-primary flex-1 border-none bg-transparent h-auto p-0 focus-visible:ring-0"
+                                            />
+                                        ) : (
+                                            <p className="text-slate-800 font-bold">{profile.email}</p>
+                                        )}
                                     </div>
                                 </div>
                                 <div className="space-y-1">
                                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Contact Téléphonique</label>
                                     <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
                                         <Smartphone className="w-4 h-4 text-slate-300" />
-                                        <p className="text-slate-800 font-bold">{profile.phone || 'Non configuré'}</p>
+                                        {isEditing ? (
+                                            <Input
+                                                name="phone"
+                                                value={editData.phone}
+                                                onChange={handleChange}
+                                                placeholder="Non configuré"
+                                                className="h-9 rounded-lg border-slate-200 focus:border-primary flex-1 border-none bg-transparent h-auto p-0 focus-visible:ring-0"
+                                            />
+                                        ) : (
+                                            <p className="text-slate-800 font-bold">{profile.phone || 'Non configuré'}</p>
+                                        )}
                                     </div>
                                 </div>
                                 <div className="space-y-1">
@@ -157,25 +246,57 @@ const AdminProfilePage = () => {
                                     </div>
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Réseaux Sociaux</label>
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Lien Facebook</label>
                                     <div className="flex items-center gap-2 border-b border-slate-100 pb-2">
                                         <Facebook className="w-4 h-4 text-slate-300" />
-                                        {profile.linkfacebook ? (
-                                            <a href={profile.linkfacebook} target="_blank" rel="noopener noreferrer" className="text-primary font-bold hover:underline">Connecté</a>
+                                        {isEditing ? (
+                                            <Input
+                                                name="linkfacebook"
+                                                value={editData.linkfacebook}
+                                                onChange={handleChange}
+                                                placeholder="Lien Facebook"
+                                                className="h-9 rounded-lg border-slate-200 focus:border-primary flex-1 border-none bg-transparent h-auto p-0 focus-visible:ring-0"
+                                            />
                                         ) : (
-                                            <span className="text-slate-400 font-medium">Non relié</span>
+                                            profile.linkfacebook ? (
+                                                <a href={profile.linkfacebook} target="_blank" rel="noopener noreferrer" className="text-primary font-bold hover:underline">Connecté</a>
+                                            ) : (
+                                                <span className="text-slate-400 font-medium">Non relié</span>
+                                            )
                                         )}
                                     </div>
                                 </div>
                             </div>
 
                             <div className="mt-10 flex flex-wrap gap-4">
-                                <Button className="bg-primary hover:bg-primary/90 rounded-xl px-8 shadow-lg shadow-primary/20">
-                                    Modifier le Profil
-                                </Button>
-                                <Button variant="outline" className="rounded-xl px-8 border-slate-200">
-                                    Changer le Mot de passe
-                                </Button>
+                                {isEditing ? (
+                                    <>
+                                        <Button
+                                            onClick={handleUpdate}
+                                            disabled={updating}
+                                            className="bg-primary hover:bg-primary/90 rounded-xl px-8 shadow-lg shadow-primary/20"
+                                        >
+                                            {updating ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                                            Enregistrer les modifications
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            onClick={() => setIsEditing(false)}
+                                            className="rounded-xl px-8 border-slate-200"
+                                        >
+                                            Annuler
+                                        </Button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Button
+                                            onClick={() => setIsEditing(true)}
+                                            className="bg-primary hover:bg-primary/90 rounded-xl px-8 shadow-lg shadow-primary/20"
+                                        >
+                                            Modifier le Profil
+                                        </Button>
+                                    </>
+                                )}
                             </div>
                         </CardContent>
                     </Card>

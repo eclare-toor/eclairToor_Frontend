@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '../../../components/ui/button';
 import { Label } from '../../../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
-import { Plus, Trash2, Hotel as HotelIcon, Check } from 'lucide-react';
+import { Plus, Trash2, Hotel as HotelIcon, Check, RefreshCw } from 'lucide-react';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 import { getHotels, getTripHotels, deleteTripHotel, linkTripHotels } from '../../../api';
 import type { Hotel, TripHotel } from '../../../Types';
@@ -134,6 +134,37 @@ const TripHotelsForm: React.FC<TripHotelsFormProps> = ({
         }
     };
 
+    const handleOmraHotelChange = async (slot: 'Makkah' | 'Madinah', newHotelId: string) => {
+        if (!tripId) return;
+        setLocalSaving(true);
+        try {
+            // Find existing hotel in this slot
+            const description = `Hôtel ${slot}`;
+            const existing = existingHotels.find(h => h.description === description || (slot === 'Makkah' ? h === existingHotels[0] : h === existingHotels[1])); // Fallback to index if description missing
+
+            // Unlink existing if present
+            if (existing) {
+                await deleteTripHotel(tripId, existing.hotel_id);
+            }
+
+            // Link new
+            const hotelName = allHotels.find(h => h.id === newHotelId)?.name || '';
+            await linkTripHotels(tripId, [{
+                hotel_id: newHotelId,
+                description: description
+            }]);
+
+            toast.success(`${description} mis à jour !`);
+            const updated = await getTripHotels(tripId);
+            setExistingHotels(updated);
+        } catch (error) {
+            console.error(error);
+            toast.error("Erreur lors de la mise à jour de l'hôtel");
+        } finally {
+            setLocalSaving(false);
+        }
+    };
+
     // Creation mode logic
     const handleAddHotelSlot = () => {
         setSelectedHotels([...selectedHotels, { hotel_id: '', description: '' }]);
@@ -151,7 +182,7 @@ const TripHotelsForm: React.FC<TripHotelsFormProps> = ({
         updated[index] = {
             ...updated[index],
             hotel_id: hotelId,
-            description: updated[index].description || (hotel ? hotel.name : '')
+            description: isReligieuse ? (index === 0 ? 'Hôtel Makkah' : 'Hôtel Madinah') : (updated[index].description || (hotel ? hotel.name : ''))
         };
         setSelectedHotels(updated);
     };
@@ -176,67 +207,106 @@ const TripHotelsForm: React.FC<TripHotelsFormProps> = ({
                         Gérer les Hôtels liés au voyage
                     </h4>
 
-                    <div className="space-y-3">
-                        {existingHotels.length > 0 ? (
-                            existingHotels.map((hotel) => {
-                                const hotelId = hotel.hotel_id;
+                    {isReligieuse ? (
+                        <div className="space-y-4">
+                            {['Makkah', 'Madinah'].map((slot, index) => {
+                                const description = `Hôtel ${slot}`;
+                                // Try to find by explicit description first, then by implicit order if legacy data
+                                const currentHotel = existingHotels.find(h => h.description === description) ||
+                                    (!existingHotels.some(h => h.description?.includes('Hôtel')) ? existingHotels[index] : undefined);
+
                                 return (
-                                    <div key={hotelId} className="flex justify-between items-center bg-white p-4 rounded-lg border border-slate-100 shadow-sm">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center">
-                                                <HotelIcon className="w-5 h-5 text-slate-400" />
-                                            </div>
-                                            <div>
-                                                <p className="font-bold text-slate-900">{hotel.name}</p>
-                                                <p className="text-xs text-slate-500 uppercase tracking-tight">{hotel.city} • {hotel.stars} Étoiles</p>
-                                            </div>
+                                    <div key={slot} className="flex gap-4 items-start bg-white p-4 rounded-lg border border-slate-100 shadow-sm relative overflow-hidden">
+                                        <div className="absolute top-0 left-0 w-1 h-full bg-primary/20" />
+                                        <div className="flex-1 space-y-2">
+                                            <Label className="text-xs font-black text-slate-500 uppercase tracking-widest">
+                                                {description}
+                                            </Label>
+                                            <Select
+                                                value={currentHotel?.hotel_id || ''}
+                                                onValueChange={(val) => handleOmraHotelChange(slot as 'Makkah' | 'Madinah', val)}
+                                                disabled={localSaving}
+                                            >
+                                                <SelectTrigger className="h-12 bg-slate-50 border-slate-200 font-bold">
+                                                    <SelectValue placeholder={`Choisir ${description}`} />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {allHotels.map((hotel) => (
+                                                        <SelectItem key={hotel.id} value={hotel.id}>
+                                                            {hotel.name} <span className="text-slate-400 ml-2">({hotel.city})</span>
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
                                         </div>
-                                        <Button variant="ghost" size="icon" className="text-red-500 hover:bg-red-50" onClick={() => handleRemoveHotelLink(hotelId)} disabled={localSaving}>
-                                            <Trash2 className="w-4 h-4" />
-                                        </Button>
+                                        {localSaving && <div className="absolute inset-0 bg-white/50 flex items-center justify-center"><LoadingSpinner className="w-5 h-5 text-primary" /></div>}
                                     </div>
                                 );
-                            })
-                        ) : (
-                            <p className="text-slate-500 text-sm italic py-4">Aucun hôtel n'est actuellement lié à ce voyage.</p>
-                        )}
+                            })}
+                        </div>
+                    ) : (
+                        <div className="space-y-3">
+                            {existingHotels.length > 0 ? (
+                                existingHotels.map((hotel) => {
+                                    const hotelId = hotel.hotel_id;
+                                    return (
+                                        <div key={hotelId} className="flex justify-between items-center bg-white p-4 rounded-lg border border-slate-100 shadow-sm">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center">
+                                                    <HotelIcon className="w-5 h-5 text-slate-400" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-bold text-slate-900">{hotel.name}</p>
+                                                    <p className="text-xs text-slate-500 uppercase tracking-tight">{hotel.city} • {hotel.stars} Étoiles</p>
+                                                </div>
+                                            </div>
+                                            <Button variant="ghost" size="icon" className="text-red-500 hover:bg-red-50" onClick={() => handleRemoveHotelLink(hotelId)} disabled={localSaving}>
+                                                <Trash2 className="w-4 h-4" />
+                                            </Button>
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <p className="text-slate-500 text-sm italic py-4">Aucun hôtel n'est actuellement lié à ce voyage.</p>
+                            )}
 
-                        {isAddingNew && (
-                            <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-200 shadow-sm animate-in fade-in slide-in-from-top-2 space-y-4">
-                                <h5 className="text-xs font-bold text-emerald-800 uppercase tracking-widest">Lier un nouvel hôtel</h5>
-                                <div>
-                                    <Label className="text-xs text-emerald-600 font-bold">Sélectionner un hôtel</Label>
-                                    <Select
-                                        value={newHotelLink.hotel_id}
-                                        onValueChange={(val) => {
-                                            const h = allHotels.find(x => x.id === val);
-                                            setNewHotelLink({ ...newHotelLink, hotel_id: val, description: h?.name || '' });
-                                        }}
-                                    >
-                                        <SelectTrigger className="bg-white">
-                                            <SelectValue placeholder="Choisir un hôtel" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {allHotels.filter(h => !existingHotels.some(ex => ex.hotel_id === h.id)).map(hotel => (
-                                                <SelectItem key={hotel.id} value={hotel.id}>{hotel.name} ({hotel.city})</SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                            {isAddingNew && (
+                                <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-200 shadow-sm animate-in fade-in slide-in-from-top-2 space-y-4">
+                                    <h5 className="text-xs font-bold text-emerald-800 uppercase tracking-widest">Lier un nouvel hôtel</h5>
+                                    <div>
+                                        <Label className="text-xs text-emerald-600 font-bold">Sélectionner un hôtel</Label>
+                                        <Select
+                                            value={newHotelLink.hotel_id}
+                                            onValueChange={(val) => {
+                                                const h = allHotels.find(x => x.id === val);
+                                                setNewHotelLink({ ...newHotelLink, hotel_id: val, description: h?.name || '' });
+                                            }}
+                                        >
+                                            <SelectTrigger className="bg-white">
+                                                <SelectValue placeholder="Choisir un hôtel" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {allHotels.filter(h => !existingHotels.some(ex => ex.hotel_id === h.id)).map(hotel => (
+                                                    <SelectItem key={hotel.id} value={hotel.id}>{hotel.name} ({hotel.city})</SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="flex justify-end gap-2">
+                                        <Button size="sm" variant="ghost" onClick={() => setIsAddingNew(false)}>Annuler</Button>
+                                        <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700" onClick={handleAddHotelLink} disabled={localSaving}>
+                                            {localSaving ? <LoadingSpinner className="w-3 h-3" /> : <Check className="w-4 h-4 mr-1" />} Lier l'hôtel
+                                        </Button>
+                                    </div>
                                 </div>
-                                <div className="flex justify-end gap-2">
-                                    <Button size="sm" variant="ghost" onClick={() => setIsAddingNew(false)}>Annuler</Button>
-                                    <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700" onClick={handleAddHotelLink} disabled={localSaving}>
-                                        {localSaving ? <LoadingSpinner className="w-3 h-3" /> : <Check className="w-4 h-4 mr-1" />} Lier l'hôtel
-                                    </Button>
-                                </div>
-                            </div>
-                        )}
-                    </div>
+                            )}
 
-                    {!isAddingNew && (
-                        <Button variant="outline" className="w-full mt-4 border-dashed border-2" onClick={() => setIsAddingNew(true)}>
-                            <Plus className="w-4 h-4 mr-2" /> Lier un autre hôtel
-                        </Button>
+                            {!isAddingNew && (
+                                <Button variant="outline" className="w-full mt-4 border-dashed border-2" onClick={() => setIsAddingNew(true)}>
+                                    <Plus className="w-4 h-4 mr-2" /> Lier un autre hôtel
+                                </Button>
+                            )}
+                        </div>
                     )}
                 </div>
                 <Button variant="outline" className="w-full" onClick={onCancel}>Fermer</Button>

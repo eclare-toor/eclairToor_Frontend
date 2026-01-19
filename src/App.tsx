@@ -29,6 +29,9 @@ import AdminLayout from "./components/Layout/AdminLayout";
 import Profile from "./Pages/client/Profile";
 import AdminProfilePage from "./Pages/admin/AdminProfilePage";
 import AdminNotificationsPage from "./Pages/admin/AdminNotificationsPage";
+import AdminTripDetailPage from "./Pages/admin/AdminTripDetailPage";
+import AdminTripBookingsPage from "./Pages/admin/AdminTripBookingsPage";
+import AdminHotelDetailPage from "./Pages/admin/AdminHotelDetailPage";
 import OnboardingLoader from "./components/Shared/OnboardingLoader";
 
 
@@ -83,9 +86,10 @@ function App() {
 
           {/* ROUTES PROTÉGÉES (Nécessitent une connexion) */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/voyages/:id/congratulationReservation" element={<CongratulationReservation />} />
+            <Route path="/congratulation" element={<CongratulationReservation />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/mon-compte" element={<DashboardUser />} />
+            <Route path="/mon-compte/:tab" element={<DashboardUser />} />
             <Route path="/profile" element={<Profile />} />
           </Route>
 
@@ -102,7 +106,10 @@ function App() {
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboardPage />} />
             <Route path="voyages" element={<AdminTripsPage />} />
+            <Route path="voyages/:id" element={<AdminTripDetailPage />} />
+            <Route path="voyages/:id/bookings" element={<AdminTripBookingsPage />} />
             <Route path="hotels" element={<AdminOmraHotelsPage />} />
+            <Route path="hotels/:id" element={<AdminHotelDetailPage />} />
             <Route path="demandes" element={<AdminRequestsPage />} />
             <Route path="messages" element={<AdminRequestContact />} />
             <Route path="users" element={<AdminUsersPage />} />

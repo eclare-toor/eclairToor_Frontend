@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Map, BedDouble, TrendingUp, Calendar, Bell, Clock, AlertCircle, Plus, User, Plane, Users as UsersIcon, ChevronRight, Hash } from 'lucide-react';
-import { getNotifications, getTrips, adminCreateBooking } from '../../api';
-import type { AppNotification, Trip } from '../../Types';
+import { Users, Map, BedDouble, TrendingUp, Calendar, Bell, Clock, AlertCircle, Plus, User, Plane, ChevronRight, PieChart, BarChart, LineChart, Activity, DollarSign, Briefcase, ShieldCheck, Minus, Search } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { getNotifications, getTrips, adminCreateBooking, getDashboardStats } from '../../api';
+import type { AppNotification, Trip, DashboardData } from '../../Types';
 import LoadingSpinner from '../../components/Shared/LoadingSpinner';
 import { cn } from '../../lib/utils';
 import { Button } from '../../components/ui/button';
@@ -12,6 +13,21 @@ import {
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
+import {
+  LineChart as RechartsLineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart as RechartsBarChart,
+  Bar,
+  PieChart as RechartsPieChart,
+  Pie,
+  Cell,
+  Legend
+} from 'recharts';
 
 const StatCard = ({ icon: Icon, title, value, subtext, color }: { icon: any, title: string, value: string, subtext: string, color: string }) => (
   <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-start justify-between hover:shadow-md transition-shadow">
@@ -26,11 +42,24 @@ const StatCard = ({ icon: Icon, title, value, subtext, color }: { icon: any, tit
   </div>
 );
 
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+
 function AdminDashboardPage() {
   const [activities, setActivities] = useState<AppNotification[]>([]);
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [trips, setTrips] = useState<Trip[]>([]);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+
+  // Omra & Booking State
+  const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
+  const [rooms2, setRooms2] = useState(0);
+  const [rooms3, setRooms3] = useState(0);
+  const [rooms4, setRooms4] = useState(0);
+  const [isShaking, setIsShaking] = useState(false);
+  const [reservationError, setReservationError] = useState<string | null>(null);
+  const [totalPrice, setTotalPrice] = useState(0);
+
   const [bookingForm, setBookingForm] = useState({
     user_id: '',
     trip_id: '',
@@ -43,9 +72,10 @@ function AdminDashboardPage() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [notifsData, tripsData] = await Promise.all([
+        const [notifsData, tripsData, dashboardStats] = await Promise.all([
           getNotifications(),
-          getTrips()
+          getTrips(),
+          getDashboardStats()
         ]);
 
         // Sort by latest first and take top 5
@@ -55,10 +85,22 @@ function AdminDashboardPage() {
           return dateB - dateA;
         }).slice(0, 5);
 
+        // Parse chart data to ensure numbers
+        const parsedStats: DashboardData = {
+          ...dashboardStats,
+          usersPerMonth: dashboardStats.usersPerMonth.map(d => ({ ...d, total: Number(d.total) })),
+          bookingsPerMonth: dashboardStats.bookingsPerMonth.map(d => ({ ...d, total: Number(d.total) })),
+          revenuePerMonth: dashboardStats.revenuePerMonth.map(d => ({ ...d, total: Number(d.total) })),
+          tripsByType: dashboardStats.tripsByType.map(d => ({ ...d, total: Number(d.total) })),
+          bookingsByStatus: dashboardStats.bookingsByStatus.map(d => ({ ...d, total: Number(d.total) })),
+        };
+
         setActivities(lastFive);
         setTrips(tripsData);
+        setDashboardData(parsedStats);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
+        toast.error("Erreur lors du chargement des données du tableau de bord");
       } finally {
         setLoading(false);
       }
@@ -67,6 +109,87 @@ function AdminDashboardPage() {
     fetchData();
   }, []);
 
+  // Update selected trip when ID changes
+  useEffect(() => {
+    if (bookingForm.trip_id) {
+      const trip = trips.find(t => t.id === bookingForm.trip_id) || null;
+      setSelectedTrip(trip);
+      setRooms2(0);
+      setRooms3(0);
+      setRooms4(0);
+      setReservationError(null);
+    } else {
+      setSelectedTrip(null);
+    }
+  }, [bookingForm.trip_id, trips]);
+
+  // Calculate Price
+  useEffect(() => {
+    if (!selectedTrip) {
+      setTotalPrice(0);
+      return;
+    }
+
+    const { passengers_adult: adults, passengers_child: children, passengers_baby: babies } = bookingForm;
+    let calculatedPrice = 0;
+    const isOmra = selectedTrip.type.toLowerCase() === 'religieuse' || selectedTrip.type.toLowerCase() === 'omra';
+
+    if (isOmra) {
+      // Omra Logic (Strict Room Pricing)
+      const slots: number[] = [];
+      if (selectedTrip.options?.prix_2_chmpre) {
+        for (let i = 0; i < rooms2; i++) { slots.push(selectedTrip.options.prix_2_chmpre); slots.push(selectedTrip.options.prix_2_chmpre); }
+      }
+      if (selectedTrip.options?.prix_3_chmpre) {
+        for (let i = 0; i < rooms3; i++) { slots.push(selectedTrip.options.prix_3_chmpre); slots.push(selectedTrip.options.prix_3_chmpre); slots.push(selectedTrip.options.prix_3_chmpre); }
+      }
+      if (selectedTrip.options?.prix_4_chmpre) {
+        for (let i = 0; i < rooms4; i++) { slots.push(selectedTrip.options.prix_4_chmpre); slots.push(selectedTrip.options.prix_4_chmpre); slots.push(selectedTrip.options.prix_4_chmpre); slots.push(selectedTrip.options.prix_4_chmpre); }
+      }
+
+      slots.sort((a, b) => b - a);
+      let currentSlotIndex = 0;
+      let totalAdults = 0;
+      let totalChildren = 0;
+      let totalBabies = 0;
+
+      for (let i = 0; i < adults; i++) {
+        const price = slots[currentSlotIndex] || 0;
+        totalAdults += price;
+        currentSlotIndex++;
+      }
+
+      for (let i = 0; i < children; i++) {
+        const price = slots[currentSlotIndex] || 0;
+        totalChildren += price * 0.8;
+        currentSlotIndex++;
+      }
+
+      // Babies: 70% off CHEAPEST SELECTED room
+      let cheapestSelectedPrice = 0;
+      const selectedPrices = [];
+      if (rooms4 > 0 && selectedTrip.options?.prix_4_chmpre) selectedPrices.push(selectedTrip.options.prix_4_chmpre);
+      if (rooms3 > 0 && selectedTrip.options?.prix_3_chmpre) selectedPrices.push(selectedTrip.options.prix_3_chmpre);
+      if (rooms2 > 0 && selectedTrip.options?.prix_2_chmpre) selectedPrices.push(selectedTrip.options.prix_2_chmpre);
+
+      if (selectedPrices.length > 0) {
+        selectedPrices.sort((a, b) => a - b);
+        cheapestSelectedPrice = selectedPrices[0];
+      }
+      totalBabies = babies * cheapestSelectedPrice * 0.3;
+
+      calculatedPrice = totalAdults + totalChildren + totalBabies;
+    } else {
+      // Standard Logic
+      const priceAdult = selectedTrip.base_price;
+      const priceChild = selectedTrip.base_price * 0.8;
+      const priceBaby = selectedTrip.base_price * 0.3;
+      calculatedPrice = (adults * priceAdult) + (children * priceChild) + (babies * priceBaby);
+    }
+    setTotalPrice(calculatedPrice);
+  }, [bookingForm, selectedTrip, rooms2, rooms3, rooms4]);
+
+
   const handleCreateBooking = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!bookingForm.user_id || !bookingForm.trip_id) {
@@ -74,8 +197,32 @@ function AdminDashboardPage() {
       return;
     }
 
+    // Omra Validation
+    if (selectedTrip && (selectedTrip.type.toLowerCase() === 'religieuse' || selectedTrip.type.toLowerCase() === 'omra')) {
+      const totalCapacity = (rooms2 * 2) + (rooms3 * 3) + (rooms4 * 4);
+      const totalBedPeople = bookingForm.passengers_adult + bookingForm.passengers_child;
+
+      if (totalCapacity < totalBedPeople) {
+        setReservationError(`Capacité insuffisante : ${totalBedPeople - totalCapacity} places manquantes.`);
+        setIsShaking(true);
+        setTimeout(() => setIsShaking(false), 500);
+        return;
+      }
+    }
+
     try {
-      await adminCreateBooking(bookingForm);
+      const payload: any = { ...bookingForm };
+
+      if (selectedTrip && (selectedTrip.type.toLowerCase() === 'religieuse' || selectedTrip.type.toLowerCase() === 'omra')) {
+        payload.options = {
+          "champre-2": rooms2,
+          "champre-3": rooms3,
+          "champre-4": rooms4
+        };
+        payload.prix_calculer = totalPrice;
+      }
+
+      await adminCreateBooking(payload);
       toast.success("Réservation créée avec succès");
       setIsBookingModalOpen(false);
       setBookingForm({
@@ -85,6 +232,7 @@ function AdminDashboardPage() {
         passengers_child: 0,
         passengers_baby: 0
       });
+      setRooms2(0); setRooms3(0); setRooms4(0); setTotalPrice(0);
     } catch (error: any) {
       toast.error(error.message || "Erreur lors de la création de la réservation");
     }
@@ -97,8 +245,16 @@ function AdminDashboardPage() {
     return { icon: AlertCircle, bg: 'bg-slate-100', text: 'text-slate-600' };
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-10">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h2 className="text-4xl font-black text-slate-900 tracking-tight">Admin <span className="text-primary italic">Dashboard</span></h2>
@@ -142,7 +298,7 @@ function AdminDashboardPage() {
                     <SelectTrigger className="h-14 pl-12 rounded-2xl bg-slate-50 border-slate-100 font-bold focus:bg-white transition-colors shadow-sm text-left">
                       <SelectValue placeholder="Choisir un voyage dans la liste..." />
                     </SelectTrigger>
-                    <SelectContent className="rounded-2xl border-slate-100 shadow-2xl">
+                    <SelectContent className="rounded-2xl border-slate-100 shadow-2xl max-h-60 overflow-y-auto z-[9999]">
                       {trips.map(trip => (
                         <SelectItem key={trip.id} value={trip.id} className="p-4 focus:bg-primary/5 rounded-xl cursor-pointer">
                           <div className="flex flex-col">
@@ -156,13 +312,91 @@ function AdminDashboardPage() {
                 </div>
               </div>
 
+              {/* Omra Room Selection Step */}
+              <AnimatePresence>
+                {selectedTrip && (selectedTrip.type.toLowerCase() === 'religieuse' || selectedTrip.type.toLowerCase() === 'omra') && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={isShaking && reservationError?.includes('Capacité') ? { x: [-10, 10, -10, 10, 0], opacity: 1, height: 'auto' } : { opacity: 1, height: 'auto', x: 0 }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="space-y-4 overflow-hidden"
+                  >
+                    <div className="flex items-center gap-3 py-2">
+                      <div className="p-2 bg-primary/10 rounded-xl">
+                        <ShieldCheck className="w-5 h-5 text-primary" />
+                      </div>
+                      <h3 className="font-black text-slate-900 text-lg">Choix des Chambres</h3>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-3">
+                      {/* Chambre Double */}
+                      {selectedTrip.options?.prix_2_chmpre && (
+                        <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                          <div>
+                            <p className="font-black text-slate-900 text-sm">Chambre Double</p>
+                            <p className="text-[10px] font-bold text-primary">{Number(selectedTrip.options.prix_2_chmpre).toLocaleString('fr-DZ')} DZD / pers</p>
+                          </div>
+                          <div className="flex items-center gap-2 bg-white px-2 py-1 rounded-lg shadow-sm border">
+                            <Button type="button" variant="ghost" size="icon" onClick={() => setRooms2(Math.max(0, rooms2 - 1))} className="h-6 w-6"><Minus className="w-3 h-3" /></Button>
+                            <span className="font-black w-4 text-center text-sm">{rooms2}</span>
+                            <Button type="button" variant="ghost" size="icon" onClick={() => setRooms2(rooms2 + 1)} className="h-6 w-6"><Plus className="w-3 h-3" /></Button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Chambre Triple */}
+                      {selectedTrip.options?.prix_3_chmpre && (
+                        <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                          <div>
+                            <p className="font-black text-slate-900 text-sm">Chambre Triple</p>
+                            <p className="text-[10px] font-bold text-primary">{Number(selectedTrip.options.prix_3_chmpre).toLocaleString('fr-DZ')} DZD / pers</p>
+                          </div>
+                          <div className="flex items-center gap-2 bg-white px-2 py-1 rounded-lg shadow-sm border">
+                            <Button type="button" variant="ghost" size="icon" onClick={() => setRooms3(Math.max(0, rooms3 - 1))} className="h-6 w-6"><Minus className="w-3 h-3" /></Button>
+                            <span className="font-black w-4 text-center text-sm">{rooms3}</span>
+                            <Button type="button" variant="ghost" size="icon" onClick={() => setRooms3(rooms3 + 1)} className="h-6 w-6"><Plus className="w-3 h-3" /></Button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Chambre Quadruple */}
+                      {selectedTrip.options?.prix_4_chmpre && (
+                        <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                          <div>
+                            <p className="font-black text-slate-900 text-sm">Chambre Quadruple</p>
+                            <p className="text-[10px] font-bold text-primary">{Number(selectedTrip.options.prix_4_chmpre).toLocaleString('fr-DZ')} DZD / pers</p>
+                          </div>
+                          <div className="flex items-center gap-2 bg-white px-2 py-1 rounded-lg shadow-sm border">
+                            <Button type="button" variant="ghost" size="icon" onClick={() => setRooms4(Math.max(0, rooms4 - 1))} className="h-6 w-6"><Minus className="w-3 h-3" /></Button>
+                            <span className="font-black w-4 text-center text-sm">{rooms4}</span>
+                            <Button type="button" variant="ghost" size="icon" onClick={() => setRooms4(rooms4 + 1)} className="h-6 w-6"><Plus className="w-3 h-3" /></Button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    {/* Validation Message */}
+                    <div className="text-center pt-2">
+                      {(rooms2 * 2 + rooms3 * 3 + rooms4 * 4) < (bookingForm.passengers_adult + bookingForm.passengers_child) ? (
+                        <p className="text-red-500 font-bold text-xs">
+                          Capacité insuffisante : {(bookingForm.passengers_adult + bookingForm.passengers_child) - (rooms2 * 2 + rooms3 * 3 + rooms4 * 4)} places manquantes
+                        </p>
+                      ) : (
+                        <p className="text-emerald-500 font-bold text-xs flex items-center justify-center gap-1">
+                          <ShieldCheck className="w-3 h-3" /> Sélection valide
+                        </p>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               <div className="grid grid-cols-3 gap-4 p-6 bg-slate-50 rounded-[2rem] border border-slate-100">
                 <div className="space-y-2 text-center">
                   <Label className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">Adultes</Label>
                   <Input
                     type="number" min="1" required
                     value={bookingForm.passengers_adult}
-                    onChange={e => setBookingForm({ ...bookingForm, passengers_adult: parseInt(e.target.value) })}
+                    onChange={e => setBookingForm({ ...bookingForm, passengers_adult: parseInt(e.target.value) || 0 })}
                     className="h-12 text-center rounded-xl bg-white border-slate-200 font-black text-primary"
                   />
                 </div>
@@ -171,7 +405,7 @@ function AdminDashboardPage() {
                   <Input
                     type="number" min="0" required
                     value={bookingForm.passengers_child}
-                    onChange={e => setBookingForm({ ...bookingForm, passengers_child: parseInt(e.target.value) })}
+                    onChange={e => setBookingForm({ ...bookingForm, passengers_child: parseInt(e.target.value) || 0 })}
                     className="h-12 text-center rounded-xl bg-white border-slate-200 font-black text-emerald-500"
                   />
                 </div>
@@ -180,10 +414,22 @@ function AdminDashboardPage() {
                   <Input
                     type="number" min="0" required
                     value={bookingForm.passengers_baby}
-                    onChange={e => setBookingForm({ ...bookingForm, passengers_baby: parseInt(e.target.value) })}
+                    onChange={e => setBookingForm({ ...bookingForm, passengers_baby: parseInt(e.target.value) || 0 })}
                     className="h-12 text-center rounded-xl bg-white border-slate-200 font-black text-orange-500"
                   />
                 </div>
+              </div>
+
+              {/* Total Price Display */}
+              <div className="flex justify-between items-center p-4 bg-slate-900 rounded-2xl shadow-xl shadow-slate-200 overflow-hidden relative">
+                <div className="relative z-10">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Prix Total Estimé</p>
+                  <p className="text-2xl font-black text-white tracking-tight">{totalPrice.toLocaleString('fr-DZ')} <span className="text-sm font-bold text-slate-500">DZD</span></p>
+                </div>
+                <div className="p-3 bg-white/10 rounded-xl relative z-10">
+                  <DollarSign className="w-6 h-6 text-emerald-400" />
+                </div>
+                <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-white/5 to-transparent pointer-events-none" />
               </div>
 
               <DialogFooter className="mt-8">
@@ -197,37 +443,141 @@ function AdminDashboardPage() {
         </Dialog>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <StatCard
-          icon={Users}
-          title="Clients Inscrits"
-          value="1,240"
-          subtext="+12% ce mois"
-          color="bg-blue-500"
-        />
-        <StatCard
-          icon={Map}
-          title="Voyages Actifs"
-          value="24"
-          subtext="8 destinations"
-          color="bg-green-500"
-        />
-        <StatCard
-          icon={Calendar}
-          title="Réservations"
-          value="86"
-          subtext="En attente de confirmation"
-          color="bg-orange-500"
-        />
-        <StatCard
-          icon={BedDouble}
-          title="Hôtels Omra"
-          value="12"
-          subtext="Partenaires vérifiés"
-          color="bg-purple-500"
-        />
-      </div>
+      {dashboardData && (
+        <>
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <StatCard
+              icon={Users}
+              title="Utilisateurs Total"
+              value={dashboardData.kpis.total_users}
+              subtext="Inscrits"
+              color="bg-blue-500"
+            />
+            <StatCard
+              icon={Map}
+              title="Voyages Total"
+              value={dashboardData.kpis.total_trips}
+              subtext="Catalogués"
+              color="bg-green-500"
+            />
+            <StatCard
+              icon={Briefcase}
+              title="Réservations"
+              value={dashboardData.kpis.total_bookings}
+              subtext={`${dashboardData.kpis.pending_bookings} en attente`}
+              color="bg-orange-500"
+            />
+            <StatCard
+              icon={DollarSign}
+              title="Revenu Total"
+              value={`${Number(dashboardData.kpis.total_revenue).toLocaleString()} DZD`}
+              subtext={`Taux de conversion: ${dashboardData.conversion.conversion_rate}%`}
+              color="bg-emerald-500"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Chart: Users & Bookings Per Month */}
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+              <h3 className="font-bold text-slate-900 mb-6 flex items-center gap-2">
+                <Activity className="w-5 h-5 text-primary" /> Croissance Utilisateurs & Réservations
+              </h3>
+              <div className="h-[300px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RechartsLineChart data={dashboardData.usersPerMonth}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                    <XAxis dataKey="month" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
+                    <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
+                    <Tooltip
+                      contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                      cursor={{ stroke: '#f1f5f9', strokeWidth: 2 }}
+                    />
+                    <Legend />
+                    <Line type="monotone" dataKey="total" name="Utilisateurs" stroke="#3b82f6" strokeWidth={3} dot={{ r: 4, fill: '#3b82f6', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} />
+                    {/* Ideally we would merge bookingsPerMonth here if dimensions align, or display separate lines. 
+                        Assuming similar month keys, we could pre-process. For now displaying Users. */}
+                  </RechartsLineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Chart: Revenue Per Month */}
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+              <h3 className="font-bold text-slate-900 mb-6 flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-emerald-500" /> Revenus Mensuels
+              </h3>
+              <div className="h-[300px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RechartsBarChart data={dashboardData.revenuePerMonth.length > 0 ? dashboardData.revenuePerMonth : [{ month: 'N/A', total: 0 }]}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                    <XAxis dataKey="month" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
+                    <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
+                    <Tooltip
+                      cursor={{ fill: '#f8fafc' }}
+                      contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                    />
+                    <Bar dataKey="total" name="Revenu" fill="#10b981" radius={[4, 4, 0, 0]} barSize={40} />
+                  </RechartsBarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Chart: Trips by Type */}
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+              <h3 className="font-bold text-slate-900 mb-6 flex items-center gap-2">
+                <PieChart className="w-5 h-5 text-purple-500" /> Répartition des Voyages
+              </h3>
+              <div className="h-[300px] w-full flex justify-center">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RechartsPieChart>
+                    <Pie
+                      data={dashboardData.tripsByType}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      paddingAngle={5}
+                      dataKey="total"
+                      nameKey="type"
+                    >
+                      {dashboardData.tripsByType.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                    <Legend verticalAlign="bottom" height={36} />
+                  </RechartsPieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Chart: Bookings by Status */}
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+              <h3 className="font-bold text-slate-900 mb-6 flex items-center gap-2">
+                <Briefcase className="w-5 h-5 text-blue-500" /> Statut des Réservations
+              </h3>
+              <div className="h-[300px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RechartsBarChart layout="vertical" data={dashboardData.bookingsByStatus}>
+                    <CartesianGrid strokeDasharray="3 3" horizontal={true} stroke="#f1f5f9" />
+                    <XAxis type="number" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
+                    <YAxis dataKey="status" type="category" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} width={100} />
+                    <Tooltip
+                      cursor={{ fill: '#f8fafc' }}
+                      contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                    />
+                    <Bar dataKey="total" name="Réservations" fill="#3b82f6" radius={[0, 4, 4, 0]} barSize={20} />
+                  </RechartsBarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+          </div>
+        </>
+      )}
+
 
       {/* Sections: Activities & Top Destinations */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -238,38 +588,24 @@ function AdminDashboardPage() {
             <TrendingUp className="w-5 h-5 text-primary" /> Destinations Populaires
           </h3>
           <div className="space-y-6">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1565552629477-gin-4d4c4ec9?auto=format&fit=crop&q=80)' }} />
-              <div className="flex-1">
-                <h4 className="font-bold text-slate-800">La Mecque (Omra)</h4>
-                <div className="w-full bg-slate-100 h-2 rounded-full mt-2 overflow-hidden">
-                  <div className="bg-primary h-full w-[85%]" />
+            {dashboardData?.topDestinations && dashboardData.topDestinations.length > 0 ? (
+              dashboardData.topDestinations.map((dest, idx) => (
+                <div key={idx} className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold">
+                    {idx + 1}
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-bold text-slate-800">{dest.destination_country || "Destination inconnue"}</h4>
+                    <div className="w-full bg-slate-100 h-2 rounded-full mt-2 overflow-hidden">
+                      <div className="bg-primary h-full" style={{ width: `${Math.min(100, (parseInt(dest.bookings) / parseInt(dashboardData.kpis.total_bookings || "1")) * 100)}%` }} />
+                    </div>
+                  </div>
+                  <span className="font-bold text-slate-900">{dest.bookings}</span>
                 </div>
-              </div>
-              <span className="font-bold text-slate-900">85%</span>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1542401886-65d6c61db217?auto=format&fit=crop&q=80)' }} />
-              <div className="flex-1">
-                <h4 className="font-bold text-slate-800">Sahara Algérien</h4>
-                <div className="w-full bg-slate-100 h-2 rounded-full mt-2 overflow-hidden">
-                  <div className="bg-orange-500 h-full w-[65%]" />
-                </div>
-              </div>
-              <span className="font-bold text-slate-900">65%</span>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg bg-cover bg-center" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&q=80)' }} />
-              <div className="flex-1">
-                <h4 className="font-bold text-slate-800">Istanbul</h4>
-                <div className="w-full bg-slate-100 h-2 rounded-full mt-2 overflow-hidden">
-                  <div className="bg-blue-500 h-full w-[50%]" />
-                </div>
-              </div>
-              <span className="font-bold text-slate-900">50%</span>
-            </div>
+              ))
+            ) : (
+              <div className="text-center text-slate-400 py-8">Aucune donnée disponible</div>
+            )}
           </div>
         </div>
 

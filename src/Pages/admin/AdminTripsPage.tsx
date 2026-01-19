@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import type { Trip } from '../../Types';
-import { getTrips, createTrip, updateTrip, deleteTrip, createTripItineraries, linkTripHotels, addTripImages, deleteTripImages, type CreateItineraryPayload } from '../../api';
+import { getTrips, createTrip, deleteTrip, createTripItineraries, linkTripHotels, type CreateItineraryPayload } from '../../api';
 import { Button } from '../../components/ui/button';
-import { Plus, Edit, Trash2, MapPin, Calendar, ListChecks, Hotel as HotelIcon } from 'lucide-react';
+import { Plus, Trash2, MapPin, Calendar, Eye } from 'lucide-react';
 import LoadingSpinner from '../../components/Shared/LoadingSpinner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/ui/dialog';
 import TripForm from './components/TripForm';
@@ -16,7 +17,6 @@ const AdminTripsPage = () => {
   const [filterType, setFilterType] = useState<string>('national');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTrip, setCurrentTrip] = useState<Partial<Trip>>({});
-  const [originalTrip, setOriginalTrip] = useState<Trip | null>(null);
 
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -26,23 +26,20 @@ const AdminTripsPage = () => {
   const [deletedImages, setDeletedImages] = useState<string[]>([]);
   const [newItineraries, setNewItineraries] = useState<CreateItineraryPayload[]>([{ day_date: '', activities: '' }]);
 
-  // Specific editing states
-  const [editingItineraryTrip, setEditingItineraryTrip] = useState<string | null>(null);
-  const [editingHotelsTrip, setEditingHotelsTrip] = useState<{ id: string, type: string } | null>(null);
+  const navigate = useNavigate();
 
   const fetchTrips = async () => {
     setLoading(true);
     try {
       const data = await getTrips();
       setTrips(data);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching trips:', error);
-      toast.error('Erreur lors du chargement des voyages');
+      toast.error(error.message || 'Erreur lors du chargement des voyages');
     } finally {
       setLoading(false);
     }
   };
-
 
   useEffect(() => {
     fetchTrips();
@@ -53,128 +50,51 @@ const AdminTripsPage = () => {
     setIsSaving(true);
 
     try {
-      if (isEditing && currentTrip.id && originalTrip) {
-        let hasInfoChanges = false;
-        const updatePayload: any = {};
+      const formData = new FormData();
+      formData.append('title', currentTrip.title || '');
+      formData.append('description', currentTrip.description || '');
+      formData.append('start_date', currentTrip.start_date || '');
+      formData.append('end_date', currentTrip.end_date || '');
+      formData.append('base_price', String(currentTrip.base_price || 0));
 
-        // Compare and append changed fields
-        if (currentTrip.title !== originalTrip.title) {
-          updatePayload.title = currentTrip.title;
-          hasInfoChanges = true;
-        }
-        if (currentTrip.description !== originalTrip.description) {
-          updatePayload.description = currentTrip.description;
-          hasInfoChanges = true;
-        }
+      const type = currentTrip.type?.toLowerCase() || 'national';
+      formData.append('type', type);
 
-        const originalStartDate = originalTrip.start_date ? new Date(originalTrip.start_date).toISOString().split('T')[0] : '';
-        const currentStartDate = currentTrip.start_date ? new Date(currentTrip.start_date).toISOString().split('T')[0] : '';
-        if (currentStartDate !== originalStartDate) {
-          updatePayload.start_date = currentStartDate;
-          hasInfoChanges = true;
-        }
-
-        const originalEndDate = originalTrip.end_date ? new Date(originalTrip.end_date).toISOString().split('T')[0] : '';
-        const currentEndDate = currentTrip.end_date ? new Date(currentTrip.end_date).toISOString().split('T')[0] : '';
-        if (currentEndDate !== originalEndDate) {
-          updatePayload.end_date = currentEndDate;
-          hasInfoChanges = true;
-        }
-
-        if (String(currentTrip.base_price) !== String(originalTrip.base_price)) {
-          updatePayload.base_price = Number(currentTrip.base_price || 0);
-          hasInfoChanges = true;
-        }
-
-        const type = currentTrip.type?.toLowerCase() || 'national';
-        if (currentTrip.type !== originalTrip.type) {
-          updatePayload.type = type;
-          hasInfoChanges = true;
-        }
-
-        if (type === 'national' && currentTrip.destination_wilaya !== originalTrip.destination_wilaya) {
-          updatePayload.destination_wilaya = currentTrip.destination_wilaya; hasInfoChanges = true;
-        } else if (type === 'international' && currentTrip.destination_country !== originalTrip.destination_country) {
-          updatePayload.destination_country = currentTrip.destination_country; hasInfoChanges = true;
-        } else if (['religieuse', 'omra', 'tourisme religieux'].includes(type)) {
-          if (currentTrip.omra_category !== originalTrip.omra_category) {
-            updatePayload.omra_category = currentTrip.omra_category; hasInfoChanges = true;
-          }
-          if (currentTrip.omra_type !== originalTrip.omra_type) {
-            updatePayload.omra_type = currentTrip.omra_type; hasInfoChanges = true;
-          }
-        }
-
-        if (JSON.stringify(currentTrip.equipment_list) !== JSON.stringify(originalTrip.equipment_list)) {
-          updatePayload.equipment_list = currentTrip.equipment_list;
-          hasInfoChanges = true;
-        }
-
-        // 1. Update Trip Info if changed
-        if (hasInfoChanges) {
-          await updateTrip(currentTrip.id, updatePayload);
-        }
-
-        // 2. Add New Images if any
-        if (imageFiles.length > 0) {
-          const imgFormData = new FormData();
-          imageFiles.forEach(file => imgFormData.append('images', file));
-          await addTripImages(currentTrip.id, imgFormData);
-        }
-
-        // 3. Delete Removed Images if any
-        if (deletedImages.length > 0) {
-          const namesToDelete = deletedImages.map(path => {
-            const parts = path.split('/');
-            return parts[parts.length - 1];
-          });
-          await deleteTripImages(currentTrip.id, namesToDelete);
-        }
-
-        if (hasInfoChanges || imageFiles.length > 0 || deletedImages.length > 0) {
-          toast.success("Voyage modifié avec succès !");
-          fetchTrips();
-        } else if (hasInfoChanges === false && imageFiles.length === 0 && deletedImages.length === 0) {
-          toast.info("Aucune modification détectée.");
-        }
-      } else {
-        const formData = new FormData();
-        formData.append('title', currentTrip.title || '');
-        formData.append('description', currentTrip.description || '');
-        formData.append('start_date', currentTrip.start_date || '');
-        formData.append('end_date', currentTrip.end_date || '');
-        formData.append('base_price', String(currentTrip.base_price || 0));
-
-        const type = currentTrip.type?.toLowerCase() || 'national';
-        formData.append('type', type);
-
-        if (type === 'national') {
-          formData.append('destination_wilaya', currentTrip.destination_wilaya || '');
-        } else if (type === 'international') {
-          formData.append('destination_country', currentTrip.destination_country || '');
-        } else if (['religieuse', 'omra', 'tourisme religieux'].includes(type)) {
-          formData.append('omra_category', currentTrip.omra_category || '');
-          formData.append('omra_type', currentTrip.omra_type || 'classic');
-        }
-
-        if (currentTrip.equipment_list && currentTrip.equipment_list.length > 0) {
-          formData.append('equipment_list', JSON.stringify(currentTrip.equipment_list));
-        }
-
-        imageFiles.forEach((file) => {
-          formData.append('images', file);
-        });
-
-        const newTrip = await createTrip(formData);
-        toast.success("Voyage créé avec succès ! Ajoutez maintenant l'itinéraire.");
-        fetchTrips();
-        setCreatedTripId(newTrip.id);
-        setCreationStep(2);
+      if (type === 'national') {
+        formData.append('destination_wilaya', currentTrip.destination_wilaya || '');
+      } else if (type === 'international') {
+        formData.append('destination_country', currentTrip.destination_country || '');
+      } else if (['religieuse', 'omra', 'tourisme religieux'].includes(type)) {
+        formData.append('omra_category', currentTrip.omra_category || '');
+        formData.append('omra_type', currentTrip.omra_type || 'classic');
       }
-      if (isEditing) {
-        setIsModalOpen(false);
-        fetchTrips();
+
+      if (currentTrip.equipment_list) {
+        let equipment: string[] = [];
+        if (typeof currentTrip.equipment_list === 'string') {
+          equipment = currentTrip.equipment_list.split(',').map(s => s.trim()).filter(Boolean);
+        } else if (Array.isArray(currentTrip.equipment_list)) {
+          equipment = currentTrip.equipment_list;
+        }
+
+        if (equipment.length > 0) {
+          formData.append('equipment_list', JSON.stringify(equipment));
+        }
       }
+
+      if (currentTrip.options) {
+        formData.append('options', JSON.stringify(currentTrip.options));
+      }
+
+      imageFiles.forEach((file) => {
+        formData.append('images', file);
+      });
+
+      const newTrip = await createTrip(formData);
+      toast.success("Voyage créé avec succès ! Ajoutez maintenant l'itinéraire.");
+      fetchTrips();
+      setCreatedTripId(newTrip.id);
+      setCreationStep(2);
     } catch (error: any) {
       console.error(error);
       toast.error(error.message || "Une erreur est survenue lors de l'enregistrement.");
@@ -201,13 +121,13 @@ const AdminTripsPage = () => {
   const handleDelete = (id: string) => {
     toast(
       ({ closeToast }) => (
-        <div>
-          <p className="mb-2 font-medium text-sm">Êtes-vous sûr de vouloir supprimer ce voyage ?</p>
-          <div className="flex gap-2 justify-end">
+        <div className="p-2">
+          <p className="mb-4 font-bold text-slate-900">Êtes-vous sûr de vouloir supprimer ce voyage ?</p>
+          <div className="flex gap-3 justify-end">
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
-              className="h-8 px-2 text-xs"
+              className="font-black uppercase tracking-widest text-[10px]"
               onClick={closeToast}
             >
               Annuler
@@ -215,16 +135,16 @@ const AdminTripsPage = () => {
             <Button
               variant="destructive"
               size="sm"
-              className="h-8 px-2 text-xs"
+              className="font-black uppercase tracking-widest text-[10px] shadow-lg shadow-red-200"
               onClick={async () => {
                 try {
                   await deleteTrip(id);
                   toast.dismiss();
                   toast.success("Voyage supprimé avec succès");
                   fetchTrips();
-                } catch (error) {
+                } catch (error: any) {
                   console.error(error);
-                  toast.error("Erreur lors de la suppression");
+                  toast.error(error.message || "Erreur lors de la suppression");
                 }
                 closeToast();
               }}
@@ -307,174 +227,206 @@ const AdminTripsPage = () => {
     setIsModalOpen(true);
   };
 
-  const openEditModal = (trip: Trip) => {
-    setOriginalTrip(JSON.parse(JSON.stringify(trip)));
-    const safeDate = (dateStr: string | undefined) => {
-      if (!dateStr) return '';
-      const d = new Date(dateStr);
-      return isNaN(d.getTime()) ? '' : d.toISOString().split('T')[0];
-    };
-
-    setCurrentTrip({
-      ...trip,
-      start_date: safeDate(trip.start_date),
-      end_date: safeDate(trip.end_date),
-    });
-    setImageFiles([]);
-    setCreationStep(1);
-    setIsEditing(true);
-    setDeletedImages([]);
-    setIsModalOpen(true);
-  };
-
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-slate-900">Gestion des Voyages</h2>
-        <Button onClick={openCreateModal} className="gap-2">
-          <Plus className="w-4 h-4" /> Ajouter Un Voyage
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-4">
+        <div>
+          <h2 className="text-4xl font-black text-slate-900 tracking-tight leading-none">
+            Gestion des <span className="text-primary italic">Voyages</span>
+          </h2>
+          <p className="text-slate-500 font-bold mt-2 uppercase tracking-widest text-[10px]">Catalogue et Programmation</p>
+        </div>
+        <Button onClick={openCreateModal} className="h-14 px-8 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-black uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] flex items-center gap-3">
+          <div className="p-1.5 bg-white/10 rounded-lg">
+            <Plus className="w-4 h-4" />
+          </div>
+          Nouveau Voyage
         </Button>
       </div>
 
-      <div className="flex bg-white p-1 rounded-xl w-fit border border-slate-200">
-        {[
-          { label: 'Tourisme National', value: 'national' },
-          { label: 'Tourisme International', value: 'international' },
-          { label: 'Tourisme Religieux', value: 'religieuse' }
-        ].map((tab) => (
-          <button
-            key={tab.value}
-            onClick={() => setFilterType(tab.value)}
-            className={`px-4 py-2 text-sm font-bold rounded-lg transition-all ${filterType === tab.value
-              ? 'bg-slate-900 text-white shadow-md'
-              : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
-              }`}
-          >
-            {tab.label}
-          </button>
-        ))}
+      <div className="flex items-center justify-between gap-6 mb-8">
+        <div className="flex bg-slate-100/50 p-1.5 rounded-[1.5rem] border border-slate-200/50 backdrop-blur-sm">
+          {[
+            { label: 'National', value: 'national' },
+            { label: 'International', value: 'international' },
+            { label: 'Omra', value: 'religieuse' }
+          ].map((tab) => (
+            <button
+              key={tab.value}
+              onClick={() => setFilterType(tab.value)}
+              className={`px-6 py-2.5 text-xs font-black uppercase tracking-widest rounded-2xl transition-all duration-300 ${filterType === tab.value
+                ? 'bg-white text-primary shadow-xl shadow-primary/5 border border-slate-100'
+                : 'text-slate-400 hover:text-slate-600'
+                }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="hidden md:block px-4 py-2 bg-primary/5 rounded-full border border-primary/10">
+          <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] italic">
+            {trips.filter(t => t.type === filterType).length} Voyages trouvés
+          </p>
+        </div>
       </div>
 
       {loading ? (
-        <LoadingSpinner />
+        <div className="flex justify-center p-20"><LoadingSpinner /></div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {trips
-            .filter((trip) => trip.type === filterType)
-            .map((trip) => (
-              <div key={trip.id} className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-shadow group">
-                <div className="h-48 overflow-hidden relative">
-                  <img
-                    src={Array.isArray(trip.images) && trip.images[0] ? (trip.images[0].startsWith('http') ? trip.images[0] : `http://localhost:3000/api${trip.images[0]}`) : 'https://via.placeholder.com/400x300'}
-                    alt={trip.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-2 right-2 flex flex-col gap-2">
-                    <div className="bg-white/90 backdrop-blur px-2 py-1 rounded-md text-xs font-bold shadow-sm self-end">
-                      {trip.type}
-                    </div>
-                  </div>
-                </div>
-                <div className="p-5">
-                  <h3 className="font-bold text-lg text-slate-900 mb-1">{trip.title}</h3>
-                  <div className="flex items-center text-sm text-slate-500 mb-4">
-                    <MapPin className="w-4 h-4 mr-1" /> {trip.destination_wilaya || trip.destination_country || trip.omra_category}
-                    <span className="mx-2">•</span>
-                    <Calendar className="w-4 h-4 mr-1" /> {new Date(trip.start_date).toLocaleDateString()}
-                  </div>
-                  <div className="flex justify-between items-center pt-4 border-t border-slate-100">
-                    <span className="font-bold text-primary">{Number(trip.base_price || 0).toLocaleString()} DA</span>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="icon" title="Modifier l'itinéraire" className="h-8 w-8 text-blue-600 border-blue-100 hover:bg-blue-50" onClick={() => setEditingItineraryTrip(trip.id)}>
-                        <ListChecks className="w-4 h-4" />
-                      </Button>
-                      <Button variant="outline" size="icon" title="Gérer les hôtels" className="h-8 w-8 text-emerald-600 border-emerald-100 hover:bg-emerald-50" onClick={() => setEditingHotelsTrip({ id: trip.id, type: trip.type })}>
-                        <HotelIcon className="w-4 h-4" />
-                      </Button>
-                      <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => openEditModal(trip)}>
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button variant="destructive" size="icon" className="h-8 w-8" onClick={() => handleDelete(trip.id)}>
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
+        <div className="min-h-[200px]">
+          {trips.filter((trip) => trip.type === filterType).length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 bg-slate-50/50 rounded-[2.5rem] border border-dashed border-slate-200">
+              <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+                <Calendar className="w-10 h-10 text-slate-300" />
               </div>
-            ))}
+              <h3 className="text-xl font-black text-slate-900 mb-2">Aucun voyage trouvé</h3>
+              <p className="text-slate-500 font-medium text-sm max-w-md text-center">
+                Il n'y a actuellement aucun voyage dans la catégorie <span className="font-bold text-primary italic">{filterType}</span>.
+                Commencez par en créer un nouveau !
+              </p>
+              <Button onClick={openCreateModal} variant="outline" className="mt-6 border-2 font-bold hover:border-primary hover:text-primary rounded-xl h-12 px-6">
+                <Plus className="w-4 h-4 mr-2" /> Créer un voyage
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {trips
+                .filter((trip) => trip.type === filterType)
+                .map((trip) => (
+                  <div
+                    key={trip.id}
+                    onClick={() => navigate(`/admin/voyages/${trip.id}`)}
+                    className="group relative bg-white rounded-[2rem] border border-slate-100 overflow-hidden hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 cursor-pointer"
+                  >
+                    {/* Trip Image with Overlay */}
+                    <div className="h-56 overflow-hidden relative">
+                      <img
+                        src={Array.isArray(trip.images) && trip.images[0] ? (trip.images[0].startsWith('http') ? trip.images[0] : `http://localhost:3000/api${trip.images[0]}`) : 'https://via.placeholder.com/400x300'}
+                        alt={trip.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                      {/* Floating Badges */}
+                      <div className="absolute top-4 left-4 flex flex-col gap-2">
+                        <div className="bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-xl text-slate-900 border border-white/20">
+                          {trip.type}
+                        </div>
+                      </div>
+
+                      <div className="absolute bottom-4 left-4 right-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                        <p className="text-white text-xs font-bold flex items-center gap-2">
+                          <Eye className="w-4 h-4" /> Cliquez pour modifier
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Content */}
+                    <div className="p-6">
+                      <div className="mb-4">
+                        <h3 className="font-black text-xl text-slate-900 mb-2 leading-tight group-hover:text-primary transition-colors line-clamp-1">{trip.title}</h3>
+                        <div className="flex flex-wrap items-center gap-y-2 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                          <div className="flex items-center gap-1.5 mr-4">
+                            <MapPin className="w-3.5 h-3.5 text-primary" />
+                            <span className="truncate max-w-[120px]">{trip.destination_wilaya || trip.destination_country || trip.omra_category}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Calendar className="w-3.5 h-3.5 text-primary" />
+                            {new Date(trip.start_date).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between items-center pt-5 border-t border-slate-50">
+                        <div className="flex flex-col gap-2">
+                          <div>
+                            <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.2em] mb-0.5">À partir de</p>
+                            <p className="font-black text-lg text-primary tracking-tight">
+                              {Number(trip.base_price || 0).toLocaleString('fr-DZ')} <span className="text-[10px]">DZD</span>
+                            </p>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-8 text-[10px] font-black uppercase tracking-widest border-2 hover:bg-slate-50"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/admin/voyages/${trip.id}/bookings`);
+                            }}
+                          >
+                            Voir les réservations
+                          </Button>
+                        </div>
+
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(trip.id);
+                          }}
+                          className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-300 shadow-sm border border-red-100"
+                          title="Supprimer ce voyage"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Hover Glow Effect */}
+                    <div className="absolute inset-0 border-2 border-primary/0 group-hover:border-primary/10 rounded-[2rem] pointer-events-none transition-colors duration-500" />
+                  </div>
+                ))}
+            </div>
+          )}
         </div>
       )}
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-[2.5rem] p-0 border-none">
+          <DialogHeader className="p-8 pb-0">
+            <DialogTitle className="text-3xl font-black text-slate-900">
               {creationStep === 1
-                ? (isEditing ? "Modifier le voyage" : "Créer un nouveau voyage (1/3)")
+                ? "Nouveau Voyage"
                 : creationStep === 2
-                  ? "Ajouter l'itinéraire (2/3)"
-                  : "Sélectionner les hôtels (3/3)"
+                  ? "Itinéraire"
+                  : "Hébergement"
               }
+              <span className="text-primary italic ml-2">({creationStep}/3)</span>
             </DialogTitle>
           </DialogHeader>
 
-          {creationStep === 1 ? (
-            <TripForm
-              currentTrip={currentTrip}
-              setCurrentTrip={setCurrentTrip}
-              onSubmit={handleSave}
-              isSaving={isSaving}
-              isEditing={isEditing}
-              imageFiles={imageFiles}
-              setImageFiles={setImageFiles}
-              onRemoveExistingImage={handleRemoveExistingImage}
-              onRemoveNewImage={handleRemoveNewImage}
-            />
-          ) : creationStep === 2 ? (
-            <ItineraryForm
-              newItineraries={newItineraries}
-              setNewItineraries={setNewItineraries}
-              onSave={handleSaveItineraries}
-              onAddStep={handleAddItineraryStep}
-              onRemoveStep={handeRemoveItineraryStep}
-              onCancel={() => setCreationStep(3)}
-              isSaving={isSaving}
-            />
-          ) : (
-            <TripHotelsForm
-              tripType={currentTrip.type || 'national'}
-              onSave={handleSaveHotels}
-              onCancel={() => setIsModalOpen(false)}
-              isSaving={isSaving}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={!!editingItineraryTrip} onOpenChange={(open) => !open && setEditingItineraryTrip(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Gestion de l'itinéraire</DialogTitle>
-          </DialogHeader>
-          <ItineraryForm
-            tripId={editingItineraryTrip || undefined}
-            onCancel={() => setEditingItineraryTrip(null)}
-          />
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={!!editingHotelsTrip} onOpenChange={(open) => !open && setEditingHotelsTrip(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Gestion des Hôtels</DialogTitle>
-          </DialogHeader>
-          {editingHotelsTrip && (
-            <TripHotelsForm
-              tripId={editingHotelsTrip.id}
-              tripType={editingHotelsTrip.type}
-              onCancel={() => setEditingHotelsTrip(null)}
-            />
-          )}
+          <div className="p-8">
+            {creationStep === 1 ? (
+              <TripForm
+                currentTrip={currentTrip}
+                setCurrentTrip={setCurrentTrip}
+                onSubmit={handleSave}
+                isSaving={isSaving}
+                isEditing={isEditing}
+                imageFiles={imageFiles}
+                setImageFiles={setImageFiles}
+                onRemoveExistingImage={handleRemoveExistingImage}
+                onRemoveNewImage={handleRemoveNewImage}
+              />
+            ) : creationStep === 2 ? (
+              <ItineraryForm
+                newItineraries={newItineraries}
+                setNewItineraries={setNewItineraries}
+                onSave={handleSaveItineraries}
+                onAddStep={handleAddItineraryStep}
+                onRemoveStep={handeRemoveItineraryStep}
+                onCancel={() => setCreationStep(3)}
+                isSaving={isSaving}
+              />
+            ) : (
+              <TripHotelsForm
+                tripType={currentTrip.type || 'national'}
+                onSave={handleSaveHotels}
+                onCancel={() => setIsModalOpen(false)}
+                isSaving={isSaving}
+              />
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </div>

@@ -57,7 +57,7 @@ const StatItem = ({ label, value, delay, icon: Icon }: { label: string, value: s
 import { useTranslation } from 'react-i18next';
 
 const HomePage = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [typewriterIndex, setTypewriterIndex] = useState(0);
     const phrases = t('home.hero.phrases', { returnObjects: true }) as string[];
 
@@ -248,7 +248,7 @@ const HomePage = () => {
                                     </div>
                                     <div>
                                         <h4 className="font-black text-white text-lg tracking-tight">{review.user_name}</h4>
-                                        <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">{new Date(review.date).toLocaleDateString()}</p>
+                                        <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">{new Date(review.date).toLocaleDateString(i18n.language)}</p>
                                     </div>
                                 </div>
                             </div>

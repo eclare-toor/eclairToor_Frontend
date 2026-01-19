@@ -4,13 +4,15 @@ import { getHotels, createHotel, deleteHotel, updateHotel } from '../../api';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
-import { Plus, Trash2, MapPin, Star, Building, Edit } from 'lucide-react';
+import { Plus, Trash2, MapPin, Star, Building } from 'lucide-react';
 import LoadingSpinner from '../../components/Shared/LoadingSpinner';
 import { toast } from 'react-toastify';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { addHotelImages, deleteHotelImages } from '../../api';
 import { X, Image as ImageIcon, Upload } from 'lucide-react';
+
+import { useNavigate } from 'react-router-dom';
 
 const AdminOmraHotelsPage = () => {
   const [hotels, setHotels] = useState<Hotel[]>([]);
@@ -23,6 +25,8 @@ const AdminOmraHotelsPage = () => {
   const [createdHotelId, setCreatedHotelId] = useState<string | null>(null);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [deletedImages, setDeletedImages] = useState<string[]>([]);
+
+  const navigate = useNavigate();
 
   const fetchHotels = async () => {
     setLoading(true);
@@ -106,11 +110,11 @@ const AdminOmraHotelsPage = () => {
   const handleDelete = (id: string) => {
     toast(
       ({ closeToast }) => (
-        <div>
-          <p className="mb-2 font-medium text-sm">Supprimer cet hôtel ?</p>
-          <div className="flex gap-2 justify-end">
-            <Button variant="outline" size="sm" className="h-8 px-2 text-xs" onClick={closeToast}>Annuler</Button>
-            <Button variant="destructive" size="sm" className="h-8 px-2 text-xs" onClick={async () => {
+        <div className="p-2">
+          <p className="mb-4 font-bold text-slate-900">Supprimer cet hôtel ?</p>
+          <div className="flex gap-3 justify-end">
+            <Button variant="ghost" size="sm" className="font-black uppercase tracking-widest text-[10px]" onClick={closeToast}>Annuler</Button>
+            <Button variant="destructive" size="sm" className="font-black uppercase tracking-widest text-[10px] shadow-lg shadow-red-200" onClick={async () => {
               try {
                 await deleteHotel(id);
                 toast.dismiss();
@@ -139,15 +143,6 @@ const AdminOmraHotelsPage = () => {
     setCreationStep(1);
     setCreatedHotelId(null);
     setIsEditing(false);
-    setIsModalOpen(true);
-  };
-
-  const openEditModal = (hotel: Hotel) => {
-    setCurrentHotel({ ...hotel });
-    setImageFiles([]);
-    setDeletedImages([]);
-    setCreationStep(1);
-    setIsEditing(true);
     setIsModalOpen(true);
   };
 
@@ -183,61 +178,92 @@ const AdminOmraHotelsPage = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-slate-900">Hôtels (Omra & Autres)</h2>
-        <Button onClick={openCreateModal} className="gap-2">
-          <Plus className="w-4 h-4" /> Ajouter Un Hôtel
+    <div className="space-y-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-4">
+        <div>
+          <h2 className="text-4xl font-black text-slate-900 tracking-tight leading-none">
+            Gestion des <span className="text-primary italic">Hôtels</span>
+          </h2>
+          <p className="text-slate-500 font-bold mt-2 uppercase tracking-widest text-[10px]">Hébergements et Services</p>
+        </div>
+        <Button onClick={openCreateModal} className="h-14 px-8 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-black uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] flex items-center gap-3">
+          <div className="p-1.5 bg-white/10 rounded-lg">
+            <Plus className="w-4 h-4" />
+          </div>
+          Ajouter Un Hôtel
         </Button>
       </div>
 
       {loading ? (
-        <LoadingSpinner />
+        <div className="flex justify-center p-20"><LoadingSpinner /></div>
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
-          <table className="w-full text-left">
-            <thead className="bg-slate-50 border-b border-slate-100">
-              <tr>
-                <th className="p-4 font-semibold text-slate-600">Nom</th>
-                <th className="p-4 font-semibold text-slate-600">Ville</th>
-                <th className="p-4 font-semibold text-slate-600">Etoiles</th>
-                <th className="p-4 font-semibold text-slate-600 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {hotels.map((hotel) => (
-                <tr key={hotel.id} className="hover:bg-slate-50 transition-colors">
-                  <td className="p-4 font-medium text-slate-900 flex items-center gap-3">
-                    <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400">
-                      <Building className="w-5 h-5" />
-                    </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {hotels.map((hotel) => (
+            <div
+              key={hotel.id}
+              onClick={() => navigate(`/admin/hotels/${hotel.id}`)}
+              className="group relative bg-white rounded-[2.5rem] border border-slate-100 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 cursor-pointer overflow-hidden"
+            >
+              {/* Image Preview / Header */}
+              <div className="h-48 overflow-hidden relative">
+                {hotel.images && hotel.images.length > 0 ? (
+                  <img
+                    src={hotel.images[0].startsWith('http') ? hotel.images[0] : `http://localhost:3000/api${hotel.images[0]}`}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    alt={hotel.name}
+                  />
+                ) : (
+                  <div className="w-full h-full bg-slate-50 flex items-center justify-center text-slate-200">
+                    <Building className="w-12 h-12" />
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+                <div className="absolute top-4 right-4 translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-500">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(hotel.id);
+                    }}
+                    className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/20 backdrop-blur-md text-white hover:bg-red-500 transition-all duration-300 shadow-xl border border-white/20"
+                    title="Supprimer"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="absolute bottom-4 left-4 flex gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className={`w-3 h-3 ${i < hotel.stars ? 'text-yellow-400 fill-yellow-400' : 'text-white/30'}`} />
+                  ))}
+                </div>
+              </div>
+
+              <div className="p-6">
+                <div className="space-y-1">
+                  <h3 className="font-black text-xl text-slate-900 group-hover:text-primary transition-colors leading-tight line-clamp-1">
                     {hotel.name}
-                  </td>
-                  <td className="p-4 text-slate-600">
-                    <div className="flex items-center gap-1">
-                      <MapPin className="w-3 h-3 text-slate-400" />
-                      {hotel.city}
-                    </div>
-                  </td>
-                  <td className="p-4">
-                    <div className="flex gap-0.5">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className={`w-4 h-4 ${i < hotel.stars ? 'text-yellow-400 fill-yellow-400' : 'text-slate-200'}`} />
-                      ))}
-                    </div>
-                  </td>
-                  <td className="p-4 text-right">
-                    <Button variant="ghost" size="icon" className="text-blue-400 hover:text-blue-500 hover:bg-blue-50" onClick={() => openEditModal(hotel)}>
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="text-red-400 hover:text-red-500 hover:bg-red-50" onClick={() => handleDelete(hotel.id)}>
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </h3>
+                  <div className="flex items-center gap-2 text-slate-400 font-bold uppercase tracking-[0.15em] text-[10px]">
+                    <MapPin className="w-3 h-3 text-primary" />
+                    {hotel.city} <span className="text-slate-200">|</span> {hotel.type}
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-6 border-t border-slate-50 flex items-center justify-between">
+                  <div className="px-3 py-1 bg-slate-50 rounded-lg text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                    Quick Info
+                  </div>
+                  <div className="text-[10px] font-black text-primary uppercase tracking-widest italic opacity-0 group-hover:opacity-100 transition-opacity">
+                    Voir détails →
+                  </div>
+                </div>
+              </div>
+
+              {/* Hover Effect Line */}
+              <div className="absolute bottom-0 left-0 h-1.5 w-0 bg-primary transition-all duration-500 group-hover:w-full" />
+            </div>
+          ))}
         </div>
       )}
 
