@@ -10,6 +10,7 @@ import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 import { Calendar, Users, MapPin, Minus, Plus, ShieldCheck, Mail, Phone, User as UserIcon, ArrowLeft, ArrowRight } from 'lucide-react';
+import BackgroundAura from '../../../components/Shared/BackgroundAura';
 
 const Reservation = () => {
   const { id } = useParams<{ id: string }>();
@@ -85,6 +86,7 @@ const Reservation = () => {
 
   // Pricing Logic
   const isOmra = trip.type?.toLowerCase() === 'religieuse' || trip.type?.toLowerCase() === 'omra';
+  const promoFactor = trip.promotion ? (1 - trip.promotion / 100) : 1;
   let totalPrice = 0;
   let totalAdults = 0;
   let totalChildren = 0;
@@ -94,13 +96,16 @@ const Reservation = () => {
     // Omra Calculation Logic
     const slots: number[] = [];
     if (trip.options?.prix_2_chmpre) {
-      for (let i = 0; i < rooms2; i++) { slots.push(trip.options.prix_2_chmpre); slots.push(trip.options.prix_2_chmpre); }
+      const price = trip.options.prix_2_chmpre * promoFactor;
+      for (let i = 0; i < rooms2; i++) { slots.push(price); slots.push(price); }
     }
     if (trip.options?.prix_3_chmpre) {
-      for (let i = 0; i < rooms3; i++) { slots.push(trip.options.prix_3_chmpre); slots.push(trip.options.prix_3_chmpre); slots.push(trip.options.prix_3_chmpre); }
+      const price = trip.options.prix_3_chmpre * promoFactor;
+      for (let i = 0; i < rooms3; i++) { slots.push(price); slots.push(price); slots.push(price); }
     }
     if (trip.options?.prix_4_chmpre) {
-      for (let i = 0; i < rooms4; i++) { slots.push(trip.options.prix_4_chmpre); slots.push(trip.options.prix_4_chmpre); slots.push(trip.options.prix_4_chmpre); slots.push(trip.options.prix_4_chmpre); }
+      const price = trip.options.prix_4_chmpre * promoFactor;
+      for (let i = 0; i < rooms4; i++) { slots.push(price); slots.push(price); slots.push(price); slots.push(price); }
     }
 
     // Sort slots descending (assign best/most expensive rooms first)
@@ -110,9 +115,6 @@ const Reservation = () => {
 
     // 1. Assign Adults
     for (let i = 0; i < adults; i++) {
-      // STRICT: Use slot price. If no slot available (overflow), use 0 or handle error.
-      // In practice, validation prevents overflow. 
-      // Logic: Pay for the assigned slot.
       const price = slots[currentSlotIndex] || 0;
       totalAdults += price;
       currentSlotIndex++;
@@ -126,14 +128,12 @@ const Reservation = () => {
     }
 
     // 3. Babies (70% off cheapest SELECTED room)
-    // Find cheapest selected room price to apply the baby discount logic
     let cheapestSelectedPrice = 0;
     const selectedPrices = [];
-    if (rooms4 > 0 && trip.options?.prix_4_chmpre) selectedPrices.push(trip.options.prix_4_chmpre);
-    if (rooms3 > 0 && trip.options?.prix_3_chmpre) selectedPrices.push(trip.options.prix_3_chmpre);
-    if (rooms2 > 0 && trip.options?.prix_2_chmpre) selectedPrices.push(trip.options.prix_2_chmpre);
+    if (rooms4 > 0 && trip.options?.prix_4_chmpre) selectedPrices.push(trip.options.prix_4_chmpre * promoFactor);
+    if (rooms3 > 0 && trip.options?.prix_3_chmpre) selectedPrices.push(trip.options.prix_3_chmpre * promoFactor);
+    if (rooms2 > 0 && trip.options?.prix_2_chmpre) selectedPrices.push(trip.options.prix_2_chmpre * promoFactor);
 
-    // Sort ascending to get cheapest
     if (selectedPrices.length > 0) {
       selectedPrices.sort((a, b) => a - b);
       cheapestSelectedPrice = selectedPrices[0];
@@ -144,9 +144,9 @@ const Reservation = () => {
     totalPrice = totalAdults + totalChildren + totalBabies;
   } else {
     // Standard Calculation
-    const priceAdult = trip.base_price;
-    const priceChild = trip.base_price * 0.8;
-    const priceBaby = trip.base_price * 0.3;
+    const priceAdult = trip.base_price * promoFactor;
+    const priceChild = priceAdult * 0.8;
+    const priceBaby = priceAdult * 0.3;
 
     totalAdults = adults * priceAdult;
     totalChildren = children * priceChild;
@@ -215,7 +215,8 @@ const Reservation = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] pt-52 pb-32 px-4 relative overflow-hidden">
+    <div className="min-h-screen bg-transparent pt-52 pb-32 px-4 relative overflow-hidden">
+      <BackgroundAura />
       {/* Decorative Background */}
       <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-primary/5 to-transparent -z-10" />
       <div className="absolute top-1/2 right-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl -z-10" />
@@ -391,7 +392,7 @@ const Reservation = () => {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={isShaking && reservationError?.includes(t('reservation.omra.capacity_insufficient', { count: 0 }).split(':')[0]) ? { x: [-10, 10, -10, 10, 0], opacity: 1, y: 0 } : { opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
+                transition={{ duration: 0.3 }}
                 className="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-2xl shadow-slate-200/50 border border-slate-100 space-y-8"
               >
                 <h2 className="text-2xl font-black text-slate-900 flex items-center gap-4">
@@ -553,6 +554,11 @@ const Reservation = () => {
                     <div className="flex justify-between items-center">
                       <span className="text-lg font-black text-slate-900">{t('reservation.summary.total')}</span>
                       <div className="text-right">
+                        {trip.promotion && trip.promotion > 0 && (
+                          <p className="text-sm font-bold text-slate-400 line-through decoration-red-400/50 mb-1">
+                            {(totalPrice / promoFactor).toLocaleString('fr-DZ')} DZD
+                          </p>
+                        )}
                         <p className="text-4xl font-black text-primary leading-none mb-1 tracking-tighter">
                           {totalPrice.toLocaleString('fr-DZ')}
                         </p>
@@ -562,7 +568,7 @@ const Reservation = () => {
 
                     <motion.div
                       animate={isShaking ? { x: [-10, 10, -10, 10, 0] } : {}}
-                      transition={{ duration: 0.4 }}
+                      transition={{ duration: 0.3 }}
                     >
                       <Button
                         onClick={handleConfirm}

@@ -14,6 +14,7 @@ import CongratulationReservation from "./Pages/client/trips/congratulationReserv
 import CustomOmraTripPage from "./Pages/client/trips/CustomOmraTripPage";
 import HotelPage from "./Pages/client/trips/HotelPage"; // Updated import path
 import FlightsPage from "./Pages/client/trips/FlightsPage"; // Updated import path
+import TransportPage from "./Pages/client/trips/TransportPage";
 import Contact from "./Pages/client/Contact";
 import LoginPage from "./Pages/auth/LoginPage";
 import RegisterPage from "./Pages/auth/RegisterPage";
@@ -33,6 +34,7 @@ import AdminTripDetailPage from "./Pages/admin/AdminTripDetailPage";
 import AdminTripBookingsPage from "./Pages/admin/AdminTripBookingsPage";
 import AdminHotelDetailPage from "./Pages/admin/AdminHotelDetailPage";
 import OnboardingLoader from "./components/Shared/OnboardingLoader";
+import PromotionsPage from "./Pages/client/trips/PromotionsPage";
 
 
 
@@ -79,9 +81,10 @@ function App() {
           <Route path="/voyages/CustomTripPage" element={<CustomTripPage />} />
           <Route path="/voyages/CustomOmraTripPage" element={<CustomOmraTripPage />} />
           <Route path="/request-hotel" element={<HotelPage />} />
+          <Route path="/promotions" element={<PromotionsPage />} />
           <Route path="/request-flight" element={<FlightsPage />} />
+          <Route path="/request-transport" element={<TransportPage />} />
           <Route path="/reservation/:id" element={<Reservation />} />
-          <Route path="/request-flight" element={<FlightsPage />} />
           <Route path="/contact" element={<Contact />} />
 
           {/* ROUTES PROTÉGÉES (Nécessitent une connexion) */}

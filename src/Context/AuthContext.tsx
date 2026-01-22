@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import Cookies from 'js-cookie';
 import type { User } from '../Types/index';
-import { getUserById } from '../api';
+import { getUserProfile } from '../api';
 
 interface AuthContextType {
     user: User | null;
@@ -19,30 +19,37 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [token, setToken] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
+    const handleLogout = () => {
+        console.log('🔒 AuthContext: Logging out.');
+        setToken(null);
+        setUser(null);
+
+        Cookies.remove('token');
+        Cookies.remove('userId');
+        Cookies.remove('userRole');
+        localStorage.removeItem('user_data');
+
+        if (window.location.pathname !== '/connexion') {
+            window.location.href = '/connexion';
+        }
+    };
+
     useEffect(() => {
         const initializeAuth = async () => {
             const storedToken = Cookies.get('token');
-            const storedUserId = Cookies.get('userId');
 
-            console.log('🔄 AuthContext: Initializing...', { storedToken, storedUserId });
+            console.log('🔄 AuthContext: Initializing...', { storedToken });
 
             if (storedToken) {
-                setToken(storedToken);
-
-                // Fallback to localStorage since we don't have a getUserById endpoint yet
-                const storedUser = localStorage.getItem('user_data');
-                if (storedUser) {
-                    try {
-                        const parsedUser = JSON.parse(storedUser);
-                        setUser(parsedUser);
-                        console.log('✅ AuthContext: Restored user from localStorage:', parsedUser);
-                    } catch (e) {
-                        console.error('❌ AuthContext: Failed to parse user data from localStorage');
-
-                    }
-                } else {
-                    console.warn('⚠️ AuthContext: Token found but no user data in localStorage.');
-                    // Optional: handleLogout() if you want to force re-login
+                try {
+                    // Real verification with server
+                    const userProfile = await getUserProfile();
+                    setUser(userProfile);
+                    setToken(storedToken);
+                    console.log('✅ AuthContext: Token verified, session restored.');
+                } catch (e) {
+                    console.error('❌ AuthContext: Token invalid or expired, logging out.', e);
+                    handleLogout();
                 }
             } else {
                 console.log('ℹ️ AuthContext: No session found.');
@@ -60,25 +67,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         // Persistent storage
         Cookies.set('token', newToken, { expires: 7 });
-        Cookies.set('userId', newUser.id, { expires: 7 }); // Kept for consistency but not primarily used for rehydration now
+        Cookies.set('userId', newUser.id, { expires: 7 });
         Cookies.set('userRole', newUser.role, { expires: 7 });
         localStorage.setItem('user_data', JSON.stringify(newUser));
         console.log('💾 AuthContext: Cookies & LocalStorage set.');
-    };
-
-    const handleLogout = () => {
-        console.log('🔒 AuthContext: Logging out.');
-        setToken(null);
-        setUser(null);
-
-        Cookies.remove('token');
-        Cookies.remove('userId');
-        Cookies.remove('userRole');
-        localStorage.removeItem('user_data');
-
-        if (window.location.pathname !== '/connexion') {
-            window.location.href = '/connexion';
-        }
     };
 
     return (

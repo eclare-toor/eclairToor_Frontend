@@ -21,7 +21,9 @@ import {
   TrendingUp,
   Inbox,
   Search,
-  ExternalLink
+  ExternalLink,
+  Car,
+  Users
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import LoadingSpinner from '../../components/Shared/LoadingSpinner';
@@ -29,7 +31,7 @@ import { Dialog, DialogContent } from '../../components/ui/dialog';
 import { cn } from '../../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
-type TabType = 'BOOKINGS' | 'CUSTOM' | 'SERVICES';
+type TabType = 'BOOKINGS' | 'CUSTOM' | 'SERVICES' | 'TRANSPORT';
 
 const AdminRequestsPage = () => {
   const { t } = useTranslation();
@@ -84,7 +86,7 @@ const AdminRequestsPage = () => {
   }, []);
 
   useEffect(() => {
-    if (activeTab === 'CUSTOM' || activeTab === 'SERVICES') {
+    if (activeTab === 'CUSTOM' || activeTab === 'SERVICES' || activeTab === 'TRANSPORT') {
       fetchRequests();
     }
   }, [activeTab]);
@@ -232,6 +234,7 @@ const AdminRequestsPage = () => {
 
   const RequestDetails = ({ req, full = false }: { req: any, full?: boolean }) => {
     const { category, info } = req;
+    if (!info) return <div className="p-4 text-slate-400 italic">Données manquantes pour cette demande</div>;
 
     const SectionTitle = ({ title, icon: Icon }: { title: string, icon: any }) => (
       <h4 className={cn(
@@ -347,6 +350,28 @@ const AdminRequestsPage = () => {
       );
     }
 
+    if (category === 'transport') {
+      return (
+        <div className={cn("grid gap-4", full ? "grid-cols-1 md:grid-cols-3" : "grid-cols-1")}>
+          <div className={cn("bg-blue-50/50 p-5 rounded-2xl border border-blue-100/50", full && "bg-white/5 border-white/10 p-6")}>
+            <SectionTitle title={t('admin.requests.details.transport')} icon={Car} />
+            <p className={cn("font-black tracking-tight", full ? "text-2xl text-white" : "text-base text-blue-900 uppercase")}>{info.aeroport}</p>
+            <ArrowRight className={cn("text-blue-300 my-1", full ? "w-5 h-5" : "w-3 h-3")} />
+            <p className={cn("font-black tracking-tight", full ? "text-2xl text-white" : "text-base text-blue-900 uppercase")}>{info.hotel}</p>
+          </div>
+          <div className={cn("bg-blue-50/50 p-5 rounded-2xl border border-blue-100/50", full && "bg-white/5 border-white/10 p-6")}>
+            <SectionTitle title={t('admin.requests.details.calendar')} icon={Calendar} />
+            <p className={cn("font-black tracking-tight", full ? "text-2xl text-white" : "text-base text-slate-900")}>{info.date_depart}</p>
+            <p className={cn("font-bold capitalize mt-1", full ? "text-sm text-slate-400" : "text-xs text-slate-500")}>{t('admin.requests.details.luggage')}: {info.bagages}</p>
+          </div>
+          <div className={cn("bg-blue-50/50 p-5 rounded-2xl border border-blue-100/50", full && "bg-white/5 border-white/10 p-6")}>
+            <SectionTitle title={t('admin.requests.details.passengers')} icon={Users} />
+            <p className={cn("font-black tracking-tight", full ? "text-4xl text-white" : "text-2xl text-blue-900")}>{info.nbre_person}</p>
+          </div>
+        </div>
+      );
+    }
+
     return null;
   };
 
@@ -375,7 +400,8 @@ const AdminRequestsPage = () => {
         {[
           { id: 'BOOKINGS', label: 'Réservations', icon: FileText, color: 'text-slate-900 bg-white shadow-xl' },
           { id: 'CUSTOM', label: 'Voyage à la Carte', icon: Clock, color: 'text-slate-900 bg-white shadow-xl' },
-          { id: 'SERVICES', label: 'Vols & Hôtels', icon: Plane, color: 'text-slate-900 bg-white shadow-xl' }
+          { id: 'SERVICES', label: 'Vols & Hôtels', icon: Plane, color: 'text-slate-900 bg-white shadow-xl' },
+          { id: 'TRANSPORT', label: 'Transport', icon: Car, color: 'text-slate-900 bg-white shadow-xl' }
         ].map(tab => (
           <button
             key={tab.id}
@@ -473,7 +499,7 @@ const AdminRequestsPage = () => {
             )}
 
             {/* CUSTOM & SERVICES TABS (Unified Table View) */}
-            {(activeTab === 'CUSTOM' || activeTab === 'SERVICES') && (
+            {(activeTab === 'CUSTOM' || activeTab === 'SERVICES' || activeTab === 'TRANSPORT') && (
               <div className="bg-white rounded-[3rem] border border-slate-200 shadow-2xl shadow-slate-200/50 overflow-hidden">
                 <div className="p-6 bg-slate-50 border-b border-slate-100 flex items-center gap-4">
                   <div className="relative flex-1 max-w-sm">
@@ -499,16 +525,17 @@ const AdminRequestsPage = () => {
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                       {unifiedRequests
-                        .filter(r =>
-                          activeTab === 'CUSTOM'
-                            ? (r.category === 'voyage' || r.category === 'omra')
-                            : (r.category === 'vol' || r.category === 'hotel')
-                        )
+                        .filter(r => {
+                          if (activeTab === 'CUSTOM') return r.category === 'voyage' || r.category === 'omra';
+                          if (activeTab === 'TRANSPORT') return r.category === 'transport';
+                          return r.category === 'vol' || r.category === 'hotel';
+                        })
                         .filter(r => {
                           if (!clientNameSearch) return true;
                           const fullName = `${r.nom || ''} ${r.prenom || ''}`.toLowerCase();
                           const search = clientNameSearch.toLowerCase();
-                          return fullName.includes(search) || r.user_id?.toLowerCase().includes(search);
+                          const userIdMatch = r.user_id ? r.user_id.toLowerCase().includes(search) : false;
+                          return fullName.includes(search) || userIdMatch;
                         })
                         .length === 0 ? (
                         <tr><td colSpan={4} className="p-20 text-center font-bold text-slate-400">{t('admin.requests.table.no_requests')}</td></tr>
@@ -516,13 +543,16 @@ const AdminRequestsPage = () => {
                         .filter(r =>
                           activeTab === 'CUSTOM'
                             ? (r.category === 'voyage' || r.category === 'omra')
-                            : (r.category === 'vol' || r.category === 'hotel')
+                            : activeTab === 'TRANSPORT'
+                              ? r.category === 'transport'
+                              : (r.category === 'vol' || r.category === 'hotel')
                         )
                         .filter(r => {
                           if (!clientNameSearch) return true;
                           const fullName = `${r.nom || ''} ${r.prenom || ''}`.toLowerCase();
                           const search = clientNameSearch.toLowerCase();
-                          return fullName.includes(search) || r.user_id?.toLowerCase().includes(search);
+                          const userIdMatch = r.user_id ? r.user_id.toLowerCase().includes(search) : false;
+                          return fullName.includes(search) || userIdMatch;
                         })
                         .map((req) => (
                           <tr
@@ -539,7 +569,8 @@ const AdminRequestsPage = () => {
                                   "w-10 h-10 rounded-2xl flex items-center justify-center font-black text-sm shadow-lg",
                                   req.category === 'omra' ? "bg-indigo-600 text-white" :
                                     req.category === 'hotel' ? "bg-emerald-600 text-white" :
-                                      req.category === 'vol' ? "bg-sky-600 text-white" : "bg-slate-900 text-white"
+                                      req.category === 'vol' ? "bg-sky-600 text-white" :
+                                        req.category === 'transport' ? "bg-blue-600 text-white" : "bg-slate-900 text-white"
                                 )}>
                                   {req.nom?.charAt(0) || req.category.charAt(0).toUpperCase()}
                                   {req.prenom?.charAt(0)}
@@ -557,10 +588,17 @@ const AdminRequestsPage = () => {
                             <td className="p-6">
                               <div className="space-y-1">
                                 <p className="font-bold text-slate-700 text-base leading-tight">
-                                  {req.category === 'voyage' && req.info.destination}
-                                  {req.category === 'omra' && "Projet Omra"}
-                                  {req.category === 'hotel' && req.info.wilaya}
-                                  {req.category === 'vol' && `${req.info.ville_depart} ➝ ${req.info.ville_arrivee}`}
+                                  {req.info ? (
+                                    <>
+                                      {req.category === 'voyage' && req.info.destination}
+                                      {req.category === 'omra' && "Projet Omra"}
+                                      {req.category === 'hotel' && req.info.wilaya}
+                                      {req.category === 'vol' && `${req.info.ville_depart} ➝ ${req.info.ville_arrivee}`}
+                                      {req.category === 'transport' && `${req.info.aeroport} ➝ ${req.info.hotel}`}
+                                    </>
+                                  ) : (
+                                    <span className="text-red-400 italic">Info manquante</span>
+                                  )}
                                 </p>
                                 <p className="text-[10px] font-black text-primary uppercase tracking-widest">{req.category}</p>
                               </div>

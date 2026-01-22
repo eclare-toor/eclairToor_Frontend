@@ -17,6 +17,8 @@
         "trips": "Voyages",
         "hotels": "Hôtels",
         "flights": "Vols",
+        "transport": "Transport",
+        "promotions": "Promotions",
         "contact": "Contact",
         "dashboard": "Tableau de bord",
         "profile": "Profil",
@@ -34,7 +36,65 @@
         "my_account": "Mon Compte",
         "pride_algerian": "Fierté Algérienne",
         "notif_deleted": "Notification supprimée",
-        "error_deleting": "Erreur lors de la suppression"
+        "error_deleting": "Erreur lors de la suppression",
+        "language": "Langue"
+    },
+    "promotions": {
+        "title": "Offres Exceptionnelles",
+        "subtitle": "Profitez de nos meilleures réductions pour vos prochains voyages",
+        "no_promotions": "Aucune promotion n'est disponible pour le moment.",
+        "badge": "PROMO",
+        "discount": "-{{percent}}%"
+    },
+    "transport": {
+        "title": "VOTRE TRANSFERT",
+        "subtitle": "Aéroport ⟷ Hôtel en toute sérénité",
+        "form_title": "Demande de Transport",
+        "date_depart": "Date du transfert",
+        "aeroport": "Aéroport",
+        "hotel": "Hôtel de destination / départ",
+        "nbre_person": "Nombre de passagers",
+        "bagages": "Bagages volumineux",
+        "bagages_yes": "Oui, j'ai des bagages",
+        "bagages_no": "Non, pas de bagages particuliers",
+        "remarques": "Informations complémentaires (N° vol, besoins spéciaux...)",
+        "submit": "Réserver le transfert",
+        "success": "Votre demande de transport a été envoyée !"
+    },
+    "hotels_page": {
+        "title": "VOTRE HÔTEL IDÉAL",
+        "subtitle": "Séjours d'exception sélectionnés pour vous",
+        "form_title": "Réservation d'Hôtel",
+        "wilaya": "Wilaya / Ville",
+        "lieu": "Lieu / Quartier (Optionnel)",
+        "arrival": "Date d'arrivée",
+        "departure": "Date de départ",
+        "standing": "Standing (Étoiles)",
+        "duration": "Durée du séjour: {{count}} nuits",
+        "select_dates": "Sélectionnez vos dates",
+        "passengers": "Passagers",
+        "adults": "Adultes (+12 ans)",
+        "children": "Enfants (2-11 ans)",
+        "babies": "Bébés (-2 ans)",
+        "submit": "Envoyer ma demande",
+        "success": "Votre demande de réservation d'hôtel a été envoyée avec succès !"
+    },
+    "flights_page": {
+        "title": "VOTRE PROCHAIN VOL",
+        "subtitle": "Billets au meilleur tarif garanti",
+        "form_title": "Recherche de Vol",
+        "round_trip": "Aller-Retour",
+        "one_way": "Aller Simple",
+        "from": "Ville de départ",
+        "to": "Ville d'arrivée",
+        "date_depart": "Date de départ",
+        "date_return": "Date de retour",
+        "class": "Classe",
+        "eco": "Économique",
+        "business": "Affaires",
+        "first": "Première",
+        "submit": "Rechercher les vols",
+        "success": "Votre demande de vol a été envoyée avec succès !"
     },
     "footer": {
         "desc": "Votre partenaire de confiance pour des voyages inoubliables. Découvrez le monde avec confort et sérénité.",
@@ -370,7 +430,8 @@
                 "voyage": "Demande voyage",
                 "omra": "Demande omra",
                 "hotel": "Demande hôtel",
-                "vol": "Demande vol"
+                "vol": "Demande vol",
+                "transport": "Demande transport"
             },
             "modify": "Modifier",
             "cancel_success": "Demande annulée avec succès !",
@@ -406,7 +467,11 @@
                 "ville_depart": "Ville de départ",
                 "ville_arrivee": "Ville d'arrivée",
                 "nbre_etoile": "Étoiles (Nombre)",
-                "options": "Options"
+                "options": "Options",
+                "aeroport": "Aéroport",
+                "hotel": "Hôtel",
+                "date": "Date du transfert",
+                "bagages": "Bagages"
             },
             "modal": {
                 "title": "OFFRE D'ECLAIR TRAVEL",
@@ -520,7 +585,11 @@
                 "travelers": "Voyageurs",
                 "trajet": "Trajet",
                 "calendar": "Calendrier",
-                "precisions": "Précisions"
+                "precisions": "Précisions",
+                "transport": "Transport",
+                "airport": "Aéroport",
+                "passengers": "Passagers",
+                "luggage": "Bagages"
             }
         }
     }

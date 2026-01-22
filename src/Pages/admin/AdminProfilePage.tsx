@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getUserProfile } from '../../api';
 import type { User } from '../../Types';
 import {
@@ -25,6 +25,30 @@ const AdminProfilePage = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [editData, setEditData] = useState<Partial<User>>({});
     const [updating, setUpdating] = useState(false);
+
+    // Check if there are unsaved changes
+    const isDirty = (() => {
+        if (!profile || !isEditing) return false;
+
+        const fields: (keyof User)[] = ['nom', 'prenom', 'email', 'phone', 'nationalite', 'linkfacebook'];
+        return fields.some(key => {
+            const originalValue = profile[key as keyof User] || '';
+            const currentValue = editData[key as keyof typeof editData] || '';
+            return currentValue !== originalValue;
+        });
+    })();
+
+    // Handle browser refresh/close
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (isDirty) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        };
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [isDirty]);
 
     const fetchProfile = async () => {
         setLoading(true);

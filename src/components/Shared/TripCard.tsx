@@ -46,17 +46,43 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
                     <div className={cn("absolute top-6 z-20", i18n.language === 'ar' ? "left-6" : "right-6")}>
                         <div className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl shadow-xl border border-white/50">
                             <p className="text-[10px] font-black uppercase text-slate-400 leading-none mb-1">{t('trips.card.from')}</p>
-                            <div className="flex items-baseline gap-1">
-                                <span className="text-xl font-black text-primary leading-none">
-                                    {trip.base_price.toLocaleString()}
-                                </span>
-                                <span className="text-[10px] font-bold text-slate-600">DZD</span>
+                            <div className="flex flex-col items-end">
+                                {trip.promotion && trip.promotion > 0 ? (
+                                    <>
+                                        <span className="text-[10px] font-bold text-slate-400 line-through decoration-red-400/50">
+                                            {trip.base_price.toLocaleString()} DZD
+                                        </span>
+                                        <div className="flex items-baseline gap-1">
+                                            <span className="text-2xl font-black text-emerald-600 leading-none">
+                                                {(trip.base_price * (1 - trip.promotion / 100)).toLocaleString()}
+                                            </span>
+                                            <span className="text-[10px] font-bold text-slate-600">DZD</span>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="flex items-baseline gap-1">
+                                        <span className="text-xl font-black text-primary leading-none">
+                                            {trip.base_price.toLocaleString()}
+                                        </span>
+                                        <span className="text-[10px] font-bold text-slate-600">DZD</span>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
 
                     {/* Badges */}
                     <div className={cn("absolute top-6 flex flex-col gap-2 z-20", i18n.language === 'ar' ? "right-6" : "left-6")}>
+                        {trip.promotion && trip.promotion > 0 && (
+                            <motion.div
+                                initial={{ scale: 0.8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                className="bg-emerald-500 text-white px-4 py-2 rounded-2xl text-sm font-black shadow-xl border border-emerald-400 flex flex-col items-center justify-center min-w-[60px]"
+                            >
+                                <span className="text-[10px] uppercase tracking-tighter opacity-80 leading-none mb-1">PROMO</span>
+                                <span className="text-lg leading-none">-{trip.promotion}%</span>
+                            </motion.div>
+                        )}
                         {isNew && (
                             <span className="bg-white text-primary px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg flex items-center gap-2">
                                 <span className="relative flex h-2 w-2">

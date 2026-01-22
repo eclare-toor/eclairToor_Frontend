@@ -26,10 +26,42 @@ const AdminTripDetailPage = () => {
     const initialTab = (location.state as any)?.activeTab || 'info';
     const [activeTab, setActiveTab] = useState<'info' | 'itinerary' | 'hotels'>(initialTab);
 
-    // Form states (reusing the logic from AdminTripsPage but adapted)
+    // Form states
     const [editTrip, setEditTrip] = useState<Partial<Trip>>({});
     const [imageFiles, setImageFiles] = useState<File[]>([]);
     const [deletedImages, setDeletedImages] = useState<string[]>([]);
+
+    // Check if there are unsaved changes
+    const isDirty = (() => {
+        if (!trip) return false;
+
+        // Basic fields comparison
+        const fields: (keyof Trip)[] = ['title', 'description', 'base_price', 'promotion', 'type', 'destination_wilaya', 'destination_country', 'omra_category', 'omra_type'];
+        const hasFieldChanges = fields.some(f => (editTrip as any)[f] !== (trip as any)[f]);
+
+        // Date comparison
+        const currentStart = editTrip.start_date || '';
+        const originalStart = trip.start_date ? new Date(trip.start_date).toISOString().split('T')[0] : '';
+        const hasStartDateChange = currentStart !== originalStart;
+
+        const currentEnd = editTrip.end_date || '';
+        const originalEnd = trip.end_date ? new Date(trip.end_date).toISOString().split('T')[0] : '';
+        const hasEndDateChange = currentEnd !== originalEnd;
+
+        return hasFieldChanges || hasStartDateChange || hasEndDateChange || imageFiles.length > 0 || deletedImages.length > 0;
+    })();
+
+    // Handle browser refresh/close
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (isDirty) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        };
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [isDirty]);
 
     const fetchTripDetails = async () => {
         if (!id) return;
@@ -71,7 +103,7 @@ const AdminTripDetailPage = () => {
             let hasInfoChanges = false;
 
             // Compare simple fields
-            const fields: (keyof Trip)[] = ['title', 'description', 'base_price', 'type', 'destination_wilaya', 'destination_country', 'omra_category', 'omra_type'];
+            const fields: (keyof Trip)[] = ['title', 'description', 'base_price', 'promotion', 'type', 'destination_wilaya', 'destination_country', 'omra_category', 'omra_type'];
             fields.forEach(f => {
                 if ((editTrip as any)[f] !== (trip as any)[f]) {
                     updatePayload[f] = (editTrip as any)[f];
@@ -143,7 +175,7 @@ const AdminTripDetailPage = () => {
                 toast.info("Aucune modification détectée");
             }
         } catch (error: any) {
-            toast.error(error.message || "vs lors de la mise à jour");
+            toast.error(error.message || "Erreur lors de la mise à jour");
         } finally {
             setIsSaving(false);
         }

@@ -981,11 +981,24 @@ export interface CustomFlightRequestPayload {
     };
 }
 
+export interface CustomTransportRequestPayload {
+    category: 'transport';
+    details: {
+        date_depart: string;
+        aeroport: string;
+        hotel: string;
+        nbre_person: number;
+        bagages: string;
+        remarques: string;
+    }
+}
+
 export type CustomRequestPayload =
     | CustomTripRequestPayload
     | CustomOmraRequestPayload
     | CustomHotelRequestPayload
-    | CustomFlightRequestPayload;
+    | CustomFlightRequestPayload
+    | CustomTransportRequestPayload;
 
 export const createCustomTripRequest = async (data: CustomRequestPayload): Promise<any> => {
     const token = Cookies.get('token');

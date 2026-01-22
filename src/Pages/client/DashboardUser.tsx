@@ -3,7 +3,7 @@ import { getUserBookings, updateBooking, updateBookingStatus, getUserRequests, g
 import type { BookingItem, UnifiedRequest } from '../../Types';
 import LoadingSpinner from '../../components/Shared/LoadingSpinner';
 import { Button } from '../../components/ui/button';
-import { MapPin, FileText, User, Plane, LogOut, Edit2, History, BedDouble, Calendar, Eye, ShieldCheck, XCircle, Plus, Minus, ArrowRight, Star } from 'lucide-react';
+import { MapPin, FileText, User, Plane, LogOut, Edit2, History, BedDouble, Calendar, Eye, ShieldCheck, XCircle, Plus, Minus, ArrowRight, Star, Car } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -23,6 +23,7 @@ import { Label } from "../../components/ui/label";
 import { Input } from "../../components/ui/input";
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
+import BackgroundAura from '../../components/Shared/BackgroundAura';
 import { useAuth } from '../../Context/AuthContext';
 import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { cn } from '../../lib/utils';
@@ -660,10 +661,12 @@ const DashboardUser = () => {
                       {req.category === 'omra' && <History className="w-3.5 h-3.5 text-primary" />}
                       {req.category === 'hotel' && <BedDouble className="w-3.5 h-3.5 text-primary" />}
                       {req.category === 'vol' && <Plane className="w-3.5 h-3.5 text-primary" />}
+                      {req.category === 'transport' && <Car className="w-3.5 h-3.5 text-primary" />}
                       {req.category === 'voyage' && req.info.destination}
                       {req.category === 'omra' && "Pèlerinage"}
                       {req.category === 'hotel' && req.info.wilaya}
                       {req.category === 'vol' && `${req.info.ville_depart} ➝ ${req.info.ville_arrivee}`}
+                      {req.category === 'transport' && `${req.info.aeroport} ➝ ${req.info.hotel}`}
                     </span>
                     <span className="uppercase text-[10px] font-bold tracking-widest text-slate-400 border border-slate-200 px-2 py-0.5 rounded">
                       ID: {req.id.slice(0, 8)}
@@ -699,6 +702,14 @@ const DashboardUser = () => {
                   <>
                     <div className="col-span-2"><p className="text-xs text-slate-400 uppercase font-semibold mb-1">{t('dashboard.requests.details.route')}</p><p className="font-medium text-slate-700">{req.info.ville_depart} ➝ {req.info.ville_arrivee}</p></div>
                     <div className="col-span-2"><p className="text-xs text-slate-400 uppercase font-semibold mb-1">{t('dashboard.requests.details.flight_type')}</p><p className="font-medium text-slate-700 capitalize">{req.info.type_vol?.replace('_', ' ') || '-'}</p></div>
+                  </>
+                )}
+                {req.category === 'transport' && (
+                  <>
+                    <div><p className="text-xs text-slate-400 uppercase font-semibold mb-1">{t('dashboard.requests.details.aeroport')}</p><p className="font-medium text-slate-700">{req.info.aeroport}</p></div>
+                    <div><p className="text-xs text-slate-400 uppercase font-semibold mb-1">{t('dashboard.requests.details.hotel')}</p><p className="font-medium text-slate-700">{req.info.hotel}</p></div>
+                    <div><p className="text-xs text-slate-400 uppercase font-semibold mb-1">{t('dashboard.requests.details.date')}</p><p className="font-medium text-slate-700 text-xs">{req.info.date_depart}</p></div>
+                    <div><p className="text-xs text-slate-400 uppercase font-semibold mb-1">{t('dashboard.requests.details.bagages')}</p><p className="font-medium text-slate-700">{req.info.bagages}</p></div>
                   </>
                 )}
               </div>
@@ -888,7 +899,8 @@ const DashboardUser = () => {
   };
 
   return (
-    <div className="min-h-screen bg-transparent pt-52  pb-12 px-4">
+    <div className="min-h-screen bg-transparent pt-52 md:pt-60 pb-12 px-4 relative">
+      <BackgroundAura />
       <div className="container mx-auto max-w-6xl">
         <div className="flex flex-col md:flex-row gap-8">
 

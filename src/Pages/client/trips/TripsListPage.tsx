@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { getTrips } from '../../../api';
 import TripCard from '../../../components/Shared/TripCard';
 import type { Trip } from '../../../Types';
@@ -88,13 +89,18 @@ const TripsListPage = () => {
   }, [categoryTrips, destinationFilter, maxDuration]);
 
   return (
-    <div className="pt-40 min-h-screen pb-20 relative">
+    <div className="pt-48 md:pt-56 min-h-screen pb-20 relative">
       <BackgroundAura />
 
       <div className="container mx-auto px-4 max-w-[1600px]">
 
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-12">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="flex flex-col md:flex-row items-center justify-between gap-8 mb-12"
+        >
           <div className={cn("text-center md:text-left w-full", i18n.language === 'ar' && "md:text-right")}>
             <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mb-2">
               {i18n.language === 'ar' ? (
@@ -106,7 +112,6 @@ const TripsListPage = () => {
             <p className="text-slate-500 font-medium text-lg">{t('trips.subtitle')}</p>
           </div>
 
-          {/* Voyage à la carte button */}
           <div className="shrink-0">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -133,9 +138,14 @@ const TripsListPage = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-        </div>
+        </motion.div>
 
-        <div className={cn("flex flex-col lg:flex-row gap-8 items-start", i18n.language === 'ar' && "lg:flex-row-reverse")}>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.1, duration: 0.3 }}
+          className={cn("flex flex-col lg:flex-row gap-8 items-start", i18n.language === 'ar' && "lg:flex-row-reverse")}
+        >
           {/* Sidebar Filters */}
           <aside className="w-full lg:w-80 shrink-0 space-y-8 sticky top-28 self-start z-10">
             <div className="bg-white/80 backdrop-blur-xl border border-white/60 p-6 rounded-[2rem] shadow-xl shadow-slate-200/40">
@@ -231,12 +241,15 @@ const TripsListPage = () => {
             ) : filteredTrips.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                 {filteredTrips.map((trip) => (
-                  <div
+                  <motion.div
                     key={trip.id}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3 }}
                     className="w-full h-full"
                   >
                     <TripCard trip={trip} />
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             ) : (
@@ -260,7 +273,7 @@ const TripsListPage = () => {
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

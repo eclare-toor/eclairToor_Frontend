@@ -147,6 +147,45 @@ const TripForm: React.FC<TripFormProps> = ({
                     />
                 </div>
 
+                <div className="space-y-4 col-span-1 md:col-span-2 p-6 bg-emerald-50/50 rounded-[1.5rem] border border-emerald-100/50">
+                    <div className="flex items-center gap-3">
+                        <input
+                            type="checkbox"
+                            id="has_promotion"
+                            className="w-5 h-5 rounded-lg border-emerald-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer"
+                            checked={(currentTrip.promotion || 0) > 0}
+                            onChange={(e) => {
+                                if (!e.target.checked) {
+                                    setCurrentTrip({ ...currentTrip, promotion: 0 });
+                                } else {
+                                    setCurrentTrip({ ...currentTrip, promotion: 5 }); // Default to 5% if checked
+                                }
+                            }}
+                        />
+                        <Label htmlFor="has_promotion" className="uppercase text-xs font-black tracking-widest text-emerald-700 cursor-pointer">
+                            Activer une promotion
+                        </Label>
+                    </div>
+
+                    {(currentTrip.promotion || 0) > 0 && (
+                        <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
+                            <Label className="uppercase text-[10px] font-black tracking-widest text-emerald-600 ml-1">Pourcentage de remise (%)</Label>
+                            <Input
+                                type="number"
+                                className="h-14 rounded-2xl border-emerald-200 bg-white text-lg font-bold text-emerald-600 focus:border-emerald-500 focus:ring-emerald-500/20"
+                                placeholder="0"
+                                value={currentTrip.promotion || ''}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    setCurrentTrip({ ...currentTrip, promotion: val === '' ? 0 : Math.min(100, Math.max(0, parseInt(val))) });
+                                }}
+                                max={100}
+                                min={0}
+                            />
+                        </div>
+                    )}
+                </div>
+
                 <div className="col-span-1 md:col-span-2 space-y-2">
                     <Label className="uppercase text-xs font-black tracking-widest text-slate-500 ml-1">Liste d'équipements</Label>
                     <Input

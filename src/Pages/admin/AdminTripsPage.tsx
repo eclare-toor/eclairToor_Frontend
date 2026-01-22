@@ -56,6 +56,9 @@ const AdminTripsPage = () => {
       formData.append('start_date', currentTrip.start_date || '');
       formData.append('end_date', currentTrip.end_date || '');
       formData.append('base_price', String(currentTrip.base_price || 0));
+      if (currentTrip.promotion !== undefined) {
+        formData.append('promotion', String(currentTrip.promotion));
+      }
 
       const type = currentTrip.type?.toLowerCase() || 'national';
       formData.append('type', type);

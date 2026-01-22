@@ -7,6 +7,7 @@ import { Button } from '../../components/ui/button';
 import { toast } from 'react-toastify';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import BackgroundAura from '../../components/Shared/BackgroundAura';
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
@@ -50,7 +51,8 @@ const Notifications = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 pt-48 pb-20 px-4 md:px-8">
+    <div className="min-h-screen bg-transparent pt-52 md:pt-60 pb-20 px-4 md:px-8 relative">
+      <BackgroundAura />
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
           <div>

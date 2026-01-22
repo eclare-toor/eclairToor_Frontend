@@ -17,6 +17,8 @@
         "trips": "Trips",
         "hotels": "Hotels",
         "flights": "Flights",
+        "transport": "Transport",
+        "promotions": "Promotions",
         "contact": "Contact",
         "dashboard": "Dashboard",
         "profile": "Profile",
@@ -35,7 +37,14 @@
         "pride_algerian": "Algerian Pride",
         "notif_deleted": "Notification deleted",
         "error_deleting": "Error while deleting",
-        "promotions": "Promotions"
+        "language": "Language"
+    },
+    "promotions": {
+        "title": "Exceptional Offers",
+        "subtitle": "Enjoy our best discounts for your next trips",
+        "no_promotions": "No promotions are available at the moment.",
+        "badge": "PROMO",
+        "discount": "-{{percent}}%"
     },
     "footer": {
         "desc": "Your trusted partner for unforgettable trips. Discover the world with comfort and serenity.",
@@ -371,7 +380,8 @@
                 "voyage": "Trip Request",
                 "omra": "Omra Request",
                 "hotel": "Hotel Request",
-                "vol": "Flight Request"
+                "vol": "Flight Request",
+                "transport": "Transport Request"
             },
             "status_processing": "Processing...",
             "status_ready": "Offer Ready",
@@ -399,7 +409,11 @@
                 "ville_depart": "Departure City",
                 "ville_arrivee": "Arrival City",
                 "nbre_etoile": "Stars (Number)",
-                "options": "Options"
+                "options": "Options",
+                "aeroport": "Airport",
+                "hotel": "Hotel",
+                "date": "Transfer Date",
+                "bagages": "Luggage"
             },
             "modal": {
                 "title": "ECLAIR TRAVEL OFFER",
@@ -513,16 +527,62 @@
                 "travelers": "Travelers",
                 "trajet": "Journey",
                 "calendar": "Calendar",
-                "precisions": "Details"
+                "precisions": "Details",
+                "transport": "Transport",
+                "airport": "Airport",
+                "passengers": "Passengers",
+                "luggage": "Luggage"
             }
         }
     },
-    "promotions": {
-        "title": "Promotions",
-        "subtitle": "Take advantage of our discounted offers",
-        "badge": "Limited Offers",
-        "no_promotions": "No promotions available",
-        "check_back": "Check back soon to discover our new offers!",
-        "available_offers": "available offers"
+    "transport": {
+        "title": "YOUR TRANSFER",
+        "subtitle": "Airport ⟷ Hotel in complete serenity",
+        "form_title": "Transport Request",
+        "date_depart": "Transfer Date",
+        "aeroport": "Airport",
+        "hotel": "Destination / departure hotel",
+        "nbre_person": "Number of passengers",
+        "bagages": "Bulky luggage",
+        "bagages_yes": "Yes, I have luggage",
+        "bagages_no": "No, no special luggage",
+        "remarques": "Additional information (Flight No., special needs...)",
+        "submit": "Book the transfer",
+        "success": "Your transport request has been sent!"
+    },
+    "hotels_page": {
+        "title": "YOUR IDEAL HOTEL",
+        "subtitle": "Exceptional stays selected for you",
+        "form_title": "Hotel Reservation",
+        "wilaya": "Wilaya / City",
+        "lieu": "Location / District (Optional)",
+        "arrival": "Arrival Date",
+        "departure": "Departure Date",
+        "standing": "Standing (Stars)",
+        "duration": "Stay duration: {{count}} nights",
+        "select_dates": "Select your dates",
+        "passengers": "Passengers",
+        "adults": "Adults (+12 yrs)",
+        "children": "Children (2-11 yrs)",
+        "babies": "Babies (-2 yrs)",
+        "submit": "Send my request",
+        "success": "Your hotel reservation request has been successfully sent!"
+    },
+    "flights_page": {
+        "title": "YOUR NEXT FLIGHT",
+        "subtitle": "Tickets at the best guaranteed rate",
+        "form_title": "Flight Search",
+        "round_trip": "Round Trip",
+        "one_way": "One Way",
+        "from": "Departure City",
+        "to": "Arrival City",
+        "date_depart": "Departure Date",
+        "date_return": "Return Date",
+        "class": "Class",
+        "eco": "Economy",
+        "business": "Business",
+        "first": "First",
+        "submit": "Search for flights",
+        "success": "Your flight request has been successfully sent!"
     }
 }

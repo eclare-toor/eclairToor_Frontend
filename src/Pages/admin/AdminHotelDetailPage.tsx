@@ -21,6 +21,29 @@ const AdminHotelDetailPage = () => {
     const [imageFiles, setImageFiles] = useState<File[]>([]);
     const [deletedImages, setDeletedImages] = useState<string[]>([]);
 
+    // Check if there are unsaved changes
+    const isDirty = (() => {
+        if (!hotel) return false;
+
+        // Compare form data with original hotel data
+        const fields: (keyof Hotel)[] = ['name', 'city', 'type', 'stars', 'address', 'maps_url'];
+        const hasFieldChanges = fields.some(f => formData[f] !== hotel[f]);
+
+        return hasFieldChanges || imageFiles.length > 0 || deletedImages.length > 0;
+    })();
+
+    // Handle browser refresh/close
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (isDirty) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        };
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [isDirty]);
+
     useEffect(() => {
         const fetchHotel = async () => {
             if (!id) return;
@@ -165,7 +188,7 @@ const AdminHotelDetailPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* Left Column: Info Card */}
                 <div className="md:col-span-2 space-y-6">
-                    <form onSubmit={handleSave} className="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-sm space-y-6">
+                    <div className="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-sm space-y-6">
                         <div className="space-y-4">
                             <div className="flex items-center gap-4 mb-6">
                                 <div className="p-4 bg-primary/5 rounded-2xl text-primary">
@@ -207,7 +230,7 @@ const AdminHotelDetailPage = () => {
                                     {isEditing ? (
                                         <Select
                                             value={formData.type}
-                                            onValueChange={(val) => setFormData({ ...formData, type: val })}
+                                            onValueChange={(val) => setFormData({ ...formData, type: val as any })}
                                         >
                                             <SelectTrigger className="bg-slate-50 border-none rounded-xl">
                                                 <SelectValue />
@@ -237,7 +260,7 @@ const AdminHotelDetailPage = () => {
                                     ) : (
                                         <div className="flex gap-1">
                                             {[...Array(5)].map((_, i) => (
-                                                <Star key={i} className={`w-4 h-4 ${i < hotel.stars ? 'text-yellow-400 fill-yellow-400' : 'text-slate-200'}`} />
+                                                <Star key={i} className={`w-4 h-4 ${i < (hotel.stars || 0) ? 'text-yellow-400 fill-yellow-400' : 'text-slate-200'}`} />
                                             ))}
                                         </div>
                                     )}
@@ -278,7 +301,7 @@ const AdminHotelDetailPage = () => {
                                 </div>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
 
                 {/* Right Column: Images */}
@@ -349,7 +372,7 @@ const AdminHotelDetailPage = () => {
                         <div className="space-y-4">
                             <div>
                                 <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-1">Créé le</p>
-                                <p className="text-sm font-bold">{new Date(hotel.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+                                <p className="text-sm font-bold">{hotel.created_at ? new Date(hotel.created_at).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }) : 'N/A'}</p>
                             </div>
                             {hotel.updated_at && (
                                 <div>

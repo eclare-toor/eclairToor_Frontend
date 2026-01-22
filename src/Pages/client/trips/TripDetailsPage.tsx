@@ -438,13 +438,32 @@ const TripDetailsPage = () => {
 
               <div className="space-y-2">
                 <p className="text-sm text-slate-500 font-semibold uppercase tracking-wider">{t('trip_details.sidebar.price_label')}</p>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-bold text-slate-900">
-                    {Number(trip.base_price || 0).toLocaleString('fr-DZ')}
-                  </span>
-                  <span className="text-lg font-semibold text-slate-500">DZD</span>
+                <div className="flex flex-col">
+                  {trip.promotion && trip.promotion > 0 ? (
+                    <>
+                      <span className="text-sm font-bold text-slate-400 line-through decoration-red-400/50 mb-1">
+                        {Number(trip.base_price || 0).toLocaleString('fr-DZ')} DZD
+                      </span>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-4xl font-bold text-emerald-600">
+                          {Number(trip.base_price * (1 - trip.promotion / 100)).toLocaleString('fr-DZ')}
+                        </span>
+                        <span className="text-lg font-semibold text-emerald-600/80">DZD</span>
+                        <span className="ml-2 bg-emerald-500 text-white px-2 py-0.5 rounded-lg text-xs font-black">
+                          -{trip.promotion}%
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-4xl font-bold text-slate-900">
+                        {Number(trip.base_price || 0).toLocaleString('fr-DZ')}
+                      </span>
+                      <span className="text-lg font-semibold text-slate-500">DZD</span>
+                    </div>
+                  )}
                 </div>
-                <div className="inline-flex items-center gap-1 text-green-600 text-sm font-medium bg-green-50 px-2 py-1 rounded-md">
+                <div className="inline-flex items-center gap-1 text-green-600 text-sm font-medium bg-green-50 px-2 py-1 rounded-md mt-2">
                   <ShieldCheck className="w-4 h-4" />
                   {t('trip_details.sidebar.best_price')}
                 </div>

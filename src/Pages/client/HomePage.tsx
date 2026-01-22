@@ -39,7 +39,7 @@ const StatItem = ({ label, value, delay, icon: Icon }: { label: string, value: s
                     }
                 }, 16);
             }}
-            transition={{ duration: 0.5, delay }}
+            transition={{ duration: 0.3, delay }}
             className="flex flex-col items-center group"
         >
             <div className="w-14 h-14 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center text-primary mb-6 shadow-xl group-hover:bg-primary group-hover:text-white transition-all duration-500">
@@ -92,25 +92,39 @@ const HomePage = () => {
                     <div
                         className="max-w-6xl mx-auto"
                     >
-                        <h1
+                        <motion.h1
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
                             className="text-6xl md:text-[8rem] font-black leading-[0.85] tracking-tighter mb-10 drop-shadow-2xl"
                         >
-                            {t('home.hero.explore')} <br />
-                            <div className="h-[1.2em] overflow-hidden flex justify-center">
+                            <motion.span
+                                initial={{ y: 100, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                                className="block"
+                            >
+                                {t('home.hero.explore')}
+                            </motion.span>
+                            <div className="h-[1.2em] overflow-hidden flex justify-center mt-4">
                                 <AnimatePresence mode="wait">
                                     <motion.span
                                         key={typewriterIndex}
-                                        initial={{ y: 30, opacity: 0 }}
-                                        animate={{ y: 0, opacity: 1 }}
-                                        exit={{ y: -30, opacity: 0 }}
-                                        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                                        className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary-300 to-primary italic block uppercase"
+                                        initial={{ y: 50, opacity: 0, scale: 0.9, rotateX: 45 }}
+                                        animate={{ y: 0, opacity: 1, scale: 1, rotateX: 0 }}
+                                        exit={{ y: -50, opacity: 0, scale: 0.9, rotateX: -45 }}
+                                        transition={{
+                                            duration: 0.3,
+                                            ease: [0.16, 1, 0.3, 1],
+                                            opacity: { duration: 0.3 }
+                                        }}
+                                        className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-400 to-white italic block uppercase drop-shadow-lg"
+                                        style={{ perspective: "1000px" }}
                                     >
                                         {phrases[typewriterIndex]}
                                     </motion.span>
                                 </AnimatePresence>
                             </div>
-                        </h1>
+                        </motion.h1>
 
                         <p
                             className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-16 leading-relaxed font-medium drop-shadow-lg"

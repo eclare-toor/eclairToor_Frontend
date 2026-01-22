@@ -37,6 +37,7 @@ export interface Trip {
   start_date: string;
   end_date: string;
   base_price: number;
+  promotion?: number;
   images: string[];
   equipment_list?: string[] | string;
   destination_wilaya?: string;
@@ -122,7 +123,7 @@ export type CustomRequestType = "NATIONAL" | "INTERNATIONAL" | "OMRA";
 
 export type CustomRequestStatus = "PENDING" | "PROCESSED" | "REJECTED" | "CANCELLED";
 
-export type RequestCategory = 'voyage' | 'omra' | 'hotel' | 'vol';
+export type RequestCategory = 'voyage' | 'omra' | 'hotel' | 'vol' | 'transport';
 
 export interface UnifiedRequest {
   id: string;

@@ -11,6 +11,7 @@ import { Label } from '../../components/ui/label';
 import { toast } from 'react-toastify';
 
 import { useTranslation } from 'react-i18next';
+import BackgroundAura from '../../components/Shared/BackgroundAura';
 
 const Profile = () => {
     const { t, i18n } = useTranslation();
@@ -111,7 +112,8 @@ const Profile = () => {
         : 'bg-green-100 text-green-700 border-green-200';
 
     return (
-        <div className="min-h-screen bg-transparent pt-32 pb-24 px-4">
+        <div className="min-h-screen bg-transparent pt-48 md:pt-56 pb-24 px-4 relative">
+            <BackgroundAura />
             <div className="container mx-auto max-w-5xl">
 
                 {/* Header Section */}
