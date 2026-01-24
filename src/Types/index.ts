@@ -257,16 +257,19 @@ export interface DashboardKPIs {
 export interface MonthlyData {
   month: string;
   total: string | number;
+  [key: string]: any;
 }
 
 export interface TypeData {
   type: string;
   total: string | number;
+  [key: string]: any;
 }
 
 export interface StatusData {
   status: string;
   total: string | number;
+  [key: string]: any;
 }
 
 export interface DestinationData {

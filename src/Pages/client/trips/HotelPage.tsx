@@ -80,18 +80,17 @@ const HotelPage = () => {
                 <motion.div
                     initial={{ scale: 1.05, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.2 }}
                     className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=2070&auto=format&fit=crop")' }}
+                    style={{ backgroundImage: 'url("src/assets/hotel.jpg")' }}
                 />
-                <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px]" />
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#f8fafc]" />
+
 
                 <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
                     <motion.div
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.1, duration: 0.3 }}
+                        transition={{ delay: 0.1, duration: 0.2 }}
                     >
                         <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-500/20 backdrop-blur-md border border-emerald-500/30 text-white text-[10px] font-black uppercase tracking-[0.3em] mb-6">
                             {t('hotels_page.subtitle')}
@@ -107,7 +106,7 @@ const HotelPage = () => {
                 <motion.div
                     initial={{ y: 40, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.2, duration: 0.3 }}
+                    transition={{ delay: 0.1, duration: 0.2 }}
                     className="bg-white/80 backdrop-blur-3xl rounded-[3rem] shadow-2xl shadow-emerald-900/10 border border-white/50 overflow-hidden"
                 >
                     <div className="h-2 bg-gradient-to-r from-emerald-500 to-teal-700"></div>
