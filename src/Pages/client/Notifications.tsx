@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Bell, Trash2, Check, ShieldCheck, Calendar, Zap, ArrowLeft, RefreshCw } from 'lucide-react';
+import { Bell, Trash2, Check, ShieldCheck, Calendar, Zap, ArrowLeft, RefreshCw } from '../../components/icons';
 import { getNotifications, markNotificationAsRead, deleteNotification } from '../../api';
 import type { AppNotification } from '../../Types';
 import { cn } from '../../lib/utils';

@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import type { Trip } from '../../Types';
 import { getTrips, createTrip, deleteTrip, createTripItineraries, linkTripHotels, type CreateItineraryPayload } from '../../api';
 import { Button } from '../../components/ui/button';
-import { Plus, Trash2, MapPin, Calendar, Eye } from 'lucide-react';
+import { Plus, Trash2, MapPin, Calendar, Eye } from '../../components/icons';
 import LoadingSpinner from '../../components/Shared/LoadingSpinner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/ui/dialog';
 import TripForm from './components/TripForm';
@@ -65,11 +65,13 @@ const AdminTripsPage = () => {
 
       if (type === 'national') {
         formData.append('destination_wilaya', currentTrip.destination_wilaya || '');
+        formData.append('destination_country', 'Algérie');
       } else if (type === 'international') {
         formData.append('destination_country', currentTrip.destination_country || '');
       } else if (['religieuse', 'omra', 'tourisme religieux'].includes(type)) {
-        formData.append('omra_category', currentTrip.omra_category || '');
+        formData.append('omra_category', currentTrip.omra_category || 'classic');
         formData.append('omra_type', currentTrip.omra_type || 'classic');
+        formData.append('destination_country', 'Arabie Saoudite');
       }
 
       if (currentTrip.equipment_list) {

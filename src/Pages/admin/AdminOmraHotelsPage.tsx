@@ -4,13 +4,13 @@ import { getHotels, createHotel, deleteHotel, updateHotel } from '../../api';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
-import { Plus, Trash2, MapPin, Star, Building } from 'lucide-react';
+import { Plus, Trash2, MapPin, Star, Building } from '../../components/icons';
 import LoadingSpinner from '../../components/Shared/LoadingSpinner';
 import { toast } from 'react-toastify';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { addHotelImages, deleteHotelImages } from '../../api';
-import { X, Image as ImageIcon, Upload } from 'lucide-react';
+import { X, ImageIcon, Upload } from '../../components/icons';
 
 import { useNavigate } from 'react-router-dom';
 

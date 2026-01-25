@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getContactMessages } from '../../api';
 import type { ContactMessage } from '../../Types';
 import LoadingSpinner from '../../components/Shared/LoadingSpinner';
-import { Mail, Phone, Calendar, User, MessageSquare } from 'lucide-react';
+import { Mail, Phone, Calendar, User, MessageSquare } from '../../components/icons';
 
 const AdminRequestContact = () => {
   const [messages, setMessages] = useState<ContactMessage[]>([]);

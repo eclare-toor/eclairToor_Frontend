@@ -1,8 +1,7 @@
 import React from 'react';
 import type { Trip } from '../../Types';
-import { Calendar, MapPin, ArrowRight, Clock, Star } from 'lucide-react';
+import { Calendar, MapPin, ArrowRight, Clock, Star } from '../icons';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../../lib/utils';
 
@@ -26,7 +25,7 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
 
 
     return (
-        <motion.div
+        <div
             className="group relative flex h-full flex-col overflow-hidden rounded-[2rem] bg-white border border-slate-100 shadow-xl shadow-slate-200/40 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10"
             dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}
         >
@@ -74,14 +73,12 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
                     {/* Badges */}
                     <div className={cn("absolute top-6 flex flex-col gap-2 z-20", i18n.language === 'ar' ? "right-6" : "left-6")}>
                         {trip.promotion && trip.promotion > 0 && (
-                            <motion.div
-                                initial={{ scale: 0.8, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                className="bg-emerald-500 text-white px-4 py-2 rounded-2xl text-sm font-black shadow-xl border border-emerald-400 flex flex-col items-center justify-center min-w-[60px]"
+                            <div
+                                className="bg-emerald-500 text-white px-4 py-2 rounded-2xl text-sm font-black shadow-xl border border-emerald-400 flex flex-col items-center justify-center min-w-[60px] animate-in fade-in zoom-in-75 duration-300"
                             >
                                 <span className="text-[10px] uppercase tracking-tighter opacity-80 leading-none mb-1">PROMO</span>
                                 <span className="text-lg leading-none">-{trip.promotion}%</span>
-                            </motion.div>
+                            </div>
                         )}
                         {isNew && (
                             <span className="bg-white text-primary px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg flex items-center gap-2">
@@ -144,7 +141,7 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
                     </div>
                 </div>
             </Link>
-        </motion.div>
+        </div>
     );
 };
 

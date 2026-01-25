@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../../components/ui/button';
-import { ArrowRight, Star, Quote, Award, Globe, Users } from 'lucide-react';
+import { ArrowRight, Star, Quote, Award, Globe, Users } from '../../components/icons';
 import heroBg from '../../assets/hero-bg.avif';
 import { Link } from 'react-router-dom';
 import { MOCK_REVIEWS } from '../../mock_data';
@@ -285,6 +285,7 @@ const HomePage = () => {
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3197.0972517630626!2d3.0325490768887824!3d36.74423667226312!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x128fb20a8938e9fb%3A0x84abde430d7fc0bc!2sEclair%20Travel!5e0!3m2!1sen!2sdz!4v1767611800947!5m2!1sen!2sdz"
                             width="100%"
                             height="100%"
+                            title="Localisation Eclair Travel sur Google Maps"
                             style={{ border: 0 }}
                             allowFullScreen={true}
                             loading="lazy"

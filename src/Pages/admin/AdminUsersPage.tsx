@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import type { User } from '../../Types';
 import { getUsers, updateUserStatus, adminUpdateUser } from '../../api';
 import { Button } from '../../components/ui/button';
-import { Shield, User as UserIcon, Plus, Facebook, Phone, Globe, Mail, Lock, Copy, UserCheck, UserX, Edit2, Search } from 'lucide-react';
+import { Shield, User as UserIcon, Plus, Facebook, Phone, Globe, Mail, Lock, Copy, UserCheck, UserX, Edit2, Search } from '../../components/icons';
 import LoadingSpinner from '../../components/Shared/LoadingSpinner';
 import {
     Dialog,

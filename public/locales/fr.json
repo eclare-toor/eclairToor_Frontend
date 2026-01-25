@@ -376,7 +376,9 @@
             "quadruple_room": "Chambre Quadruple",
             "capacity_insufficient": "Capacité insuffisante : {{count}} places manquantes.",
             "selection_valid": "Sélection valide",
-            "capacity_warning": "Attention : Vous avez sélectionné plus de places que de passagers."
+            "capacity_warning": "Attention : Vous avez sélectionné plus de places que de passagers.",
+            "decrease_room": "Diminuer le nombre de chambres pour {{room}} personnes",
+            "increase_room": "Augmenter le nombre de chambres pour {{room}} personnes"
         }
     },
     "dashboard": {
@@ -447,9 +449,12 @@
             "view_offer": "Voir l'offre",
             "view_details": "Détails",
             "details": {
+                "route": "Trajet",
+                "destination": "Destination",
                 "duration": "Durée",
                 "start": "Début",
                 "accommodation": "Hébergement",
+                "hebergement": "Hébergement",
                 "type": "Type",
                 "hotels": "Hôtels",
                 "dates": "Dates",
@@ -457,6 +462,7 @@
                 "passengers": "Passagers",
                 "wilaya": "Wilaya",
                 "flight_type": "Type",
+                "type_vol": "Type de Vol",
                 "dep_ret": "Dép/Ret",
                 "class": "Classe",
                 "hebergement_makka": "Hôtel à La Mecque",
@@ -471,7 +477,11 @@
                 "aeroport": "Aéroport",
                 "hotel": "Hôtel",
                 "date": "Date du transfert",
-                "bagages": "Bagages"
+                "bagages": "Bagages",
+                "lieu": "Lieu",
+                "classe": "Classe",
+                "remarques": "Remarques",
+                "nbre_person": "Nombre de personnes"
             },
             "modal": {
                 "title": "OFFRE D'ECLAIR TRAVEL",

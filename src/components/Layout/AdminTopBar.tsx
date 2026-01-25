@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Bell, Check, CheckCheck, User, LogOut, ShieldCheck, Calendar, Zap, Trash2, ArrowRight } from 'lucide-react';
+import { Bell, Check, CheckCheck, User, LogOut, ShieldCheck, Calendar, Zap, Trash2, ArrowRight } from '../../components/icons';
 import { getNotifications, getUnreadNotificationsCount, markNotificationAsRead, markAllNotificationsAsRead, deleteNotification } from '../../api';
 import type { AppNotification } from '../../Types';
 import { useAuth } from '../../Context/AuthContext';

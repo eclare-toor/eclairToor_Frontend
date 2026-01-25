@@ -9,7 +9,7 @@ import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
-import { Calendar, Users, MapPin, Minus, Plus, ShieldCheck, Mail, Phone, User as UserIcon, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Calendar, Users, MapPin, Minus, Plus, ShieldCheck, Mail, Phone, User as UserIcon, ArrowLeft, ArrowRight } from '../../../components/icons';
 import BackgroundAura from '../../../components/Shared/BackgroundAura';
 
 const Reservation = () => {

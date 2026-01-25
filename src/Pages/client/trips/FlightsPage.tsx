@@ -7,7 +7,7 @@ import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
-import { Plane, Calendar, MapPin, Users, ArrowRight, PlaneTakeoff } from 'lucide-react';
+import { Plane, Calendar, MapPin, Users, ArrowRight, PlaneTakeoff } from '../../../components/icons';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 import BackgroundAura from '../../../components/Shared/BackgroundAura';
 import { motion } from 'framer-motion';
@@ -74,7 +74,7 @@ const FlightsPage = () => {
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.2 }}
                     className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: 'url("src/assets/flight.jpg")' }}
+                    style={{ backgroundImage: 'url("src/assets/flight.webp")' }}
                 />
 
                 <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">

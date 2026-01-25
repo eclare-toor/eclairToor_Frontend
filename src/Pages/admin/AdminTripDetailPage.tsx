@@ -9,7 +9,7 @@ import {
 } from '../../api';
 import type { Trip } from '../../Types';
 import { Button } from '../../components/ui/button';
-import { ChevronLeft, Info, ListChecks, Hotel as HotelIcon, MapPin } from 'lucide-react';
+import { ChevronLeft, Info, ListChecks, Hotel as HotelIcon, MapPin } from '../../components/icons';
 import LoadingSpinner from '../../components/Shared/LoadingSpinner';
 import TripForm from './components/TripForm';
 import ItineraryForm from './components/ItineraryForm';

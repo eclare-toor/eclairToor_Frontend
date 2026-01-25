@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, User, Bell, LogIn, Plane, Hotel, Map, Phone, LogOut, LayoutDashboard, Car } from 'lucide-react';
+import { Menu, User, Bell, LogIn, Plane, Hotel, Map, Phone, LogOut, LayoutDashboard, Car, Check, CheckCheck, ShieldCheck, Calendar, Zap, ArrowRight, Globe } from '../../components/icons';
 import { Button } from '../ui/button';
 import {
     Sheet,
@@ -19,13 +19,13 @@ import {
     DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { cn } from '../../lib/utils';
-import logo from '../../assets/logo.png';
+import logo from '../../assets/logo.webp';
 import { useAuth } from '../../Context/AuthContext';
 import { getNotifications, getUnreadNotificationsCount, markNotificationAsRead, markAllNotificationsAsRead } from '../../api';
 import type { AppNotification } from '../../Types';
-import { Check, CheckCheck, ShieldCheck, Calendar, Zap, ArrowRight, Globe } from 'lucide-react';
+
 import algeriaFlag from '../../assets/algeria.webp';
-import iataLogo from '../../assets/IATA.png';
+import iataLogo from '../../assets/IATA.webp';
 import { useTranslation } from 'react-i18next';
 
 const Navbar = () => {
@@ -128,6 +128,11 @@ const Navbar = () => {
                                 <img
                                     src={logo}
                                     alt="Eclair Travel Logo"
+                                    width={112}
+                                    height={112}
+                                    fetchPriority="high"
+                                    loading="eager"
+                                    decoding="async"
                                     className={cn(
                                         "object-contain transition-all duration-500",
                                         isScrolled
@@ -141,7 +146,15 @@ const Navbar = () => {
                                 "absolute -right-1 -bottom-1 md:-right-2 md:-bottom-1 rounded-full border-2 border-white shadow-lg overflow-hidden z-20 transition-all duration-500",
                                 isScrolled ? "w-6 h-6 md:w-7 md:h-7" : "w-8 h-8 md:w-9 md:h-9 lg:w-10 lg:h-10"
                             )}>
-                                <img src={algeriaFlag} alt="Algérie" className="w-full h-full object-cover" />
+                                <img
+                                    src={algeriaFlag}
+                                    alt="Algérie"
+                                    width={40}
+                                    height={40}
+                                    loading="lazy"
+                                    decoding="async"
+                                    className="w-full h-full object-cover"
+                                />
                             </div>
                             <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 -z-0"></div>
                         </div>
@@ -170,6 +183,10 @@ const Navbar = () => {
                                 <img
                                     src={iataLogo}
                                     alt="IATA Certified"
+                                    width={100}
+                                    height={50}
+                                    loading="lazy"
+                                    decoding="async"
                                     className={cn(
                                         "object-contain transition-all duration-500",
                                         isScrolled ? "h-8 md:h-10" : "h-10 md:h-12 lg:h-14"
@@ -224,7 +241,7 @@ const Navbar = () => {
 
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="rounded-full hover:bg-white/20 h-9 w-9 lg:h-10 lg:w-10 text-slate-900">
+                                <Button variant="ghost" size="icon" aria-label={t('nav.change_language')} className="rounded-full hover:bg-white/20 h-9 w-9 lg:h-10 lg:w-10 text-slate-900">
                                     <Globe className="w-5 h-5 lg:w-6 lg:h-6" />
                                 </Button>
                             </DropdownMenuTrigger>
@@ -245,7 +262,7 @@ const Navbar = () => {
                             <>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="relative overflow-visible h-9 w-9 lg:h-10 lg:w-10 rounded-full text-slate-900 hover:bg-white/20">
+                                        <Button variant="ghost" size="icon" aria-label={t('nav.notifications')} className="relative overflow-visible h-9 w-9 lg:h-10 lg:w-10 rounded-full text-slate-900 hover:bg-white/20">
                                             <Bell className="w-5 h-5 lg:w-6 lg:h-6" />
                                             {unreadCount > 0 && (
                                                 <span className="absolute -top-1 -right-1 min-w-[20px] h-[20px] px-1 bg-red-600 rounded-full border-2 border-white flex items-center justify-center text-[10px] text-white font-black z-[60] shadow-sm">
@@ -342,7 +359,7 @@ const Navbar = () => {
 
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="rounded-full border-2 border-transparent hover:border-primary transition-all h-9 w-9 lg:h-10 lg:w-10 text-slate-900 hover:bg-white/20">
+                                        <Button variant="ghost" size="icon" aria-label={t('nav.user_menu')} className="rounded-full border-2 border-transparent hover:border-primary transition-all h-9 w-9 lg:h-10 lg:w-10 text-slate-900 hover:bg-white/20">
                                             <User className="w-5 h-5 lg:w-6 lg:h-6" />
                                         </Button>
                                     </DropdownMenuTrigger>
@@ -382,7 +399,7 @@ const Navbar = () => {
                     <div className="md:hidden">
                         <Sheet>
                             <SheetTrigger asChild>
-                                <Button variant="ghost" size="icon" className={cn(
+                                <Button variant="ghost" size="icon" aria-label={t('nav.mobile_menu')} className={cn(
                                     "h-9 w-9",
                                     location.pathname === '/' && !isScrolled ? "text-white" : "text-foreground"
                                 )}>

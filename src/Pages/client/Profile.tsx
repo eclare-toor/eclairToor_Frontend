@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../../Context/AuthContext';
 import { getUserProfile, updateProfile } from '../../api';
 import type { User } from '../../Types';
-import { UserCircle, Mail, Phone, MapPin, Calendar, Shield, Facebook, Loader2, Edit3, Globe } from 'lucide-react';
+import { UserCircle, Mail, Phone, MapPin, Calendar, Shield, Facebook, Loader2, Edit3, Globe } from '../../components/icons';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../../components/ui/dialog';

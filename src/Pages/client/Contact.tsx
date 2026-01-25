@@ -3,7 +3,7 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Textarea } from '../../components/ui/textarea';
-import { Mail, Phone, MapPin, Send, CheckCircle, Clock, Sparkles } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle, Clock, Sparkles } from '../../components/icons';
 import { useTranslation } from 'react-i18next';
 import { sendContactMessage } from '../../api';
 import BackgroundAura from '../../components/Shared/BackgroundAura';
@@ -50,16 +50,7 @@ const Contact = () => {
       <BackgroundAura />
 
       {/* Hero Section */}
-      <div className="relative h-[60vh] min-h-[500px] w-full flex items-center justify-center overflow-hidden mb-[-100px] pt-48 md:pt-56">
-        <motion.div
-          initial={{ scale: 1.1, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.3 }}
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1423666639041-f56000c27a9a?q=80&w=2074&auto=format&fit=crop")' }}
-        />
-        <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-[1px]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white" />
+      <div className="relative h-[60vh] min-h-[500px] w-full flex items-center justify-center overflow-hidden mb-[-100px] ">
 
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
           <motion.div

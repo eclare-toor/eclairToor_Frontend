@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import logo from '../../assets/logo.png';
+import logo from '../../assets/logo.webp';
 
 const OnboardingLoader: React.FC = () => {
     const [isVisible, setIsVisible] = useState(true);
@@ -34,6 +34,11 @@ const OnboardingLoader: React.FC = () => {
                     <img
                         src={logo}
                         alt="Eclair Travel Logo"
+                        width={176}
+                        height={176}
+                        fetchPriority="high"
+                        loading="eager"
+                        decoding="async"
                         className="w-32 h-32 md:w-44 md:h-44 object-contain relative z-10 animate-float"
                     />
                 </div>

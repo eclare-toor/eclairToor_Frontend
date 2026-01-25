@@ -4,7 +4,7 @@ import { getTrip, getTripItinerary, getTripHotels } from '../../../api';
 import type { Trip, TripItinerary, TripHotel } from '../../../Types';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 import { Button } from '../../../components/ui/button';
-import { MapPin, Clock, CheckCircle2, Hotel as HotelIcon, ArrowLeft, Share2, Heart, ExternalLink, ShieldCheck, Zap, Star, X, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
+import { MapPin, Clock, CheckCircle2, Hotel as HotelIcon, ArrowLeft, Share2, Heart, ShieldCheck, Zap, Star, X, ChevronLeft, ChevronRight, Maximize2 } from '../../../components/icons';
 import { cn } from '../../../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -240,10 +240,10 @@ const TripDetailsPage = () => {
 
       <div className="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-12">
         {/* Main Content */}
-        <div className="lg:col-span-2 space-y-12">
+        <div className="lg:col-span-2 space-y-20">
 
           {/* Header Info */}
-          <div className="space-y-6">
+          <div className="space-y-8">
             <div className="flex flex-wrap items-center gap-4 text-primary font-medium">
               <span className="bg-primary/10 px-4 py-1.5 rounded-full text-sm font-semibold tracking-wide uppercase">
                 {trip.type === 'national' ? 'Tourisme National' : trip.type === 'international' ? 'Tourisme International' : 'Tourisme Religieux'}
@@ -258,48 +258,50 @@ const TripDetailsPage = () => {
               </span>
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-heading font-bold text-slate-900 leading-tight">
+            <h1 className="text-4xl md:text-6xl font-heading font-black text-slate-900 leading-tight">
               {trip.title}
             </h1>
           </div>
 
           {/* Description */}
-          <div className="prose prose-lg max-w-none text-slate-600">
-            <h3 className="text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <div className="bg-slate-50/50 p-8 rounded-3xl border border-slate-100">
+            <h3 className="text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
               <Zap className="w-6 h-6 text-yellow-500 fill-yellow-500" />
               {t('trip_details.about_title')}
             </h3>
-            <p className="leading-relaxed">{trip.description}</p>
+            <div className="prose prose-lg max-w-none text-slate-600 leading-8 text-justify">
+              <p className="whitespace-pre-line">{trip.description}</p>
+            </div>
           </div>
 
           {/* Itinerary */}
           {itinerary && itinerary.length > 0 && (
             <div>
-              <h3 className="text-2xl font-bold text-slate-900 mb-8 flex items-center gap-2">
-                <MapPin className="w-6 h-6 text-primary" />
+              <h3 className="text-3xl font-black text-slate-900 mb-10 flex items-center gap-3">
+                <MapPin className="w-8 h-8 text-primary" />
                 {t('trip_details.itinerary_title')}
               </h3>
-              <div className="space-y-8 border-l-2 border-primary/20 ml-3 pl-8 relative">
+              <div className="space-y-10 border-l-2 border-primary/20 ml-3 pl-10 relative">
                 {Array.isArray(itinerary) && itinerary.map((item, index) => (
                   <div key={item.id || index} className="relative group">
-                    <span className="absolute -left-[43px] top-0 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-bold ring-4 ring-background transition-transform group-hover:scale-110">
+                    <span className="absolute -left-[51px] top-0 flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground text-sm font-bold ring-4 ring-background transition-transform group-hover:scale-110 shadow-lg shadow-primary/30">
                       {index + 1}
                     </span>
-                    <h4 className="text-xl font-bold text-slate-800 mb-3">{t('trip_details.day', { day: item.day_date ? (item.day_date.includes('T') ? item.day_date.split('T')[0] : item.day_date) : index + 1 })}</h4>
-                    <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100 hover:shadow-md transition-shadow">
-                      <ul className="space-y-3">
+                    <h4 className="text-2xl font-bold text-slate-800 mb-4">{t('trip_details.day', { day: item.day_date ? (item.day_date.includes('T') ? item.day_date.split('T')[0] : item.day_date) : index + 1 })}</h4>
+                    <div className="bg-white p-8 rounded-3xl border border-slate-100 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300">
+                      <ul className="space-y-4">
                         {Array.isArray(item.activities) ? (
                           item.activities.map((activity, idx) => (
-                            <li key={idx} className="flex items-start gap-3 text-slate-600">
-                              <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                              <span className="font-medium">{activity}</span>
+                            <li key={idx} className="flex items-start gap-4 text-slate-600 text-lg">
+                              <CheckCircle2 className="w-6 h-6 text-primary shrink-0 mt-0.5" />
+                              <span className="font-medium leading-relaxed">{activity}</span>
                             </li>
                           ))
                         ) : (
                           item.activities && (
-                            <li className="flex items-start gap-3 text-slate-600">
-                              <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                              <span className="font-medium">{item.activities}</span>
+                            <li className="flex items-start gap-4 text-slate-600 text-lg">
+                              <CheckCircle2 className="w-6 h-6 text-primary shrink-0 mt-0.5" />
+                              <span className="font-medium leading-relaxed">{item.activities}</span>
                             </li>
                           )
                         )}
@@ -313,8 +315,8 @@ const TripDetailsPage = () => {
 
           {/* Hotels */}
           {hotels && hotels.length > 0 && (
-            <div className="space-y-10">
-              <h3 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+            <div className="space-y-12">
+              <h3 className="text-3xl font-black text-slate-900 flex items-center gap-3">
                 <HotelIcon className="w-8 h-8 text-primary" />
                 {t('trip_details.accommodation_title')}
               </h3>
@@ -330,7 +332,7 @@ const TripDetailsPage = () => {
                   >
                     <div className="flex flex-col lg:flex-row">
                       {/* Image Section */}
-                      <div className="lg:w-2/5 relative h-72 lg:h-auto overflow-hidden">
+                      <div className="lg:w-2/5 relative h-80 lg:h-auto overflow-hidden">
                         {hotel.images && hotel.images.length > 0 ? (
                           <div className="h-full flex overflow-x-auto snap-x snap-mandatory no-scrollbar cursor-grab active:cursor-grabbing">
                             {hotel.images.map((img, idx) => (
@@ -377,34 +379,33 @@ const TripDetailsPage = () => {
 
                       {/* Content Section */}
                       <div className="lg:w-3/5 p-8 lg:p-10 flex flex-col justify-between">
-                        <div className="space-y-6">
-                          <div className="space-y-2">
+                        <div className="space-y-8">
+                          <div className="space-y-3">
                             <h4 className="text-3xl font-bold text-slate-900 group-hover:text-primary transition-colors leading-tight">
                               {hotel.name}
                             </h4>
-                            <p className="text-slate-500 flex items-center gap-2 font-medium">
-                              <MapPin className="w-4 h-4 text-primary" />
+                            <p className="text-slate-500 font-medium text-lg">
                               {hotel.city} {hotel.address && `• ${hotel.address}`}
                             </p>
                           </div>
 
                           <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                            <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
                               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('trip_details.location')}</p>
-                              <p className="text-sm font-bold text-slate-700">{hotel.city || t('trip_details.unspecified')}</p>
+                              <p className="text-base font-bold text-slate-700">{hotel.city || t('trip_details.unspecified')}</p>
                             </div>
-                            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                            <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
                               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('trip_details.category')}</p>
-                              <div className="flex gap-0.5">
+                              <div className="flex gap-1">
                                 {Array.from({ length: 5 }).map((_, i) => (
-                                  <Star key={i} className={`w-3 h-3 ${i < (Number(hotel.stars) || 0) ? 'text-yellow-400 fill-yellow-400' : 'text-slate-200'}`} />
+                                  <Star key={i} className={`w-4 h-4 ${i < (Number(hotel.stars) || 0) ? 'text-yellow-400 fill-yellow-400' : 'text-slate-200'}`} />
                                 ))}
                               </div>
                             </div>
                           </div>
                         </div>
 
-                        <div className="pt-8 flex items-center gap-4">
+                        <div className="pt-10 flex items-center gap-4">
                           <a
                             href={hotel.maps_url}
                             target="_blank"
@@ -414,9 +415,6 @@ const TripDetailsPage = () => {
                             <MapPin className="w-5 h-5 group-hover/btn:animate-bounce" />
                             {t('trip_details.maps_btn')}
                           </a>
-                          <div className="hidden sm:flex w-14 h-14 items-center justify-center border-2 border-slate-100 rounded-2xl text-slate-400 hover:text-primary hover:border-primary transition-all cursor-help">
-                            <ExternalLink className="w-6 h-6" />
-                          </div>
                         </div>
                       </div>
                     </div>

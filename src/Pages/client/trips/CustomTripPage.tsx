@@ -7,7 +7,7 @@ import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
-import { Calendar, MapPin, Clock, Hotel, Plane, Coffee, ArrowRight } from 'lucide-react';
+import { Calendar, MapPin, Clock, Hotel, Plane, Coffee, ArrowRight } from '../../../components/icons';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 
 const CustomTripPage = () => {

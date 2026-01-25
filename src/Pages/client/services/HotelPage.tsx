@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
-import { Hotel, MapPin, Calendar, Star, Users, CheckCircle, Search, Building2 } from 'lucide-react';
-import { cn } from '../../../lib/utils';
+import { Hotel, MapPin, Calendar, Star, Users, CheckCircle, Search } from '../../../components/icons';
 import { Slider } from "../../../components/ui/slider";
 
 const HotelPage = () => {

@@ -326,7 +326,9 @@
             "quadruple_room": "غرفة رباعية",
             "capacity_insufficient": "سعة غير كافية: {{count}} أماكن مفقودة.",
             "selection_valid": "خيار صالح",
-            "capacity_warning": "تحذير: لقد حددت أماكن أكثر من عدد الركاب."
+            "capacity_warning": "تحذير: لقد حددت أماكن أكثر من عدد الركاب.",
+            "decrease_room": "إنقاص عدد الغرف لـ {{room}} أشخاص",
+            "increase_room": "زيادة عدد الغرف لـ {{room}} أشخاص"
         }
     },
     "dashboard": {
@@ -389,9 +391,12 @@
             "view_offer": "عرض العرض",
             "view_details": "التفاصيل",
             "details": {
+                "route": "المسار",
+                "destination": "الوجهة",
                 "duration": "المدة",
                 "start": "البداية",
                 "accommodation": "الإقامة",
+                "hebergement": "الإقامة",
                 "type": "النوع",
                 "hotels": "الفنادق",
                 "dates": "التواريخ",
@@ -399,12 +404,17 @@
                 "passengers": "الركاب",
                 "wilaya": "الولاية",
                 "flight_type": "النوع",
+                "type_vol": "نوع الرحلة",
                 "dep_ret": "ذهاب/إياب",
                 "class": "الدرجة",
                 "aeroport": "المطار",
                 "hotel": "الفندق",
                 "date": "تاريخ النقل",
-                "bagages": "الأمتعة"
+                "bagages": "الأمتعة",
+                "lieu": "الموقع",
+                "classe": "الدرجة",
+                "remarques": "ملاحظات",
+                "nbre_person": "عدد الأشخاص"
             },
             "modal": {
                 "title": "عرض إكلير ترافيل",

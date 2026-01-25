@@ -6,7 +6,7 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
-import { ChevronLeft, Star, MapPin, Building, Calendar, Edit, Loader2, Save, X, Trash2, ImageIcon, Upload } from 'lucide-react';
+import { ChevronLeft, Star, MapPin, Building, Calendar, Edit, Loader2, Save, X, Trash2, ImageIcon, Upload } from '../../components/icons';
 import LoadingSpinner from '../../components/Shared/LoadingSpinner';
 import { toast } from 'react-toastify';
 

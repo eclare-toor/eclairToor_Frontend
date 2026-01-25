@@ -6,10 +6,10 @@ import type { Trip } from '../../../Types';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 import BackgroundAura from '../../../components/Shared/BackgroundAura';
 
-import { Star } from 'lucide-react';
+import { Star } from '../../../components/icons';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
-import { Search, MapPin, Filter, Zap, Plane } from 'lucide-react';
+import { Search, MapPin, Filter, Zap, Plane } from '../../../components/icons';
 import { cn } from '../../../lib/utils';
 import { Slider } from "../../../components/ui/slider";
 import { useNavigate } from 'react-router-dom';

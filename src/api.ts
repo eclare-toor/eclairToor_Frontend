@@ -1,8 +1,4 @@
-import { MOCK_TRIPS, MOCK_USERS, MOCK_CUSTOM_REQUESTS, MOCK_HOTEL_REQUESTS, MOCK_FLIGHT_REQUESTS, MOCK_MESSAGES } from './mock_data';
-import type { Trip, TripItinerary, Hotel, TripHotel, User, Booking, BookingItem, CustomRequest, HotelRequest, FlightRequest, ContactMessage, ContactMessageStatus, BookingStatus, CustomRequestStatus, UnifiedRequest, AppNotification, DashboardData } from './Types/index';
-
-// Simulate API delay
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+import type { Trip, TripItinerary, Hotel, TripHotel, User, Booking, BookingItem, ContactMessage, BookingStatus, CustomRequestStatus, UnifiedRequest, AppNotification, DashboardData } from './Types/index';
 
 // --- DASHBOARD ---
 export const getDashboardStats = async (): Promise<DashboardData> => {
@@ -41,11 +37,7 @@ export const getTrips = async (): Promise<Trip[]> => {
         throw error;
     }
 };
-export const getTripsByType = async (type: string): Promise<Trip[]> => {
-    await delay(800);
-    if (type === 'ALL') return MOCK_TRIPS;
-    return MOCK_TRIPS.filter(t => t.type === type);
-};
+
 
 // Removed TripDetails since we are fetching separately now, or we can keep it but with optional fields if we aggregate later.
 // For now, let's keep it simple.
@@ -599,13 +591,7 @@ export const login = async (email: string, password: string): Promise<AuthRespon
     }
 };
 
-export const getUserById = async (id: string): Promise<User | null> => {
-    await delay(500);
-    // Endpoint doesn't exist yet, returning null or mock if needed.
-    // Since AuthContext uses localStorage now, this might not be called.
-    const user = MOCK_USERS.find(u => u.id === id);
-    return user || null;
-};
+
 
 export const getUsers = async (): Promise<User[]> => {
     const token = Cookies.get('token');
@@ -1026,10 +1012,7 @@ export const createCustomTripRequest = async (data: CustomRequestPayload): Promi
 
 
 // --- CUSTOM REQUESTS ---
-export const getCustomRequests = async (): Promise<CustomRequest[]> => {
-    await delay(800);
-    return MOCK_CUSTOM_REQUESTS;
-};
+
 
 export const updateRequest = async (id: string, data: any): Promise<any> => {
     const token = Cookies.get('token');
@@ -1190,13 +1173,7 @@ export const deleteResponse = async (requestId: string): Promise<any> => {
 };
 
 // --- SERVICE REQUESTS ---
-export const getServiceRequests = async (): Promise<{ hotels: HotelRequest[], flights: FlightRequest[] }> => {
-    await delay(800);
-    return {
-        hotels: MOCK_HOTEL_REQUESTS,
-        flights: MOCK_FLIGHT_REQUESTS
-    };
-};
+
 
 // --- CONTACTS ---
 export interface ContactPayload {
@@ -1350,8 +1327,4 @@ export const markAllNotificationsAsRead = async (): Promise<void> => {
     }
 };
 
-export const updateMessageStatus = async (id: string, status: ContactMessageStatus): Promise<void> => {
-    await delay(300);
-    const msg = MOCK_MESSAGES.find(m => m.id === id);
-    if (msg) msg.status = status;
-};
+

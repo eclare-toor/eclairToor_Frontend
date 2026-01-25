@@ -5,8 +5,8 @@ import { useAuth } from '../../Context/AuthContext';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
-import { Loader2, Mail, Lock, User, Facebook, AlertCircle, Phone, Globe } from 'lucide-react';
-import logo from '../../assets/logo.png';
+import { Loader2, Mail, Lock, User, Facebook, AlertCircle, Phone, Globe } from '../../components/icons';
+import logo from '../../assets/logo.webp';
 import { z } from 'zod';
 import { toast } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
@@ -112,7 +112,15 @@ const RegisterPage = () => {
       <div className="max-w-md w-full space-y-8 bg-card p-8 rounded-3xl border shadow-xl">
         <div className="text-center">
           <Link to="/" className="inline-block mb-4">
-            <img src={logo} alt="Eclair Travel" className="h-20 w-20 rounded-2xl object-cover mx-auto" />
+            <img
+              src={logo}
+              alt="Eclair Travel"
+              width={80}
+              height={80}
+              loading="eager"
+              decoding="async"
+              className="h-20 w-20 rounded-2xl object-cover mx-auto"
+            />
           </Link>
           <h2 className="mt-2 text-3xl font-heading font-bold text-foreground">
             {t('auth.register_title')}

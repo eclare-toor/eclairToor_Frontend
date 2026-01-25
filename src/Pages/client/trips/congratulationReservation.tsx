@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { CheckCircle2, MapPin, Calendar, Users, Download, ArrowRight, Home } from 'lucide-react';
+import { CheckCircle2, MapPin, Calendar, Users, Download, ArrowRight, Home } from '../../../components/icons';
 import { Button } from '../../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import logo from '../../../assets/logo.png';
+import logo from '../../../assets/logo.webp';
 
 const CongratulationReservation = () => {
   const { t, i18n } = useTranslation();

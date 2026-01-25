@@ -4,7 +4,7 @@ import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Textarea } from '../../../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
-import { Image as ImageIcon, X } from 'lucide-react';
+import { ImageIcon, X } from '../../../components/icons';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 import { toast } from 'react-toastify';
 import type { Trip, TripType } from '../../../Types';
@@ -50,7 +50,20 @@ const TripForm: React.FC<TripFormProps> = ({
                     <Label className="uppercase text-xs font-black tracking-widest text-slate-500 ml-1">Type de voyage</Label>
                     <Select
                         value={currentTrip.type?.toLowerCase() || 'national'}
-                        onValueChange={(val) => setCurrentTrip({ ...currentTrip, type: val as TripType })}
+                        onValueChange={(val) => {
+                            const newType = val as TripType;
+                            const updates: Partial<Trip> = { type: newType };
+
+                            if (['religieuse', 'omra', 'tourisme religieux'].includes(newType.toLowerCase())) {
+                                updates.omra_type = currentTrip.omra_type || 'classic';
+                                updates.omra_category = currentTrip.omra_category || 'classic';
+                                updates.destination_country = 'Arabie Saoudite';
+                            } else if (newType.toLowerCase() === 'national') {
+                                updates.destination_country = 'Algérie';
+                            }
+
+                            setCurrentTrip({ ...currentTrip, ...updates });
+                        }}
                     >
                         <SelectTrigger className="h-14 rounded-2xl border-slate-200 bg-slate-50/50 text-base font-medium">
                             <SelectValue placeholder="Type" />

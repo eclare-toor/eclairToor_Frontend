@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Users, Map, BedDouble, TrendingUp, Calendar, Bell, Clock, AlertCircle, Plus, User, Plane, ChevronRight, PieChart, BarChart, LineChart, Activity, DollarSign, Briefcase, ShieldCheck, Minus, Search } from 'lucide-react';
+import React, { useState, useEffect, Suspense } from 'react';
+import { Users, Map, TrendingUp, Calendar, Bell, Clock, AlertCircle, Plus, User, Plane, ChevronRight, PieChart, Activity, DollarSign, Briefcase, ShieldCheck, Minus } from '../../components/icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getNotifications, getTrips, adminCreateBooking, getDashboardStats } from '../../api';
 import type { AppNotification, Trip, DashboardData } from '../../Types';
@@ -13,21 +13,10 @@ import {
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
-import {
-  LineChart as RechartsLineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart as RechartsBarChart,
-  Bar,
-  PieChart as RechartsPieChart,
-  Pie,
-  Cell,
-  Legend
-} from 'recharts';
+const UsersBookingsChart = React.lazy(() => import('../../components/Charts/UsersBookingsChart'));
+const RevenueChart = React.lazy(() => import('../../components/Charts/RevenueChart'));
+const TripsTypeChart = React.lazy(() => import('../../components/Charts/TripsTypeChart'));
+const BookingsStatusChart = React.lazy(() => import('../../components/Charts/BookingsStatusChart'));
 
 const StatCard = ({ icon: Icon, title, value, subtext, color }: { icon: any, title: string, value: string, subtext: string, color: string }) => (
   <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-start justify-between hover:shadow-md transition-shadow">
@@ -42,7 +31,7 @@ const StatCard = ({ icon: Icon, title, value, subtext, color }: { icon: any, tit
   </div>
 );
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+
 
 function AdminDashboardPage() {
   const [activities, setActivities] = useState<AppNotification[]>([]);
@@ -483,23 +472,9 @@ function AdminDashboardPage() {
               <h3 className="font-bold text-slate-900 mb-6 flex items-center gap-2">
                 <Activity className="w-5 h-5 text-primary" /> Croissance Utilisateurs & Réservations
               </h3>
-              <div className="h-[300px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RechartsLineChart data={dashboardData.usersPerMonth}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                    <XAxis dataKey="month" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
-                    <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                      cursor={{ stroke: '#f1f5f9', strokeWidth: 2 }}
-                    />
-                    <Legend />
-                    <Line type="monotone" dataKey="total" name="Utilisateurs" stroke="#3b82f6" strokeWidth={3} dot={{ r: 4, fill: '#3b82f6', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} />
-                    {/* Ideally we would merge bookingsPerMonth here if dimensions align, or display separate lines. 
-                        Assuming similar month keys, we could pre-process. For now displaying Users. */}
-                  </RechartsLineChart>
-                </ResponsiveContainer>
-              </div>
+              <Suspense fallback={<div className="h-full w-full flex items-center justify-center"><LoadingSpinner /></div>}>
+                <UsersBookingsChart data={dashboardData.usersPerMonth} />
+              </Suspense>
             </div>
 
             {/* Chart: Revenue Per Month */}
@@ -507,20 +482,9 @@ function AdminDashboardPage() {
               <h3 className="font-bold text-slate-900 mb-6 flex items-center gap-2">
                 <DollarSign className="w-5 h-5 text-emerald-500" /> Revenus Mensuels
               </h3>
-              <div className="h-[300px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RechartsBarChart data={dashboardData.revenuePerMonth.length > 0 ? dashboardData.revenuePerMonth : [{ month: 'N/A', total: 0 }]}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                    <XAxis dataKey="month" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
-                    <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
-                    <Tooltip
-                      cursor={{ fill: '#f8fafc' }}
-                      contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                    />
-                    <Bar dataKey="total" name="Revenu" fill="#10b981" radius={[4, 4, 0, 0]} barSize={40} />
-                  </RechartsBarChart>
-                </ResponsiveContainer>
-              </div>
+              <Suspense fallback={<div className="h-full w-full flex items-center justify-center"><LoadingSpinner /></div>}>
+                <RevenueChart data={dashboardData.revenuePerMonth} />
+              </Suspense>
             </div>
 
             {/* Chart: Trips by Type */}
@@ -528,29 +492,9 @@ function AdminDashboardPage() {
               <h3 className="font-bold text-slate-900 mb-6 flex items-center gap-2">
                 <PieChart className="w-5 h-5 text-purple-500" /> Répartition des Voyages
               </h3>
-              <div className="h-[300px] w-full flex justify-center">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RechartsPieChart>
-                    <Pie
-                      data={dashboardData.tripsByType}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      paddingAngle={5}
-                      dataKey="total"
-                      nameKey="type"
-                    >
-                      {dashboardData.tripsByType.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                    <Legend verticalAlign="bottom" height={36} />
-                  </RechartsPieChart>
-                </ResponsiveContainer>
-              </div>
+              <Suspense fallback={<div className="h-full w-full flex items-center justify-center"><LoadingSpinner /></div>}>
+                <TripsTypeChart data={dashboardData.tripsByType} />
+              </Suspense>
             </div>
 
             {/* Chart: Bookings by Status */}
@@ -558,20 +502,9 @@ function AdminDashboardPage() {
               <h3 className="font-bold text-slate-900 mb-6 flex items-center gap-2">
                 <Briefcase className="w-5 h-5 text-blue-500" /> Statut des Réservations
               </h3>
-              <div className="h-[300px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RechartsBarChart layout="vertical" data={dashboardData.bookingsByStatus}>
-                    <CartesianGrid strokeDasharray="3 3" horizontal={true} stroke="#f1f5f9" />
-                    <XAxis type="number" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
-                    <YAxis dataKey="status" type="category" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} width={100} />
-                    <Tooltip
-                      cursor={{ fill: '#f8fafc' }}
-                      contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                    />
-                    <Bar dataKey="total" name="Réservations" fill="#3b82f6" radius={[0, 4, 4, 0]} barSize={20} />
-                  </RechartsBarChart>
-                </ResponsiveContainer>
-              </div>
+              <Suspense fallback={<div className="h-full w-full flex items-center justify-center"><LoadingSpinner /></div>}>
+                <BookingsStatusChart data={dashboardData.bookingsByStatus} />
+              </Suspense>
             </div>
 
           </div>

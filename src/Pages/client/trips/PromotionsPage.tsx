@@ -6,7 +6,7 @@ import TripCard from '../../../components/Shared/TripCard';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 import BackgroundAura from '../../../components/Shared/BackgroundAura';
 import { motion } from 'framer-motion';
-import { Zap } from 'lucide-react';
+import { Zap } from '../../../components/icons';
 
 const PromotionsPage = () => {
     const { t } = useTranslation();

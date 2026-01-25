@@ -3,7 +3,7 @@ import { getUserBookings, updateBooking, updateBookingStatus, getUserRequests, g
 import type { BookingItem, UnifiedRequest } from '../../Types';
 import LoadingSpinner from '../../components/Shared/LoadingSpinner';
 import { Button } from '../../components/ui/button';
-import { MapPin, FileText, User, Plane, LogOut, Edit2, History, BedDouble, Calendar, Eye, ShieldCheck, XCircle, Plus, Minus, ArrowRight, Star, Car } from 'lucide-react';
+import { MapPin, FileText, User, Plane, LogOut, Edit2, History, BedDouble, Calendar, Eye, ShieldCheck, XCircle, Plus, Minus, ArrowRight, Star, Car } from '../../components/icons';
 import {
   Dialog,
   DialogContent,
@@ -27,7 +27,7 @@ import BackgroundAura from '../../components/Shared/BackgroundAura';
 import { useAuth } from '../../Context/AuthContext';
 import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { cn } from '../../lib/utils';
-import logo from '../../assets/logo.png';
+import logo from '../../assets/logo.webp';
 
 const DashboardUser = () => {
   const { t, i18n } = useTranslation();
@@ -566,6 +566,7 @@ const DashboardUser = () => {
                                         variant="ghost"
                                         size="icon"
                                         className="h-7 w-7"
+                                        aria-label={t('reservation.omra.decrease_room', { room: n })}
                                         onClick={() => setEditFormData({
                                           ...editFormData,
                                           options: {
@@ -581,6 +582,7 @@ const DashboardUser = () => {
                                         variant="ghost"
                                         size="icon"
                                         className="h-7 w-7"
+                                        aria-label={t('reservation.omra.increase_room', { room: n })}
                                         onClick={() => setEditFormData({
                                           ...editFormData,
                                           options: {

@@ -3,7 +3,7 @@ import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Textarea } from '../../../components/ui/textarea';
-import { Plus, Trash2, Edit2, Check, X } from 'lucide-react';
+import { Plus, Trash2, Edit2, Check, X } from '../../../components/icons';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 import { getTripItinerary, updateTripItinerary, createTripItineraries, deleteAllTripItineraries, type CreateItineraryPayload } from '../../../api';
 import type { TripItinerary } from '../../../Types';

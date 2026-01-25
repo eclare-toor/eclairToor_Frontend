@@ -24,7 +24,7 @@ import {
   ExternalLink,
   Car,
   Users
-} from 'lucide-react';
+} from '../../components/icons';
 import { Link } from 'react-router-dom';
 import LoadingSpinner from '../../components/Shared/LoadingSpinner';
 import { Dialog, DialogContent } from '../../components/ui/dialog';

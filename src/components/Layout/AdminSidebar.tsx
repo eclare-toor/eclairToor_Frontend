@@ -7,12 +7,12 @@ import {
     MessageSquare,
     Users,
     LogOut
-} from 'lucide-react';
+} from '../../components/icons';
 import { Button } from '../ui/button';
 import { cn } from '../../lib/utils';
 import { useAuth } from '../../Context/AuthContext';
 
-import logo from '../../assets/logo.png';
+import logo from '../../assets/logo.webp';
 
 const AdminSidebar = () => {
     const { logout } = useAuth();
@@ -33,7 +33,15 @@ const AdminSidebar = () => {
     return (
         <aside className="w-64 bg-slate-900/95 backdrop-blur-xl text-white fixed h-full z-20 hidden md:flex flex-col border-r border-white/5">
             <div className="p-8 flex flex-col items-center border-b border-white/5 bg-black/20">
-                <img src={logo} alt="Logo" className="w-20 h-20 object-contain mb-4 drop-shadow-2xl" />
+                <img
+                    src={logo}
+                    alt="Logo"
+                    width={80}
+                    height={80}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-20 h-20 object-contain mb-4 drop-shadow-2xl"
+                />
                 <div className="text-center">
                     <h2 className="text-xl font-black tracking-tighter text-white uppercase italic">
                         Eclair Travel
