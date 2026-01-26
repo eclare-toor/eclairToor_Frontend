@@ -37,7 +37,11 @@
         "pride_algerian": "Fierté Algérienne",
         "notif_deleted": "Notification supprimée",
         "error_deleting": "Erreur lors de la suppression",
-        "language": "Langue"
+        "language": "Langue",
+        "visa": "Visa",
+        "change_language": "Changer de langue",
+        "mobile_menu": "Menu mobile",
+        "user_menu": "Menu utilisateur"
     },
     "promotions": {
         "title": "Offres Exceptionnelles",
@@ -60,6 +64,31 @@
         "remarques": "Informations complémentaires (N° vol, besoins spéciaux...)",
         "submit": "Réserver le transfert",
         "success": "Votre demande de transport a été envoyée !"
+    },
+    "visa": {
+        "title": "DEMANDE DE VISA",
+        "subtitle": "Assistance complète pour vos démarches de visa",
+        "form_title": "Demande de Visa",
+        "form_subtitle": "Remplissez ce formulaire pour votre demande de visa",
+        "pays_destination": "Pays de destination",
+        "pays_destination_placeholder": "Ex: France, Arabie Saoudite...",
+        "type_visa": "Type de visa",
+        "type_touristique": "Touristique",
+        "type_affaires": "Affaires",
+        "type_omra": "Omra",
+        "type_transit": "Transit",
+        "date_depart": "Date prévue de départ",
+        "date_retour": "Date prévue de retour",
+        "duree_sejour": "Durée du séjour",
+        "duree_sejour_placeholder": "Ex: 15 jours",
+        "ville_entree": "Ville d'entrée",
+        "ville_entree_placeholder": "Ex: Paris, Djeddah...",
+        "ville_sortie": "Ville de sortie (optionnel)",
+        "ville_sortie_placeholder": "Ex: Marseille, Médine...",
+        "remarques": "Informations complémentaires",
+        "remarques_placeholder": "Précisez vos besoins spécifiques...",
+        "submit": "Envoyer ma demande de visa",
+        "success": "Votre demande de visa a été envoyée avec succès !"
     },
     "hotels_page": {
         "title": "VOTRE HÔTEL IDÉAL",
@@ -177,7 +206,7 @@
         "new_message_btn": "Envoyer un nouveau message",
         "hours_val": "Sam - Jeu: 09:00 - 18:00\nVendredi: Fermé",
         "agency_label": "Notre Agence",
-        "agency_address": "123 Boulevard des Martyrs\nAlger Centre, Algérie",
+        "agency_address": "Lot Pitee Street\nN:6 Hydra, Algeria",
         "phone_label": "Téléphone",
         "email_label": "Email",
         "hours_label": "Horaires d'ouverture"
@@ -433,7 +462,8 @@
                 "omra": "Demande omra",
                 "hotel": "Demande hôtel",
                 "vol": "Demande vol",
-                "transport": "Demande transport"
+                "transport": "Demande transport",
+                "visa": "Demande visa"
             },
             "modify": "Modifier",
             "cancel_success": "Demande annulée avec succès !",

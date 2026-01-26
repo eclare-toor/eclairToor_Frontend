@@ -1,8 +1,8 @@
 import React, { useState, useEffect, Suspense } from 'react';
-import { Users, Map, TrendingUp, Calendar, Bell, Clock, AlertCircle, Plus, User, Plane, ChevronRight, PieChart, Activity, DollarSign, Briefcase, ShieldCheck, Minus } from '../../components/icons';
+import { Users, Map, TrendingUp, Calendar, Bell, Clock, AlertCircle, Plus, User, Plane, ChevronRight, PieChart, Activity, DollarSign, Briefcase, ShieldCheck, Minus, Search } from '../../components/icons';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getNotifications, getTrips, adminCreateBooking, getDashboardStats } from '../../api';
-import type { AppNotification, Trip, DashboardData } from '../../Types';
+import { getNotifications, getTrips, adminCreateBooking, getDashboardStats, getUsers } from '../../api';
+import type { AppNotification, Trip, DashboardData, User as UserType } from '../../Types';
 import LoadingSpinner from '../../components/Shared/LoadingSpinner';
 import { cn } from '../../lib/utils';
 import { Button } from '../../components/ui/button';
@@ -38,7 +38,9 @@ function AdminDashboardPage() {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [trips, setTrips] = useState<Trip[]>([]);
+  const [users, setUsers] = useState<UserType[]>([]);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [userSearchTerm, setUserSearchTerm] = useState('');
 
   // Omra & Booking State
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
@@ -61,10 +63,11 @@ function AdminDashboardPage() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [notifsData, tripsData, dashboardStats] = await Promise.all([
+        const [notifsData, tripsData, dashboardStats, usersData] = await Promise.all([
           getNotifications(),
           getTrips(),
-          getDashboardStats()
+          getDashboardStats(),
+          getUsers()
         ]);
 
         // Sort by latest first and take top 5
@@ -86,6 +89,7 @@ function AdminDashboardPage() {
 
         setActivities(lastFive);
         setTrips(tripsData);
+        setUsers(usersData);
         setDashboardData(parsedStats);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
@@ -263,16 +267,63 @@ function AdminDashboardPage() {
             </DialogHeader>
             <form onSubmit={handleCreateBooking} className="space-y-6">
               <div className="space-y-2">
-                <Label className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">ID de l'Utilisateur</Label>
-                <div className="relative">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                  <Input
-                    required
-                    placeholder="Coller l'ID utilisateur ici..."
-                    value={bookingForm.user_id}
-                    onChange={e => setBookingForm({ ...bookingForm, user_id: e.target.value })}
-                    className="h-14 pl-12 rounded-2xl bg-slate-50 border-slate-100 font-bold focus:bg-white transition-colors shadow-sm"
-                  />
+                <Label className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Sélectionner l'Utilisateur</Label>
+                <div className="space-y-3">
+                  <div className="relative">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-10" />
+                    <Input
+                      placeholder="Rechercher par nom ou prénom..."
+                      value={userSearchTerm}
+                      onChange={(e) => setUserSearchTerm(e.target.value)}
+                      className="h-12 pl-12 rounded-2xl bg-slate-50 border-slate-100 font-bold focus:bg-white transition-colors shadow-sm"
+                    />
+                  </div>
+                  <div className="max-h-48 overflow-y-auto space-y-2 p-2 bg-slate-50 rounded-2xl border border-slate-100">
+                    {users
+                      .filter(user => {
+                        const fullName = `${user.nom} ${user.prenom}`.toLowerCase();
+                        return fullName.includes(userSearchTerm.toLowerCase());
+                      })
+                      .map(user => (
+                        <button
+                          key={user.id}
+                          type="button"
+                          onClick={() => {
+                            setBookingForm({ ...bookingForm, user_id: user.id });
+                            setUserSearchTerm(`${user.nom} ${user.prenom}`);
+                          }}
+                          className={`w-full text-left p-3 rounded-xl transition-all ${bookingForm.user_id === user.id
+                              ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                              : 'bg-white hover:bg-slate-100 border border-slate-100'
+                            }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-black ${bookingForm.user_id === user.id ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-400'
+                              }`}>
+                              {user.nom.charAt(0)}{user.prenom.charAt(0)}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-black text-sm uppercase tracking-tight truncate">
+                                {user.nom} {user.prenom}
+                              </p>
+                              <p className={`text-[10px] font-bold truncate ${bookingForm.user_id === user.id ? 'text-white/70' : 'text-slate-400'
+                                }`}>
+                                {user.email}
+                              </p>
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    {users.filter(user => {
+                      const fullName = `${user.nom} ${user.prenom}`.toLowerCase();
+                      return fullName.includes(userSearchTerm.toLowerCase());
+                    }).length === 0 && (
+                        <div className="text-center py-8 text-slate-400">
+                          <User className="w-8 h-8 mx-auto mb-2 opacity-20" />
+                          <p className="text-xs font-bold">Aucun utilisateur trouvé</p>
+                        </div>
+                      )}
+                  </div>
                 </div>
               </div>
 

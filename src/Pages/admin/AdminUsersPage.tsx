@@ -152,109 +152,116 @@ const AdminUsersPage = () => {
     return (
         <div className="space-y-8 p-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div>
+                <div className="flex-1">
                     <h2 className="text-4xl font-black text-slate-900 tracking-tight">Gestion <span className="text-primary italic">Utilisateurs</span></h2>
-                    <p className="text-slate-500 font-bold mt-1 uppercase tracking-widest text-[10px]">Total: {users.length} Comptes</p>
+                    <p className="text-slate-500 font-bold mt-1 uppercase tracking-widest text-[10px]">Gestion des comptes utilisateurs</p>
                 </div>
 
-                <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-                    <DialogTrigger asChild>
-                        <Button className="h-12 px-6 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-3 transition-all hover:scale-[1.02]">
-                            <Plus className="w-5 h-5 border-2 border-white/30 rounded-full" />
-                            Ajouter un utilisateur
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[600px] rounded-[2.5rem] p-8">
-                        <DialogHeader>
-                            <DialogTitle className="text-3xl font-black text-slate-900 mb-6">Nouvel <span className="text-primary italic">Utilisateur</span></DialogTitle>
-                        </DialogHeader>
-                        <form onSubmit={handleAddUser} className="grid grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                                <Label className="text-xs font-black uppercase tracking-widest text-slate-400">Nom</Label>
-                                <Input
-                                    required
-                                    value={formData.nom}
-                                    onChange={e => setFormData({ ...formData, nom: e.target.value })}
-                                    className="h-12 rounded-xl bg-slate-50 border-slate-100 font-bold"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs font-black uppercase tracking-widest text-slate-400">Prénom</Label>
-                                <Input
-                                    required
-                                    value={formData.prenom}
-                                    onChange={e => setFormData({ ...formData, prenom: e.target.value })}
-                                    className="h-12 rounded-xl bg-slate-50 border-slate-100 font-bold"
-                                />
-                            </div>
-                            <div className="space-y-2 col-span-2">
-                                <Label className="text-xs font-black uppercase tracking-widest text-slate-400">Email professionnel</Label>
-                                <div className="relative">
-                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <div className="flex items-center gap-4">
+                    <div className="px-6 py-3 bg-gradient-to-br from-primary to-blue-600 rounded-2xl shadow-lg shadow-primary/20">
+                        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-white/70 mb-1">Total Utilisateurs</p>
+                        <p className="text-3xl font-black text-white">{users.length}</p>
+                    </div>
+
+                    <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
+                        <DialogTrigger asChild>
+                            <Button className="h-12 px-6 rounded-2xl bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest shadow-lg shadow-primary/20 flex items-center gap-3 transition-all hover:scale-[1.02]">
+                                <Plus className="w-5 h-5 border-2 border-white/30 rounded-full" />
+                                Ajouter un utilisateur
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[600px] rounded-[2.5rem] p-8">
+                            <DialogHeader>
+                                <DialogTitle className="text-3xl font-black text-slate-900 mb-6">Nouvel <span className="text-primary italic">Utilisateur</span></DialogTitle>
+                            </DialogHeader>
+                            <form onSubmit={handleAddUser} className="grid grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <Label className="text-xs font-black uppercase tracking-widest text-slate-400">Nom</Label>
                                     <Input
-                                        type="email"
                                         required
-                                        value={formData.email}
-                                        onChange={e => setFormData({ ...formData, email: e.target.value })}
-                                        className="h-12 pl-12 rounded-xl bg-slate-50 border-slate-100 font-bold"
+                                        value={formData.nom}
+                                        onChange={e => setFormData({ ...formData, nom: e.target.value })}
+                                        className="h-12 rounded-xl bg-slate-50 border-slate-100 font-bold"
                                     />
                                 </div>
-                            </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs font-black uppercase tracking-widest text-slate-400">Mot de passe</Label>
-                                <div className="relative">
-                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                <div className="space-y-2">
+                                    <Label className="text-xs font-black uppercase tracking-widest text-slate-400">Prénom</Label>
                                     <Input
-                                        type="password"
                                         required
-                                        value={formData.password}
-                                        onChange={e => setFormData({ ...formData, password: e.target.value })}
-                                        className="h-12 pl-12 rounded-xl bg-slate-50 border-slate-100 font-bold"
+                                        value={formData.prenom}
+                                        onChange={e => setFormData({ ...formData, prenom: e.target.value })}
+                                        className="h-12 rounded-xl bg-slate-50 border-slate-100 font-bold"
                                     />
                                 </div>
-                            </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs font-black uppercase tracking-widest text-slate-400">Téléphone</Label>
-                                <div className="relative">
-                                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                    <Input
-                                        value={formData.phone}
-                                        onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                        className="h-12 pl-12 rounded-xl bg-slate-50 border-slate-100 font-bold"
-                                        placeholder="0555..."
-                                    />
+                                <div className="space-y-2 col-span-2">
+                                    <Label className="text-xs font-black uppercase tracking-widest text-slate-400">Email professionnel</Label>
+                                    <div className="relative">
+                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                        <Input
+                                            type="email"
+                                            required
+                                            value={formData.email}
+                                            onChange={e => setFormData({ ...formData, email: e.target.value })}
+                                            className="h-12 pl-12 rounded-xl bg-slate-50 border-slate-100 font-bold"
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs font-black uppercase tracking-widest text-slate-400">Nationalité</Label>
-                                <div className="relative">
-                                    <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                    <Input
-                                        value={formData.nationalite}
-                                        onChange={e => setFormData({ ...formData, nationalite: e.target.value })}
-                                        className="h-12 pl-12 rounded-xl bg-slate-50 border-slate-100 font-bold"
-                                    />
+                                <div className="space-y-2">
+                                    <Label className="text-xs font-black uppercase tracking-widest text-slate-400">Mot de passe</Label>
+                                    <div className="relative">
+                                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                        <Input
+                                            type="password"
+                                            required
+                                            value={formData.password}
+                                            onChange={e => setFormData({ ...formData, password: e.target.value })}
+                                            className="h-12 pl-12 rounded-xl bg-slate-50 border-slate-100 font-bold"
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="space-y-2">
-                                <Label className="text-xs font-black uppercase tracking-widest text-slate-400">Lien Facebook</Label>
-                                <div className="relative">
-                                    <Facebook className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                    <Input
-                                        value={formData.linkFacebook}
-                                        onChange={e => setFormData({ ...formData, linkFacebook: e.target.value })}
-                                        className="h-12 pl-12 rounded-xl bg-slate-50 border-slate-100 font-bold"
-                                    />
+                                <div className="space-y-2">
+                                    <Label className="text-xs font-black uppercase tracking-widest text-slate-400">Téléphone</Label>
+                                    <div className="relative">
+                                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                        <Input
+                                            value={formData.phone}
+                                            onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                                            className="h-12 pl-12 rounded-xl bg-slate-50 border-slate-100 font-bold"
+                                            placeholder="0555..."
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                            <DialogFooter className="col-span-2 mt-6">
-                                <Button type="submit" className="w-full h-14 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-primary/20">
-                                    Créer le compte utilisateur
-                                </Button>
-                            </DialogFooter>
-                        </form>
-                    </DialogContent>
-                </Dialog>
+                                <div className="space-y-2">
+                                    <Label className="text-xs font-black uppercase tracking-widest text-slate-400">Nationalité</Label>
+                                    <div className="relative">
+                                        <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                        <Input
+                                            value={formData.nationalite}
+                                            onChange={e => setFormData({ ...formData, nationalite: e.target.value })}
+                                            className="h-12 pl-12 rounded-xl bg-slate-50 border-slate-100 font-bold"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label className="text-xs font-black uppercase tracking-widest text-slate-400">Lien Facebook</Label>
+                                    <div className="relative">
+                                        <Facebook className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                        <Input
+                                            value={formData.linkFacebook}
+                                            onChange={e => setFormData({ ...formData, linkFacebook: e.target.value })}
+                                            className="h-12 pl-12 rounded-xl bg-slate-50 border-slate-100 font-bold"
+                                        />
+                                    </div>
+                                </div>
+                                <DialogFooter className="col-span-2 mt-6">
+                                    <Button type="submit" className="w-full h-14 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-primary/20">
+                                        Créer le compte utilisateur
+                                    </Button>
+                                </DialogFooter>
+                            </form>
+                        </DialogContent>
+                    </Dialog>
+                </div>
             </div>
 
             <div className="relative max-w-md">

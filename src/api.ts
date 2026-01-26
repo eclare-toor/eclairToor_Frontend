@@ -978,13 +978,27 @@ export interface CustomTransportRequestPayload {
         remarques: string;
     }
 }
+export interface CustomVisaRequestPayload {
+    category: 'visa';
+    details: {
+        pays_destination: string,
+        type_visa: string,
+        date_depart: string,
+        date_retour: string,
+        duree_sejour: string,
+        ville_entree: string,
+        ville_sortie: string,
+        remarques: string
+    }
+}
 
 export type CustomRequestPayload =
     | CustomTripRequestPayload
     | CustomOmraRequestPayload
     | CustomHotelRequestPayload
     | CustomFlightRequestPayload
-    | CustomTransportRequestPayload;
+    | CustomTransportRequestPayload
+    | CustomVisaRequestPayload;
 
 export const createCustomTripRequest = async (data: CustomRequestPayload): Promise<any> => {
     const token = Cookies.get('token');

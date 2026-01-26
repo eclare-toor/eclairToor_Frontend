@@ -1,10 +1,16 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../../components/ui/button';
-import { ArrowRight, Star, Quote, Award, Globe, Users } from '../../components/icons';
-import heroBg from '../../assets/hero-bg.avif';
+import { ArrowRight, Star, Quote, Award, Globe, Users, ChevronLeft, ChevronRight } from '../../components/icons';
 import { Link } from 'react-router-dom';
 import { MOCK_REVIEWS } from '../../mock_data';
+// Ajoute ça en haut du composant (importe tes images)
+import heroBg1 from '../../assets/heroBg1.jpeg';
+import heroBg2 from '../../assets/heroBg2.jpeg';
+import heroBg3 from '../../assets/heroBg3.avif';
+import heroBg4 from '../../assets/heroBg4.jpeg';
+import heroBg5 from '../../assets/heroBg5.jpeg';
+
 
 // Simple functional component for features
 const StatItem = ({ label, value, delay, icon: Icon }: { label: string, value: string, delay: number, icon: any }) => {
@@ -60,6 +66,20 @@ const HomePage = () => {
     const { t, i18n } = useTranslation();
     const [typewriterIndex, setTypewriterIndex] = useState(0);
     const phrases = t('home.hero.phrases', { returnObjects: true }) as string[];
+    const heroImages = [heroBg1, heroBg2, heroBg3, heroBg4, heroBg5];
+
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    // Change l'image automatiquement toutes les 5 secondes
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentImageIndex((prevIndex) =>
+                (prevIndex + 1) % heroImages.length
+            );
+        }, 5000); // Change toutes les 5 secondes (modifie ce nombre)
+
+        return () => clearInterval(interval);
+    }, [heroImages.length]);
 
 
 
@@ -75,14 +95,19 @@ const HomePage = () => {
             {/* Hero Section - Optimized */}
             {/* Hero Section - Optimized */}
             <section className="relative h-screen min-h-[800px] flex items-center justify-center overflow-hidden">
-                {/* Parallax Background with Premium Overlay */}
-                <div
-                    className="absolute inset-0 z-0"
-                >
-                    <div
-                        className="absolute inset-0 bg-cover bg-center"
-                        style={{ backgroundImage: `url(${heroBg})` }}
-                    />
+                {/* Parallax Background avec Diaporama */}
+                <div className="absolute inset-0 z-0">
+                    {/* Images avec transition fade */}
+                    {heroImages.map((image, index) => (
+                        <div
+                            key={index}
+                            className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+                                }`}
+                            style={{ backgroundImage: `url(${image})` }}
+                        />
+                    ))}
+
+                    {/* Overlays */}
                     <div className="absolute inset-0 bg-slate-900/40" />
                     <div className="absolute inset-0 bg-gradient-to-b from-slate-900/60 via-transparent to-white/30" />
                 </div>
@@ -166,9 +191,7 @@ const HomePage = () => {
             {/* Gallery Section - WOW Effect */}
             <section className="py-32 bg-white overflow-hidden">
                 <div className="container mx-auto px-6 mb-16">
-                    <div
-                        className="max-w-3xl"
-                    >
+                    <div className="max-w-3xl">
                         <span className="text-primary font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">{t('home.gallery.label')}</span>
                         <h2 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter leading-tight mb-8">
                             {t('home.gallery.title_part1')} <span className="text-primary italic">{t('home.gallery.title_part2')}</span>
@@ -176,28 +199,57 @@ const HomePage = () => {
                     </div>
                 </div>
 
-                <div className="flex gap-8 overflow-x-auto pb-20 scrollbar-hide px-6 snap-x">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                        <div
-                            key={num}
-                            className="min-w-[320px] md:min-w-[500px] h-[600px] rounded-[4rem] overflow-hidden relative group snap-center shadow-2xl"
-                        >
-                            <img
-                                src={`/src/assets/galerie${num}.webp`}
-                                alt={`Voyage ${num}`}
-                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                onError={(e: any) => {
-                                    e.target.src = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800";
-                                }}
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 flex items-end p-12">
-                                <div>
-                                    <p className="text-white font-black uppercase tracking-[0.3em] text-xs mb-2">{t('home.gallery.card_label')}</p>
-                                    <p className="text-primary text-xl font-bold italic">{t('home.gallery.card_experience')} {num}</p>
+                <div className="relative">
+                    {/* Navigation Buttons */}
+                    <button
+                        onClick={() => {
+                            const container = document.getElementById('gallery-scroll');
+                            if (container) container.scrollBy({ left: -520, behavior: 'smooth' });
+                        }}
+                        className="absolute left-6 top-1/2 -translate-y-1/2 z-10 w-14 h-14 rounded-full bg-white shadow-2xl flex items-center justify-center text-slate-900 hover:bg-primary hover:text-white transition-all duration-300 hover:scale-110"
+                    >
+                        <ChevronLeft className="w-7 h-7" />
+                    </button>
+
+                    <button
+                        onClick={() => {
+                            const container = document.getElementById('gallery-scroll');
+                            if (container) container.scrollBy({ left: 520, behavior: 'smooth' });
+                        }}
+                        className="absolute right-6 top-1/2 -translate-y-1/2 z-10 w-14 h-14 rounded-full bg-white shadow-2xl flex items-center justify-center text-slate-900 hover:bg-primary hover:text-white transition-all duration-300 hover:scale-110"
+                    >
+                        <ChevronRight className="w-7 h-7" />
+                    </button>
+
+                    {/* Gallery Container */}
+                    <div
+                        id="gallery-scroll"
+                        className="flex gap-8 overflow-x-auto px-6 snap-x scrollbar-hide"
+                        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                    >
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => (
+                            <div
+                                key={num}
+                                className="min-w-[320px] md:min-w-[500px] h-[600px] rounded-[4rem] overflow-hidden relative group snap-center shadow-2xl"
+                            >
+                                <img
+                                    src={`/src/assets/galerie${num}.webp`}
+                                    alt={`Voyage ${num}`}
+                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                    onError={(e: any) => {
+                                        e.target.onerror = null; // Éviter boucle infinie
+                                        e.target.src = `/src/assets/galerie${num}.jpeg`;
+                                    }}
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 flex items-end p-12">
+                                    <div>
+                                        <p className="text-white font-black uppercase tracking-[0.3em] text-xs mb-2">{t('home.gallery.card_label')}</p>
+                                        <p className="text-primary text-xl font-bold italic">{t('home.gallery.card_experience')} {num}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </section>
 

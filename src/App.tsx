@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import OnboardingLoader from "./components/Shared/OnboardingLoader";
 import UserLayout from "./components/Layout/UserLayout";
 import AdminLayout from "./components/Layout/AdminLayout";
+import VisaPage from "./Pages/client/trips/RequestVisaPage";
 
 // Lazy Load Pages
 const HomePage = lazy(() => import("./Pages/client/HomePage"));
@@ -99,6 +100,7 @@ function App() {
             <Route path="/promotions" element={<PromotionsPage />} />
             <Route path="/request-flight" element={<FlightsPage />} />
             <Route path="/request-transport" element={<TransportPage />} />
+            <Route path="/request-visa" element={<VisaPage />} />
             <Route path="/reservation/:id" element={<Reservation />} />
             <Route path="/contact" element={<Contact />} />
 

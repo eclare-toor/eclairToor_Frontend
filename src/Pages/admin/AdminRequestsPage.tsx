@@ -31,26 +31,22 @@ import { Dialog, DialogContent } from '../../components/ui/dialog';
 import { cn } from '../../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
-type TabType = 'BOOKINGS' | 'CUSTOM' | 'SERVICES' | 'TRANSPORT';
+type TabType = 'BOOKINGS' | 'CUSTOM' | 'SERVICES' | 'TRANSPORT' | 'VISA'; // ← ajout de 'VISA'
 
 const AdminRequestsPage = () => {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<TabType>('BOOKINGS');
-
   // Data States
   const [bookings, setBookings] = useState<BookingItem[]>([]);
   const [unifiedRequests, setUnifiedRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
   // Management States
   const [selectedUnifiedRequest, setSelectedUnifiedRequest] = useState<any | null>(null);
   const [selectedBooking, setSelectedBooking] = useState<BookingItem | null>(null);
   const [actualPrice, setActualPrice] = useState<string>('');
-
   const [offerHTML, setOfferHTML] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [clientNameSearch, setClientNameSearch] = useState('');
-
   const [requestsLoaded, setRequestsLoaded] = useState(false);
 
   const fetchBookings = async () => {
@@ -86,7 +82,7 @@ const AdminRequestsPage = () => {
   }, []);
 
   useEffect(() => {
-    if (activeTab === 'CUSTOM' || activeTab === 'SERVICES' || activeTab === 'TRANSPORT') {
+    if (activeTab === 'CUSTOM' || activeTab === 'SERVICES' || activeTab === 'TRANSPORT' || activeTab === 'VISA') {
       fetchRequests();
     }
   }, [activeTab]);
@@ -94,13 +90,11 @@ const AdminRequestsPage = () => {
   const handleUpdateBooking = async (id: string, status: 'CONFIRMED' | 'PAID' | 'CANCELLED', extraData?: any) => {
     try {
       await updateBookingStatus(id, status, extraData);
-
       setBookings(prevBookings =>
         prevBookings.map(b => b.id === id ? { ...b, status, ...extraData } : b)
       );
-
       toast.success(`Statut mis à jour : ${status}`);
-      setSelectedBooking(null); // Close modal on success
+      setSelectedBooking(null);
     } catch (error: any) {
       console.error("Failed to update status", error);
       toast.error(error.message || "Erreur lors de la mise à jour du statut");
@@ -114,7 +108,6 @@ const AdminRequestsPage = () => {
     try {
       await submitRequestResponse(selectedUnifiedRequest.id, offerHTML);
       await updateCustomRequestStatus(selectedUnifiedRequest.id, 'PROCESSED');
-
       setUnifiedRequests(prev => prev.map(r => r.id === selectedUnifiedRequest.id ? { ...r, status: 'PROCESSED', offer: offerHTML } : r));
       toast.success(t('admin.requests.modal.offer_sent'));
       setSelectedUnifiedRequest(null);
@@ -129,7 +122,6 @@ const AdminRequestsPage = () => {
 
   const handleDeleteResponse = async () => {
     if (!selectedUnifiedRequest) return;
-
     const confirmToast = toast(
       <div className="flex flex-col gap-3">
         <p className="font-bold">{t('admin.requests.modal.confirm_delete_offer')}</p>
@@ -220,10 +212,8 @@ const AdminRequestsPage = () => {
       REJECTED: { bg: 'bg-red-50 text-red-700 ring-red-600/10', text: t('admin.requests.status.rejected'), icon: X },
       CANCELLED: { bg: 'bg-slate-50 text-slate-600 ring-slate-500/10', text: t('admin.requests.status.cancelled'), icon: X }
     };
-
     const style = config[status] || config.PENDING;
     const Icon = style.icon;
-
     return (
       <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold ring-1 ring-inset shadow-sm transition-all", style.bg)}>
         <Icon className="w-3 h-3" />
@@ -245,6 +235,50 @@ const AdminRequestsPage = () => {
         <Icon className={cn(full ? "w-4 h-4" : "w-3 h-3")} /> {title}
       </h4>
     );
+
+    // ... autres catégories inchangées ...
+
+    if (category === 'visa') {
+      return (
+        <div className={cn("grid gap-4", full ? "grid-cols-1 md:grid-cols-3" : "grid-cols-1")}>
+          <div className={cn("bg-purple-50/50 p-5 rounded-2xl border border-purple-100/50", full && "bg-white/5 border-white/10 p-6")}>
+            <SectionTitle title={'Type de visa'} icon={FileText} />
+            <p className={cn("font-black tracking-tight", full ? "text-2xl text-white" : "text-base text-purple-900")}>
+              {info.type_visa || 'Type non spécifié'}
+            </p>
+            <p className={cn("font-bold", full ? "text-sm text-slate-400" : "text-xs text-purple-600")}>
+              {info.pays_destination || 'Pays non spécifié'}
+            </p>
+          </div>
+          <div className={cn("bg-purple-50/50 p-5 rounded-2xl border border-purple-100/50", full && "bg-white/5 border-white/10 p-6")}>
+            <SectionTitle title={'Dates'} icon={Calendar} />
+            <p className={cn("font-bold", full ? "text-base text-white" : "text-xs text-purple-700")}>
+              Départ: <span className="font-black">{info.date_depart || '–'}</span>
+            </p>
+            <p className={cn("font-bold", full ? "text-base text-white" : "text-xs text-purple-700")}>
+              Retour: <span className="font-black">{info.date_retour || '–'}</span>
+            </p>
+            <p className={cn("font-bold mt-1", full ? "text-sm text-slate-400" : "text-xs text-purple-600")}>
+              Durée: {info.duree_sejour || '–'}
+            </p>
+          </div>
+          <div className={cn("bg-purple-50/50 p-5 rounded-2xl border border-purple-100/50", full && "bg-white/5 border-white/10 p-6")}>
+            <SectionTitle title={'Villes'} icon={MapPin} />
+            <p className={cn("font-bold", full ? "text-base text-white" : "text-xs text-purple-700")}>
+              Entrée: <span className="font-black">{info.ville_entree || '–'}</span>
+            </p>
+            <p className={cn("font-bold", full ? "text-base text-white" : "text-xs text-purple-700")}>
+              Sortie: <span className="font-black">{info.ville_sortie || '–'}</span>
+            </p>
+            {info.remarques && (
+              <p className={cn("font-bold mt-2 italic", full ? "text-sm text-slate-400" : "text-xs text-purple-600")}>
+                Remarques: {info.remarques}
+              </p>
+            )}
+          </div>
+        </div>
+      );
+    }
 
     if (category === 'voyage') {
       return (
@@ -269,7 +303,6 @@ const AdminRequestsPage = () => {
         </div>
       );
     }
-
     if (category === 'omra') {
       return (
         <div className={cn("grid gap-4", full ? "grid-cols-1 md:grid-cols-3" : "grid-cols-1")}>
@@ -290,7 +323,6 @@ const AdminRequestsPage = () => {
         </div>
       );
     }
-
     if (category === 'hotel') {
       return (
         <div className={cn("grid gap-4", full ? "grid-cols-1 md:grid-cols-3" : "grid-cols-1")}>
@@ -319,7 +351,6 @@ const AdminRequestsPage = () => {
         </div>
       );
     }
-
     if (category === 'vol') {
       return (
         <div className={cn("grid gap-4", full ? "grid-cols-1 md:grid-cols-3" : "grid-cols-1")}>
@@ -349,7 +380,6 @@ const AdminRequestsPage = () => {
         </div>
       );
     }
-
     if (category === 'transport') {
       return (
         <div className={cn("grid gap-4", full ? "grid-cols-1 md:grid-cols-3" : "grid-cols-1")}>
@@ -371,7 +401,6 @@ const AdminRequestsPage = () => {
         </div>
       );
     }
-
     return null;
   };
 
@@ -401,7 +430,8 @@ const AdminRequestsPage = () => {
           { id: 'BOOKINGS', label: 'Réservations', icon: FileText, color: 'text-slate-900 bg-white shadow-xl' },
           { id: 'CUSTOM', label: 'Voyage à la Carte', icon: Clock, color: 'text-slate-900 bg-white shadow-xl' },
           { id: 'SERVICES', label: 'Vols & Hôtels', icon: Plane, color: 'text-slate-900 bg-white shadow-xl' },
-          { id: 'TRANSPORT', label: 'Transport', icon: Car, color: 'text-slate-900 bg-white shadow-xl' }
+          { id: 'TRANSPORT', label: 'Transport', icon: Car, color: 'text-slate-900 bg-white shadow-xl' },
+          { id: 'VISA', label: 'Visa', icon: FileText, color: 'text-slate-900 bg-white shadow-xl' }
         ].map(tab => (
           <button
             key={tab.id}
@@ -498,21 +528,10 @@ const AdminRequestsPage = () => {
               </div>
             )}
 
-            {/* CUSTOM & SERVICES TABS (Unified Table View) */}
-            {(activeTab === 'CUSTOM' || activeTab === 'SERVICES' || activeTab === 'TRANSPORT') && (
+            {/* CUSTOM & SERVICES & VISA & TRANSPORT TABS (Unified Table View) */}
+            {(activeTab === 'CUSTOM' || activeTab === 'SERVICES' || activeTab === 'TRANSPORT' || activeTab === 'VISA') && (
               <div className="bg-white rounded-[3rem] border border-slate-200 shadow-2xl shadow-slate-200/50 overflow-hidden">
-                <div className="p-6 bg-slate-50 border-b border-slate-100 flex items-center gap-4">
-                  <div className="relative flex-1 max-w-sm">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                    <input
-                      type="text"
-                      placeholder={t('admin.requests.table.search_placeholder')}
-                      value={clientNameSearch}
-                      onChange={(e) => setClientNameSearch(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 rounded-2xl border-none ring-1 ring-slate-200 focus:ring-2 focus:ring-primary/20 bg-white font-bold text-sm text-slate-700 placeholder:text-slate-400"
-                    />
-                  </div>
-                </div>
+
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse">
                     <thead>
@@ -528,6 +547,7 @@ const AdminRequestsPage = () => {
                         .filter(r => {
                           if (activeTab === 'CUSTOM') return r.category === 'voyage' || r.category === 'omra';
                           if (activeTab === 'TRANSPORT') return r.category === 'transport';
+                          if (activeTab === 'VISA') return r.category === 'visa';
                           return r.category === 'vol' || r.category === 'hotel';
                         })
                         .filter(r => {
@@ -545,7 +565,9 @@ const AdminRequestsPage = () => {
                             ? (r.category === 'voyage' || r.category === 'omra')
                             : activeTab === 'TRANSPORT'
                               ? r.category === 'transport'
-                              : (r.category === 'vol' || r.category === 'hotel')
+                              : activeTab === 'VISA'
+                                ? r.category === 'visa'
+                                : (r.category === 'vol' || r.category === 'hotel')
                         )
                         .filter(r => {
                           if (!clientNameSearch) return true;
@@ -570,7 +592,9 @@ const AdminRequestsPage = () => {
                                   req.category === 'omra' ? "bg-indigo-600 text-white" :
                                     req.category === 'hotel' ? "bg-emerald-600 text-white" :
                                       req.category === 'vol' ? "bg-sky-600 text-white" :
-                                        req.category === 'transport' ? "bg-blue-600 text-white" : "bg-slate-900 text-white"
+                                        req.category === 'transport' ? "bg-blue-600 text-white" :
+                                          req.category === 'visa' ? "bg-purple-600 text-white" :
+                                            "bg-slate-900 text-white"
                                 )}>
                                   {req.nom?.charAt(0) || req.category.charAt(0).toUpperCase()}
                                   {req.prenom?.charAt(0)}
@@ -595,6 +619,7 @@ const AdminRequestsPage = () => {
                                       {req.category === 'hotel' && req.info.wilaya}
                                       {req.category === 'vol' && `${req.info.ville_depart} ➝ ${req.info.ville_arrivee}`}
                                       {req.category === 'transport' && `${req.info.aeroport} ➝ ${req.info.hotel}`}
+                                      {req.category === 'visa' && (req.info.type_visa || 'Demande de visa')}
                                     </>
                                   ) : (
                                     <span className="text-red-400 italic">Info manquante</span>
@@ -619,14 +644,13 @@ const AdminRequestsPage = () => {
         </AnimatePresence>
       )}
 
+      {/* Unified Request Modal (including Visa) */}
       <Dialog open={!!selectedUnifiedRequest} onOpenChange={(open) => !open && setSelectedUnifiedRequest(null)}>
         <DialogContent className="max-w-4xl p-0 overflow-hidden rounded-[3rem] border-none shadow-2xl bg-[#F8FAFC]">
           {selectedUnifiedRequest && (
             <div className="flex flex-col h-full max-h-[90vh]">
-              {/* Premium Header - Same style as booking */}
               <div className="bg-slate-900 border-b border-white/5 p-8 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-
                 <div className="relative z-10">
                   <div className="flex items-center gap-3 mb-4">
                     <span className="px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-[10px] font-black uppercase tracking-widest text-primary shadow-sm ring-1 ring-white/20">
@@ -638,13 +662,11 @@ const AdminRequestsPage = () => {
                     {t('admin.requests.modal.treatment')}
                   </h2>
                 </div>
-
                 <div className="mt-8">
                   <RequestDetails req={selectedUnifiedRequest} full={true} />
                 </div>
               </div>
 
-              {/* Modal Body */}
               <div className="flex-1 overflow-y-auto p-8 space-y-8">
                 {selectedUnifiedRequest.status === 'REJECTED' ? (
                   <div className="py-20 text-center bg-red-50/50 rounded-[3rem] border border-red-100 border-dashed">
@@ -667,7 +689,6 @@ const AdminRequestsPage = () => {
                       </h3>
                       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('admin.requests.modal.interface_label')}</p>
                     </div>
-
                     <div className="relative group">
                       <Textarea
                         className="min-h-[250px] p-6 rounded-[2rem] border-2 border-slate-100 focus:border-primary/50 focus:ring-primary/5 transition-all font-medium text-slate-700 leading-relaxed bg-white"
@@ -686,7 +707,6 @@ const AdminRequestsPage = () => {
                   </div>
                 )}
 
-                {/* Actions Area */}
                 <div className="flex flex-col md:flex-row gap-4 pt-8 border-t border-slate-100">
                   {selectedUnifiedRequest.status !== 'REJECTED' &&
                     selectedUnifiedRequest.status !== 'CANCELLED' && (
@@ -701,7 +721,6 @@ const AdminRequestsPage = () => {
                             <X className="w-5 h-5" /> {t('admin.requests.modal.reject_dossier')}
                           </Button>
                         )}
-
                         {selectedUnifiedRequest.status === 'PROCESSED' && (
                           <Button
                             variant="outline"
@@ -712,7 +731,6 @@ const AdminRequestsPage = () => {
                             <X className="w-5 h-5" /> {t('admin.requests.modal.delete_offer')}
                           </Button>
                         )}
-
                         <Button
                           className="flex-1 h-16 px-12 bg-slate-900 hover:bg-primary text-white shadow-xl shadow-slate-900/10 rounded-2xl font-black italic gap-3 transition-all"
                           onClick={handleSendOffer}
@@ -737,15 +755,14 @@ const AdminRequestsPage = () => {
           )}
         </DialogContent>
       </Dialog>
+
       {/* Booking Detail Modal */}
       <Dialog open={!!selectedBooking} onOpenChange={(open) => !open && setSelectedBooking(null)}>
         <DialogContent className="max-w-4xl p-0 overflow-hidden rounded-[2.5rem] border-none shadow-2xl bg-[#F8FAFC]">
           {selectedBooking && (
             <div className="flex flex-col h-full max-h-[90vh]">
-              {/* Premium Header */}
               <div className="bg-slate-900 border-b border-white/5 p-8 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                   <div>
                     <div className="flex items-center gap-3 mb-2">
@@ -764,7 +781,6 @@ const AdminRequestsPage = () => {
                       <span className="uppercase tracking-wide text-xs font-bold">{selectedBooking.type}</span>
                     </div>
                   </div>
-
                   <div className="flex flex-col gap-3 shrink-0">
                     <Link
                       to={`/admin/voyages/${selectedBooking.trip_id}`}
@@ -777,13 +793,10 @@ const AdminRequestsPage = () => {
                   </div>
                 </div>
               </div>
-
               <div className="flex-1 overflow-y-auto p-8 space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {/* User Card */}
                   <div className="md:col-span-2 p-6 bg-white rounded-[2rem] shadow-sm border border-slate-100 flex items-start gap-5 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-bl-[100%] -translate-y-8 translate-x-8 group-hover:bg-primary/5 transition-colors" />
-
                     <div className="w-16 h-16 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-black text-xl shadow-lg shadow-slate-200 shrink-0">
                       {selectedBooking.nom?.charAt(0)}{selectedBooking.prenom?.charAt(0)}
                     </div>
@@ -802,8 +815,6 @@ const AdminRequestsPage = () => {
                       </div>
                     </div>
                   </div>
-
-                  {/* Quick Stats */}
                   <div className="p-6 bg-primary/5 rounded-[2rem] border border-primary/10 flex flex-col justify-center items-center text-center">
                     <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3">
                       <User className="w-6 h-6" />
@@ -814,10 +825,7 @@ const AdminRequestsPage = () => {
                     <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Voyageurs Total</p>
                   </div>
                 </div>
-
-                {/* Detailed Breakdown Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Passengers Detail */}
                   <div className="p-6 bg-white rounded-[2rem] shadow-sm border border-slate-100">
                     <div className="flex items-center gap-3 mb-6">
                       <div className="p-2 bg-slate-50 rounded-xl"><User className="w-4 h-4 text-slate-400" /></div>
@@ -838,8 +846,6 @@ const AdminRequestsPage = () => {
                       </div>
                     </div>
                   </div>
-
-                  {/* Room Options (Omra) */}
                   <div className="p-6 bg-white rounded-[2rem] shadow-sm border border-slate-100">
                     <div className="flex items-center gap-3 mb-6">
                       <div className="p-2 bg-slate-50 rounded-xl"><BedDouble className="w-4 h-4 text-slate-400" /></div>
@@ -867,12 +873,9 @@ const AdminRequestsPage = () => {
                     )}
                   </div>
                 </div>
-
-                {/* Financials */}
                 <div className="p-1 rounded-[2.5rem] bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 shadow-xl shadow-slate-200">
                   <div className="bg-slate-900 rounded-[2.3rem] p-8 relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-full bg-gradient-to-l from-white/5 to-transparent pointer-events-none" />
-
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
                       <div>
                         <p className="text-slate-400 font-bold text-xs uppercase tracking-[0.2em] mb-2">Montant Total Calculé</p>
@@ -883,7 +886,6 @@ const AdminRequestsPage = () => {
                           <span className="text-base font-bold text-slate-500">DZD</span>
                         </div>
                       </div>
-
                       {selectedBooking.prix_vrai_paye && Number(selectedBooking.prix_vrai_paye) !== Number(selectedBooking.prix_calculer) && (
                         <div className="px-6 py-4 bg-emerald-500/10 rounded-2xl border border-emerald-500/20 backdrop-blur-sm">
                           <p className="text-emerald-400 font-bold text-[10px] uppercase tracking-[0.2em] mb-1">Montant Réel Payé</p>
@@ -895,8 +897,6 @@ const AdminRequestsPage = () => {
                     </div>
                   </div>
                 </div>
-
-                {/* Secure Actions Footer */}
                 {selectedBooking.status !== 'PAID' && selectedBooking.status !== 'CANCELLED' && (
                   <div className="pt-8 mt-4 border-t border-slate-200">
                     {selectedBooking.status === 'PENDING' && (
@@ -939,7 +939,6 @@ const AdminRequestsPage = () => {
                         </div>
                       </div>
                     )}
-
                     {selectedBooking.status === 'CONFIRMED' && (
                       <div className="space-y-4 bg-slate-50 p-6 rounded-[2rem] border border-slate-100">
                         <div className="space-y-3">

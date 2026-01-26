@@ -25,6 +25,7 @@ const AdminOmraHotelsPage = () => {
   const [createdHotelId, setCreatedHotelId] = useState<string | null>(null);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [deletedImages, setDeletedImages] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState<'makka' | 'madina' | 'tourisme'>('makka');
 
   const navigate = useNavigate();
 
@@ -180,25 +181,64 @@ const AdminOmraHotelsPage = () => {
   return (
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-4">
-        <div>
+        <div className="flex-1">
           <h2 className="text-4xl font-black text-slate-900 tracking-tight leading-none">
             Gestion des <span className="text-primary italic">Hôtels</span>
           </h2>
           <p className="text-slate-500 font-bold mt-2 uppercase tracking-widest text-[10px]">Hébergements et Services</p>
         </div>
-        <Button onClick={openCreateModal} className="h-14 px-8 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-black uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] flex items-center gap-3">
-          <div className="p-1.5 bg-white/10 rounded-lg">
-            <Plus className="w-4 h-4" />
+
+        <div className="flex items-center gap-4">
+          <div className="px-6 py-3 bg-gradient-to-br from-slate-900 to-slate-700 rounded-2xl shadow-lg shadow-slate-200">
+            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-white/70 mb-1">Total Hôtels</p>
+            <p className="text-3xl font-black text-white">{hotels.length}</p>
           </div>
-          Ajouter Un Hôtel
-        </Button>
+
+          <Button onClick={openCreateModal} className="h-14 px-8 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-black uppercase tracking-widest shadow-xl transition-all hover:scale-[1.02] flex items-center gap-3">
+            <div className="p-1.5 bg-white/10 rounded-lg">
+              <Plus className="w-4 h-4" />
+            </div>
+            Ajouter Un Hôtel
+          </Button>
+        </div>
+      </div>
+
+      {/* Tabs for Hotel Types */}
+      <div className="flex gap-3 mb-6">
+        <button
+          onClick={() => setActiveTab('makka')}
+          className={`px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-sm transition-all ${activeTab === 'makka'
+              ? 'bg-primary text-white shadow-lg shadow-primary/20'
+              : 'bg-white text-slate-400 hover:text-slate-900 border border-slate-100'
+            }`}
+        >
+          Makkah ({hotels.filter(h => h.type === 'makka').length})
+        </button>
+        <button
+          onClick={() => setActiveTab('madina')}
+          className={`px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-sm transition-all ${activeTab === 'madina'
+              ? 'bg-primary text-white shadow-lg shadow-primary/20'
+              : 'bg-white text-slate-400 hover:text-slate-900 border border-slate-100'
+            }`}
+        >
+          Madinah ({hotels.filter(h => h.type === 'madina').length})
+        </button>
+        <button
+          onClick={() => setActiveTab('tourisme')}
+          className={`px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-sm transition-all ${activeTab === 'tourisme'
+              ? 'bg-primary text-white shadow-lg shadow-primary/20'
+              : 'bg-white text-slate-400 hover:text-slate-900 border border-slate-100'
+            }`}
+        >
+          Tourisme ({hotels.filter(h => h.type === 'tourisme').length})
+        </button>
       </div>
 
       {loading ? (
         <div className="flex justify-center p-20"><LoadingSpinner /></div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {hotels.map((hotel) => (
+          {hotels.filter(hotel => hotel.type === activeTab).map((hotel) => (
             <div
               key={hotel.id}
               onClick={() => navigate(`/admin/hotels/${hotel.id}`)}

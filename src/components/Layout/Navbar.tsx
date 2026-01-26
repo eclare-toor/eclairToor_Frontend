@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, User, Bell, LogIn, Plane, Hotel, Map, Phone, LogOut, LayoutDashboard, Car, Check, CheckCheck, ShieldCheck, Calendar, Zap, ArrowRight, Globe } from '../../components/icons';
+import { Menu, User, Bell, LogIn, Plane, Hotel, Map, Phone, LogOut, LayoutDashboard, Car, Check, CheckCheck, ShieldCheck, Calendar, Zap, ArrowRight, Globe, FileText } from '../../components/icons';
 import { Button } from '../ui/button';
 import {
     Sheet,
@@ -100,6 +100,7 @@ const Navbar = () => {
         { name: t('nav.hotels'), path: '/request-hotel', icon: Hotel },
         { name: t('nav.flights'), path: '/request-flight', icon: Plane },
         { name: t('nav.transport'), path: '/request-transport', icon: Car },
+        { name: t('nav.visa'), path: '/request-visa', icon: FileText },
         { name: t('nav.promotions'), path: '/promotions', icon: Zap },
     ];
 
@@ -117,54 +118,55 @@ const Navbar = () => {
                     : "max-w-full bg-white/10 backdrop-blur-md py-2.5 md:py-3 px-4 md:px-8 lg:px-12 border-b border-white/10 shadow-md"
             )}>
                 <div className="flex items-center justify-between gap-3">
-                    {/* Logo Section - IMAGES AGRANDIES */}
-                    <Link to="/" className="flex items-center gap-2 md:gap-4 group shrink-0">
-                        <div className="relative flex items-center">
-                            <motion.div
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="relative z-10"
-                            >
-                                <img
-                                    src={logo}
-                                    alt="Eclair Travel Logo"
-                                    width={112}
-                                    height={112}
-                                    fetchPriority="high"
-                                    loading="eager"
-                                    decoding="async"
-                                    className={cn(
-                                        "object-contain transition-all duration-500",
-                                        isScrolled
-                                            ? "w-14 h-14 md:w-16 md:h-16"
-                                            : "w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28"
-                                    )}
-                                />
-                            </motion.div>
-                            {/* Drapeau Algérien - AGRANDI */}
-                            <div className={cn(
-                                "absolute -right-1 -bottom-1 md:-right-2 md:-bottom-1 rounded-full border-2 border-white shadow-lg overflow-hidden z-20 transition-all duration-500",
-                                isScrolled ? "w-6 h-6 md:w-7 md:h-7" : "w-8 h-8 md:w-9 md:h-9 lg:w-10 lg:h-10"
-                            )}>
-                                <img
-                                    src={algeriaFlag}
-                                    alt="Algérie"
-                                    width={40}
-                                    height={40}
-                                    loading="lazy"
-                                    decoding="async"
-                                    className="w-full h-full object-cover"
-                                />
-                            </div>
-                            <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full scale-0 group-hover:scale-150 transition-transform duration-700 -z-0"></div>
+                    {/* Logo Section - Redesigned with uniform spacing */}
+                    <Link to="/" className="flex items-center gap-3 md:gap-4 lg:gap-6 group shrink-0 ">
+                        {/* Logo */}
+                        <motion.div
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="relative"
+                        >
+                            <img
+                                src={logo}
+                                alt="Eclair Travel Logo"
+                                width={112}
+                                height={112}
+                                fetchPriority="high"
+                                loading="eager"
+                                decoding="async"
+                                className={cn(
+                                    "object-contain transition-all duration-500  rounded-2xl",
+                                    isScrolled
+                                        ? "w-14 h-14 md:w-16 md:h-16"
+                                        : "w-20 h-20 md:w-24 md:h-24 lg:w-28 lg:h-28"
+                                )}
+                            />
+                        </motion.div>
+
+                        {/* Drapeau Algérien - Medium size */}
+                        <div className={cn(
+                            "rounded-full border-2 border-white shadow-lg overflow-hidden transition-all duration-500",
+                            isScrolled ? "w-8 h-8 md:w-10 md:h-10" : "w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14"
+                        )}>
+                            <img
+                                src={algeriaFlag}
+                                alt="Algérie"
+                                width={56}
+                                height={56}
+                                loading="lazy"
+                                decoding="async"
+                                className="w-full h-full object-cover"
+                            />
                         </div>
+
+                        {/* Titre Eclair Travel */}
                         <div className="flex flex-col">
                             <span className={cn(
                                 "font-black tracking-tight leading-none italic transition-all duration-500",
                                 isScrolled ? "text-sm md:text-lg" : "text-base md:text-xl lg:text-2xl",
-                                "text-slate-900"
+                                "text-secondary"
                             )}>
-                                ECLAIR<span className="text-primary">TRAVEL</span>
+                                Eclair<span className="text-primary">Travel</span>
                             </span>
                             <span className={cn(
                                 "font-bold uppercase tracking-[0.2em] md:tracking-[0.3em] transition-all duration-500",
@@ -174,24 +176,28 @@ const Navbar = () => {
                                 {t('nav.pride_algerian')}
                             </span>
                         </div>
-                        {/* IATA Logo - AGRANDI */}
-                        <div className="hidden md:flex items-center gap-3 ml-2 lg:ml-4 pl-2 lg:pl-4 border-l border-slate-200/50">
-                            <div className={cn(
-                                "flex items-center justify-center bg-white/10 backdrop-blur-md border border-white/20 shadow-md transition-all duration-500",
-                                isScrolled ? "p-1 rounded-lg" : "p-1.5 lg:p-2 rounded-xl"
-                            )}>
-                                <img
-                                    src={iataLogo}
-                                    alt="IATA Certified"
-                                    width={100}
-                                    height={50}
-                                    loading="lazy"
-                                    decoding="async"
-                                    className={cn(
-                                        "object-contain transition-all duration-500",
-                                        isScrolled ? "h-8 md:h-10" : "h-10 md:h-12 lg:h-14"
-                                    )}
-                                />
+
+                        {/* IATA Logo + License - Aligné comme la photo */}
+                        <div className="hidden md:flex flex-col items-center">
+                            <img
+                                src={iataLogo}
+                                alt="IATA Certified"
+                                width={100}
+                                height={50}
+                                loading="lazy"
+                                decoding="async"
+                                className={cn(
+                                    "object-contain transition-all duration-500 ",
+                                    isScrolled ? "h-8 md:h-10" : "h-10 md:h-12 lg:h-14"
+                                )}
+                            />
+                            <div className="">
+                                <span className={cn(
+                                    "font-black bg-white text-[#1E618C] tracking-tight leading-none block text-center transition-all duration-500",
+                                    isScrolled ? "text-[8px] md:text-[10px]" : "text-[10px] md:text-xs lg:text-lg"
+                                )}>
+                                    03216555
+                                </span>
                             </div>
                         </div>
                     </Link>

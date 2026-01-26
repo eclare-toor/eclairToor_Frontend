@@ -105,8 +105,8 @@ const Contact = () => {
                   <div>
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('contact.phone_label')}</p>
                     <div className="space-y-1">
-                      <p className="text-lg font-bold text-slate-900 hover:text-primary transition-colors cursor-pointer">+213 550 12 34 56</p>
-                      <p className="text-lg font-bold text-slate-900 hover:text-primary transition-colors cursor-pointer">+213 21 00 00 00</p>
+                      <p className="text-lg font-bold text-slate-900 hover:text-primary transition-colors cursor-pointer">+213 560 043 393</p>
+                      <p className="text-lg font-bold text-slate-900 hover:text-primary transition-colors cursor-pointer">+213 667 441 129</p>
                     </div>
                   </div>
                 </div>
@@ -118,7 +118,7 @@ const Contact = () => {
                   <div>
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('contact.email_label')}</p>
                     <p className="text-lg font-bold text-slate-900 hover:text-primary transition-colors cursor-pointer">
-                      contact@eclair-travel.com
+                      eclairtravel@gmail.com
                     </p>
                   </div>
                 </div>

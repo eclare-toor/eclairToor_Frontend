@@ -37,7 +37,11 @@
         "pride_algerian": "Algerian Pride",
         "notif_deleted": "Notification deleted",
         "error_deleting": "Error while deleting",
-        "language": "Language"
+        "language": "Language",
+        "visa": "Visa",
+        "change_language": "Change language",
+        "mobile_menu": "Mobile menu",
+        "user_menu": "User menu"
     },
     "promotions": {
         "title": "Exceptional Offers",
@@ -127,7 +131,7 @@
         "new_message_btn": "Send new message",
         "hours_val": "Sat - Thu: 09:00 - 18:00\nFriday: Closed",
         "agency_label": "Our Agency",
-        "agency_address": "123 Boulevard des Martyrs\nAlgiers Centre, Algeria",
+        "agency_address": "Lot Pitee Street\nN:6 Hydra, Algeria",
         "phone_label": "Phone",
         "email_label": "Email",
         "hours_label": "Opening Hours"
@@ -383,7 +387,8 @@
                 "omra": "Omra Request",
                 "hotel": "Hotel Request",
                 "vol": "Flight Request",
-                "transport": "Transport Request"
+                "transport": "Transport Request",
+                "visa": "Visa Request"
             },
             "status_processing": "Processing...",
             "status_ready": "Offer Ready",
@@ -559,6 +564,31 @@
         "remarques": "Additional information (Flight No., special needs...)",
         "submit": "Book the transfer",
         "success": "Your transport request has been sent!"
+    },
+    "visa": {
+        "title": "VISA REQUEST",
+        "subtitle": "Complete assistance for your visa procedures",
+        "form_title": "Visa Request",
+        "form_subtitle": "Fill out this form for your visa application",
+        "pays_destination": "Destination country",
+        "pays_destination_placeholder": "Ex: France, Saudi Arabia...",
+        "type_visa": "Visa type",
+        "type_touristique": "Tourist",
+        "type_affaires": "Business",
+        "type_omra": "Omra",
+        "type_transit": "Transit",
+        "date_depart": "Expected departure date",
+        "date_retour": "Expected return date",
+        "duree_sejour": "Stay duration",
+        "duree_sejour_placeholder": "Ex: 15 days",
+        "ville_entree": "Entry city",
+        "ville_entree_placeholder": "Ex: Paris, Jeddah...",
+        "ville_sortie": "Exit city (optional)",
+        "ville_sortie_placeholder": "Ex: Marseille, Medina...",
+        "remarques": "Additional information",
+        "remarques_placeholder": "Specify your specific needs...",
+        "submit": "Send my visa request",
+        "success": "Your visa request has been successfully sent!"
     },
     "hotels_page": {
         "title": "YOUR IDEAL HOTEL",
