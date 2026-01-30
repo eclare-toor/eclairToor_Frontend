@@ -4,15 +4,12 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
-
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
   },
-
   build: {
-    // Minification aggressive avec Terser
     minify: 'terser',
     terserOptions: {
       compress: {
@@ -25,15 +22,19 @@ export default defineConfig({
         safari10: true,
       },
     },
-
-    // Chunk splitting intelligent
     rollupOptions: {
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
+            // ✅ React DOIT rester ensemble - ne pas séparer
+            if (id.includes('react') || id.includes('react-dom')) {
               return 'vendor-react';
             }
+            // ✅ React Router avec React
+            if (id.includes('react-router')) {
+              return 'vendor-react';
+            }
+            // Autres vendors
             if (id.includes('recharts')) {
               return 'vendor-charts';
             }
@@ -43,35 +44,26 @@ export default defineConfig({
             if (id.includes('@radix-ui')) {
               return 'vendor-radix';
             }
-            if (id.includes('zod')) {
+            if (id.includes('zod') || id.includes('react-hook-form')) {
               return 'vendor-forms';
             }
             if (id.includes('i18next')) {
               return 'vendor-i18n';
             }
-            return 'vendor-misc';
+            // ✅ Tout le reste dans un seul chunk
+            return 'vendor-libs';
           }
         },
-
-        // Noms de fichiers avec hash pour le cache
         chunkFileNames: 'assets/js/[name]-[hash].js',
         entryFileNames: 'assets/js/[name]-[hash].js',
         assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
       },
     },
-
-    // Taille max des chunks avant alerte
-    chunkSizeWarningLimit: 400,
-
-    // Désactive les sourcemaps en production pour la performance et la sécurité
+    chunkSizeWarningLimit: 500, // Augmenté un peu
     sourcemap: false,
-
-    // Optimisations supplémentaires
     cssCodeSplit: true,
     assetsInlineLimit: 4096,
   },
-
-  // Optimisation du serveur de dev
   server: {
     hmr: {
       overlay: false,
