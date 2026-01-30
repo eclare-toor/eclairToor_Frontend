@@ -1,10 +1,10 @@
 import type { Trip, TripItinerary, Hotel, TripHotel, User, Booking, BookingItem, ContactMessage, BookingStatus, CustomRequestStatus, UnifiedRequest, AppNotification, DashboardData } from './Types/index';
-
+import { API_URL } from './config/api';
 // --- DASHBOARD ---
 export const getDashboardStats = async (): Promise<DashboardData> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch('http://localhost:3000/api/dashbord', { // Note: using 'dashbord' as requested
+        const response = await fetch(`${API_URL}/api/dashbord`, { // Note: using 'dashbord' as requested
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -27,7 +27,7 @@ export const getDashboardStats = async (): Promise<DashboardData> => {
 // --- TRIPS ---
 export const getTrips = async (): Promise<Trip[]> => {
     try {
-        const response = await fetch('http://localhost:3000/api/trips');
+        const response = await fetch(`${API_URL}/api/trips`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -44,7 +44,7 @@ export const getTrips = async (): Promise<Trip[]> => {
 
 export const getTrip = async (id: string): Promise<Trip | null> => {
     try {
-        const response = await fetch(`http://localhost:3000/api/trips/${id}`);
+        const response = await fetch(`${API_URL}/api/trips/${id}`);
         if (!response.ok) {
             if (response.status === 404) return null;
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -58,7 +58,7 @@ export const getTrip = async (id: string): Promise<Trip | null> => {
 
 export const getTripItinerary = async (tripId: string): Promise<TripItinerary[]> => {
     try {
-        const response = await fetch(`http://localhost:3000/api/trips/${tripId}/itinerary`);
+        const response = await fetch(`${API_URL}/api/trips/${tripId}/itinerary`);
         if (!response.ok) {
             // It might return 404 if no itinerary exists, in which case we return empty array
             if (response.status === 404) return [];
@@ -73,7 +73,7 @@ export const getTripItinerary = async (tripId: string): Promise<TripItinerary[]>
 
 export const getTripHotels = async (tripId: string): Promise<TripHotel[]> => {
     try {
-        const response = await fetch(`http://localhost:3000/api/trips/${tripId}/hotels`);
+        const response = await fetch(`${API_URL}/api/trips/${tripId}/hotels`);
         if (!response.ok) {
             // It might return 404 if no hotels linked, in which case we return empty array
             if (response.status === 404) return [];
@@ -92,7 +92,7 @@ import Cookies from 'js-cookie';
 export const createTrip = async (tripData: FormData): Promise<Trip> => {
     const token = Cookies.get('token')
     try {
-        const response = await fetch('http://localhost:3000/api/trips/', {
+        const response = await fetch(`${API_URL}/api/trips/`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -132,7 +132,7 @@ export const updateTrip = async (id: string, tripData: FormData | Partial<Trip>)
             body = JSON.stringify(trip);
         }
 
-        const response = await fetch(`http://localhost:3000/api/trips/${id}`, {
+        const response = await fetch(`${API_URL}/api/trips/${id}`, {
             method: 'PUT',
             headers: headers,
             body: body
@@ -152,7 +152,7 @@ export const updateTrip = async (id: string, tripData: FormData | Partial<Trip>)
 export const deleteTrip = async (id: string): Promise<void> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch(`http://localhost:3000/api/trips/${id}`, {
+        const response = await fetch(`${API_URL}/api/trips/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -172,7 +172,7 @@ export const deleteTrip = async (id: string): Promise<void> => {
 export const addTripImages = async (tripId: string, imagesData: FormData): Promise<any> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch(`http://localhost:3000/api/trips/${tripId}/images`, {
+        const response = await fetch(`${API_URL}/api/trips/${tripId}/images`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -195,7 +195,7 @@ export const addTripImages = async (tripId: string, imagesData: FormData): Promi
 export const deleteTripImages = async (tripId: string, names: string[]): Promise<any> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch(`http://localhost:3000/api/trips/${tripId}/images`, {
+        const response = await fetch(`${API_URL}/api/trips/${tripId}/images`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -224,7 +224,7 @@ export interface CreateItineraryPayload {
 export const createTripItineraries = async (tripId: string, itineraries: CreateItineraryPayload[]): Promise<any> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch(`http://localhost:3000/api/trips/${tripId}/itinerary`, {
+        const response = await fetch(`${API_URL}/api/trips/${tripId}/itinerary`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -252,7 +252,7 @@ export interface TripHotelLink {
 export const updateTripItinerary = async (tripId: string, itineraryId: string, data: Partial<CreateItineraryPayload>): Promise<any> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch(`http://localhost:3000/api/trips/${tripId}/itinerary/${itineraryId}`, {
+        const response = await fetch(`${API_URL}/api/trips/${tripId}/itinerary/${itineraryId}`, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -276,7 +276,7 @@ export const updateTripItinerary = async (tripId: string, itineraryId: string, d
 export const deleteTripItinerary = async (tripId: string, itineraryId: string): Promise<any> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch(`http://localhost:3000/api/trips/${tripId}/itinerary/${itineraryId}`, {
+        const response = await fetch(`${API_URL}/api/trips/${tripId}/itinerary/${itineraryId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -298,7 +298,7 @@ export const deleteTripItinerary = async (tripId: string, itineraryId: string): 
 export const deleteAllTripItineraries = async (tripId: string): Promise<any> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch(`http://localhost:3000/api/trips/${tripId}/itinerary`, {
+        const response = await fetch(`${API_URL}/api/trips/${tripId}/itinerary`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -320,7 +320,7 @@ export const deleteAllTripItineraries = async (tripId: string): Promise<any> => 
 export const deleteTripHotel = async (tripId: string, hotelId: string): Promise<any> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch(`http://localhost:3000/api/trips/${tripId}/hotels/${hotelId}`, {
+        const response = await fetch(`${API_URL}/api/trips/${tripId}/hotels/${hotelId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -342,7 +342,7 @@ export const deleteTripHotel = async (tripId: string, hotelId: string): Promise<
 export const linkTripHotels = async (tripId: string, hotels: TripHotelLink[]): Promise<any> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch(`http://localhost:3000/api/trips/${tripId}/hotels`, {
+        const response = await fetch(`${API_URL}/api/trips/${tripId}/hotels`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -366,7 +366,7 @@ export const linkTripHotels = async (tripId: string, hotels: TripHotelLink[]): P
 // --- HOTELS ---
 export const getHotels = async (): Promise<Hotel[]> => {
     try {
-        const response = await fetch('http://localhost:3000/api/hotels');
+        const response = await fetch(`${API_URL}/api/hotels`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -379,7 +379,7 @@ export const getHotels = async (): Promise<Hotel[]> => {
 
 export const getHotel = async (id: string): Promise<Hotel> => {
     try {
-        const response = await fetch(`http://localhost:3000/api/hotels/${id}`);
+        const response = await fetch(`${API_URL}/api/hotels/${id}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -392,7 +392,7 @@ export const getHotel = async (id: string): Promise<Hotel> => {
 
 export const getHotelsByType = async (type: string): Promise<Hotel[]> => {
     try {
-        const response = await fetch(`http://localhost:3000/api/hotels/type/${type}`);
+        const response = await fetch(`${API_URL}/api/hotels/type/${type}`);
         if (!response.ok) {
             // If 404, maybe return empty list or throw? Let's return empty list for 404 as it is safer for UI.
             if (response.status === 404) return [];
@@ -408,7 +408,7 @@ export const getHotelsByType = async (type: string): Promise<Hotel[]> => {
 export const createHotel = async (hotel: Partial<Hotel>): Promise<Hotel> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch('http://localhost:3000/api/hotels', {
+        const response = await fetch(`${API_URL}/api/hotels`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -432,7 +432,7 @@ export const createHotel = async (hotel: Partial<Hotel>): Promise<Hotel> => {
 export const updateHotel = async (id: string, hotel: Partial<Hotel>): Promise<Hotel> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch(`http://localhost:3000/api/hotels/${id}`, {
+        const response = await fetch(`${API_URL}/api/hotels/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -456,7 +456,7 @@ export const updateHotel = async (id: string, hotel: Partial<Hotel>): Promise<Ho
 export const deleteHotel = async (id: string): Promise<void> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch(`http://localhost:3000/api/hotels/${id}`, {
+        const response = await fetch(`${API_URL}/api/hotels/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -476,7 +476,7 @@ export const deleteHotel = async (id: string): Promise<void> => {
 export const addHotelImages = async (hotelId: string, imagesData: FormData): Promise<any> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch(`http://localhost:3000/api/hotels/${hotelId}/images`, {
+        const response = await fetch(`${API_URL}/api/hotels/${hotelId}/images`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -499,7 +499,7 @@ export const addHotelImages = async (hotelId: string, imagesData: FormData): Pro
 export const deleteHotelImages = async (hotelId: string, names: string[]): Promise<any> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch(`http://localhost:3000/api/hotels/${hotelId}/images`, {
+        const response = await fetch(`${API_URL}/api/hotels/${hotelId}/images`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -544,7 +544,7 @@ export const register = async (data: RegisterPayload): Promise<AuthResponse> => 
     console.log('🔄 API: Calling register endpoint with data:', data);
 
     try {
-        const response = await fetch('http://localhost:3000/api/auth/register', {
+        const response = await fetch(`${API_URL}/api/auth/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -571,7 +571,7 @@ export const register = async (data: RegisterPayload): Promise<AuthResponse> => 
 
 export const login = async (email: string, password: string): Promise<AuthResponse> => {
     try {
-        const response = await fetch('http://localhost:3000/api/auth/login', {
+        const response = await fetch(`${API_URL}/api/auth/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -596,7 +596,7 @@ export const login = async (email: string, password: string): Promise<AuthRespon
 export const getUsers = async (): Promise<User[]> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch('http://localhost:3000/api/auth/users', {
+        const response = await fetch(`${API_URL}/api/auth/users`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -618,7 +618,7 @@ export const getUsers = async (): Promise<User[]> => {
 export const deleteUser = async (id: string): Promise<void> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch(`http://localhost:3000/api/auth/users/${id}`, {
+        const response = await fetch(`${API_URL}/api/auth/users/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -638,7 +638,7 @@ export const deleteUser = async (id: string): Promise<void> => {
 export const updateUserStatus = async (userId: string, status: boolean): Promise<any> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch('http://localhost:3000/api/auth/activate', {
+        const response = await fetch(`${API_URL}/api/auth/activate`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -662,7 +662,7 @@ export const updateUserStatus = async (userId: string, status: boolean): Promise
 export const updateProfile = async (data: any): Promise<any> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch('http://localhost:3000/api/auth/update', {
+        const response = await fetch(`${API_URL}/api/auth/update`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -687,7 +687,7 @@ export const updateProfile = async (data: any): Promise<any> => {
 export const adminUpdateUser = async (userId: string, data: any): Promise<any> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch('http://localhost:3000/api/auth/update', {
+        const response = await fetch(`${API_URL}/api/auth/update`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -728,7 +728,7 @@ export interface CreateBookingPayload {
 export const createReservation = async (data: CreateBookingPayload): Promise<Booking> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch('http://localhost:3000/api/bookings', {
+        const response = await fetch(`${API_URL}/api/bookings`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -759,7 +759,7 @@ export const adminCreateBooking = async (data: CreateBookingPayload): Promise<Bo
 export const getAllBookings = async (): Promise<BookingItem[]> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch('http://localhost:3000/api/bookings/', {
+        const response = await fetch(`${API_URL}/api/bookings/`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -781,7 +781,7 @@ export const getAllBookings = async (): Promise<BookingItem[]> => {
 export const updateBookingStatus = async (id: string, status: BookingStatus, extraData: any = {}): Promise<Booking | null> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch(`http://localhost:3000/api/bookings/${id}`, {
+        const response = await fetch(`${API_URL}/api/bookings/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -805,7 +805,7 @@ export const updateBookingStatus = async (id: string, status: BookingStatus, ext
 export const getTripBookings = async (tripId: string): Promise<any> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch(`http://localhost:3000/api/bookings/trip/${tripId}`, {
+        const response = await fetch(`${API_URL}/api/bookings/trip/${tripId}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -826,7 +826,7 @@ export const getTripBookings = async (tripId: string): Promise<any> => {
 export const getUserBookings = async (): Promise<BookingItem[]> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch('http://localhost:3000/api/bookings/mine', {
+        const response = await fetch(`${API_URL}/api/bookings/mine`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -860,7 +860,7 @@ export interface UpdateBookingPayload {
 export const updateBooking = async (bookingId: string, data: UpdateBookingPayload): Promise<Booking> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch(`http://localhost:3000/api/bookings/${bookingId}`, {
+        const response = await fetch(`${API_URL}/api/bookings/${bookingId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -884,7 +884,7 @@ export const updateBooking = async (bookingId: string, data: UpdateBookingPayloa
 export const getUserProfile = async (): Promise<User> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch('http://localhost:3000/api/auth/profile', {
+        const response = await fetch(`${API_URL}/api/auth/profile`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -1003,7 +1003,7 @@ export type CustomRequestPayload =
 export const createCustomTripRequest = async (data: CustomRequestPayload): Promise<any> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch('http://localhost:3000/api/requests', {
+        const response = await fetch(`${API_URL}/api/requests`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1031,7 +1031,7 @@ export const createCustomTripRequest = async (data: CustomRequestPayload): Promi
 export const updateRequest = async (id: string, data: any): Promise<any> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch(`http://localhost:3000/api/requests/${id}`, {
+        const response = await fetch(`${API_URL}/api/requests/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -1058,7 +1058,7 @@ export const updateCustomRequestStatus = async (id: string, status: CustomReques
 export const getAllRequests = async (): Promise<UnifiedRequest[]> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch('http://localhost:3000/api/requests', {
+        const response = await fetch(`${API_URL}/api/requests`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -1079,7 +1079,7 @@ export const getAllRequests = async (): Promise<UnifiedRequest[]> => {
 export const getUserRequests = async (): Promise<UnifiedRequest[]> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch('http://localhost:3000/api/requests/mine', {
+        const response = await fetch(`${API_URL}/api/requests/mine`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -1099,7 +1099,7 @@ export const getUserRequests = async (): Promise<UnifiedRequest[]> => {
 export const getRequestDetails = async (id: string): Promise<UnifiedRequest> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch(`http://localhost:3000/api/requests/${id}`, {
+        const response = await fetch(`${API_URL}/api/requests/${id}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -1121,7 +1121,7 @@ export const getRequestDetails = async (id: string): Promise<UnifiedRequest> => 
 export const submitRequestResponse = async (requestId: string, offer: string): Promise<any> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch('http://localhost:3000/api/responses', {
+        const response = await fetch(`${API_URL}/api/responses`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1145,7 +1145,7 @@ export const submitRequestResponse = async (requestId: string, offer: string): P
 export const getAdminResponses = async (): Promise<any[]> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch('http://localhost:3000/api/responses', {
+        const response = await fetch(`${API_URL}/api/responses`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -1166,7 +1166,7 @@ export const getAdminResponses = async (): Promise<any[]> => {
 export const deleteResponse = async (requestId: string): Promise<any> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch('http://localhost:3000/api/responses', {
+        const response = await fetch(`${API_URL}/api/responses`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -1199,7 +1199,7 @@ export interface ContactPayload {
 
 export const sendContactMessage = async (data: ContactPayload): Promise<any> => {
     try {
-        const response = await fetch('http://localhost:3000/api/contacts', {
+        const response = await fetch(`${API_URL}/api/contacts`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1222,7 +1222,7 @@ export const sendContactMessage = async (data: ContactPayload): Promise<any> => 
 export const getContactMessages = async (): Promise<ContactMessage[]> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch('http://localhost:3000/api/contacts', {
+        const response = await fetch(`${API_URL}/api/contacts`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -1259,7 +1259,7 @@ export const getNotifications = async (filters: NotificationFilters = {}): Promi
             include_expired: include_expired.toString()
         });
 
-        const response = await fetch(`http://localhost:3000/api/notif?${queryParams}`, {
+        const response = await fetch(`${API_URL}/api/notif?${queryParams}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -1277,7 +1277,7 @@ export const getNotifications = async (filters: NotificationFilters = {}): Promi
 export const deleteNotification = async (id: string): Promise<void> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch(`http://localhost:3000/api/notif/${id}`, {
+        const response = await fetch(`${API_URL}/api/notif/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -1296,7 +1296,7 @@ export const deleteNotification = async (id: string): Promise<void> => {
 export const getUnreadNotificationsCount = async (): Promise<number> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch('http://localhost:3000/api/notif/unread-count', {
+        const response = await fetch(`${API_URL}/api/notif/unread-count`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -1314,7 +1314,7 @@ export const getUnreadNotificationsCount = async (): Promise<number> => {
 export const markNotificationAsRead = async (id: string): Promise<void> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch(`http://localhost:3000/api/notif/${id}/read`, {
+        const response = await fetch(`${API_URL}/api/notif/${id}/read`, {
             method: 'PATCH',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -1329,7 +1329,7 @@ export const markNotificationAsRead = async (id: string): Promise<void> => {
 export const markAllNotificationsAsRead = async (): Promise<void> => {
     const token = Cookies.get('token');
     try {
-        const response = await fetch(`http://localhost:3000/api/notif/read-all`, {
+        const response = await fetch(`${API_URL}/api/notif/read-all`, {
             method: 'PATCH',
             headers: {
                 'Authorization': `Bearer ${token}`
