@@ -308,7 +308,7 @@ const AdminTripsPage = () => {
                     {/* Trip Image with Overlay */}
                     <div className="h-56 overflow-hidden relative">
                       <img
-                        src={Array.isArray(trip.images) && trip.images[0] ? (trip.images[0].startsWith('http') ? `${API_URL}/api${trip.images[0]}` : `http://localhost:3000/api${trip.images[0]}`) : 'https://via.placeholder.com/400x300'}
+                        src={Array.isArray(trip.images) && trip.images[0] ? (`${API_URL}/api${trip.images[0]}`) : 'https://via.placeholder.com/400x300'}
                         alt={trip.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       />

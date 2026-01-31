@@ -478,7 +478,7 @@ const Reservation = () => {
                 {/* Trip Header */}
                 <div className="relative h-64 overflow-hidden">
                   <img
-                    src={trip.images[0] ? (trip.images[0].startsWith('http') ? `${API_URL}/api${trip.images[0]}` : `http://localhost:3000/api${trip.images[0]}`) : 'https://via.placeholder.com/600x400'}
+                    src={trip.images[0] ? (`${API_URL}/api${trip.images[0]}`) : 'https://via.placeholder.com/600x400'}
                     alt={trip.title}
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
                   />

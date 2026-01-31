@@ -120,7 +120,7 @@ const TripDetailsPage = () => {
               }}
             >
               <img
-                src={img && typeof img === 'string' ? (img.startsWith('http') ? `${API_URL}/api${img}` : `http://localhost:3000/api${img}`) : 'https://via.placeholder.com/800x600'}
+                src={img && typeof img === 'string' ? (`${API_URL}/api${img}`) : 'https://via.placeholder.com/800x600'}
                 alt={`${trip.title} ${idx + 1}`}
                 className="w-full h-full object-cover"
               />
@@ -194,7 +194,7 @@ const TripDetailsPage = () => {
               >
                 <img
                   src={trip.images[currentImageIndex] && typeof trip.images[currentImageIndex] === 'string'
-                    ? (trip.images[currentImageIndex].startsWith('http') ? `${API_URL}/api${trip.images[currentImageIndex]}` : `http://localhost:3000/api${trip.images[currentImageIndex]}`)
+                    ? (`${API_URL}/api${trip.images[currentImageIndex]}`)
                     : 'https://via.placeholder.com/800x600'}
                   alt={`Full view ${currentImageIndex + 1}`}
                   className="max-w-full max-h-full object-contain rounded-3xl md:rounded-[3rem] shadow-2xl"
@@ -219,7 +219,7 @@ const TripDetailsPage = () => {
                     )}
                   >
                     <img
-                      src={img && typeof img === 'string' ? (img.startsWith('http') ? `${API_URL}/api${img}` : `http://localhost:3000/api${img}`) : 'https://via.placeholder.com/800x600'}
+                      src={img && typeof img === 'string' ? (`${API_URL}/api${img}`) : 'https://via.placeholder.com/800x600'}
                       alt="Thumbnail"
                       className="w-full h-full object-cover"
                     />
@@ -331,7 +331,7 @@ const TripDetailsPage = () => {
                             {hotel.images.map((img, idx) => (
                               <div key={idx} className="min-w-full h-full snap-center relative">
                                 <img
-                                  src={img.startsWith('http') ? `${API_URL}/api${img}` : `http://localhost:3000/api${img}`}
+                                  src={`${API_URL}/api${img}`}
                                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                   alt={`${hotel.name} ${idx + 1}`}
                                 />
@@ -344,7 +344,7 @@ const TripDetailsPage = () => {
                         ) : hotel.image ? (
                           <div className="h-full relative">
                             <img
-                              src={hotel.image.startsWith('http') ? `${API_URL}/api${hotel.image}` : `http://localhost:3000/api${hotel.image}`}
+                              src={`${API_URL}/api${hotel.image}`}
                               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                               alt={hotel.name}
                             />

@@ -37,7 +37,7 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
                 {/* Image Container */}
                 <div className="relative aspect-[16/10] overflow-hidden">
                     <img
-                        src={trip.images[0] ? (trip.images[0].startsWith('http') ? `${API_URL}/api${trip.images[0]}` : `http://localhost:3000/api${trip.images[0]}`) : 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=800&q=80'}
+                        src={trip.images[0] ? (`${API_URL}/api${trip.images[0]}`) : 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=800&q=80'}
                         alt={trip.title}
                         className="h-full w-full object-cover transition-transform duration-1000"
                     />

@@ -248,7 +248,7 @@ const AdminOmraHotelsPage = () => {
               <div className="h-48 overflow-hidden relative">
                 {hotel.images && hotel.images.length > 0 ? (
                   <img
-                    src={hotel.images[0].startsWith('http') ? `${API_URL}/api${hotel.images[0]}` : `http://localhost:3000/api${hotel.images[0]}`}
+                    src={`${API_URL}/api${hotel.images[0]}`}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     alt={hotel.name}
                   />
@@ -397,7 +397,7 @@ const AdminOmraHotelsPage = () => {
                       {currentHotel.images.map((path, idx) => (
                         <div key={idx} className="relative aspect-square rounded-lg overflow-hidden group">
                           <img
-                            src={path.startsWith('http') ? `${API_URL}/api${path}` : `http://localhost:3000/api${path}`}
+                            src={`${API_URL}/api${path}`}
                             className="w-full h-full object-cover"
                             alt=""
                           />

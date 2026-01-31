@@ -186,7 +186,7 @@ const CongratulationReservation = () => {
           {trip && (
             <div className="bg-white/50 backdrop-blur-md rounded-2xl p-6 text-left border border-white/40 flex flex-col md:flex-row gap-6 items-center shadow-sm">
               <img
-                src={trip.images[0] ? (trip.images[0].startsWith('http') ? `${API_URL}/api${trip.images[0]}` : `http://localhost:3000/api${trip.images[0]}`) : 'https://via.placeholder.com/400x300'}
+                src={trip.images[0] ? (`${API_URL}/api${trip.images[0]}`) : 'https://via.placeholder.com/400x300'}
                 alt={trip.title}
                 className="w-24 h-24 rounded-xl object-cover shadow-sm"
               />

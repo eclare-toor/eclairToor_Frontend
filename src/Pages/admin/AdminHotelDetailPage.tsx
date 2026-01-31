@@ -315,7 +315,7 @@ const AdminHotelDetailPage = () => {
                             {formData.images?.map((path, idx) => (
                                 <div key={idx} className="relative aspect-video rounded-3xl overflow-hidden group shadow-lg">
                                     <img
-                                        src={path.startsWith('http') ? `${API_URL}/api${path}` : `http://localhost:3000/api${path}`}
+                                        src={`${API_URL}/api${path}`}
                                         className="w-full h-full object-cover"
                                         alt=""
                                     />
