@@ -8,6 +8,7 @@ import { ImageIcon, X } from '../../../components/icons';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 import { toast } from 'react-toastify';
 import type { Trip, TripType } from '../../../Types';
+import { API_URL } from '../../../config/api';
 
 interface TripFormProps {
     currentTrip: Partial<Trip>;
@@ -316,7 +317,7 @@ const TripForm: React.FC<TripFormProps> = ({
                     {Array.isArray(currentTrip.images) && currentTrip.images.map((img, index) => (
                         <div key={`existing-${index}`} className="group relative aspect-square rounded-2xl overflow-hidden border border-slate-100 shadow-sm">
                             <img
-                                src={img.startsWith('http') ? img : `http://localhost:3000/api${img}`}
+                                src={img.startsWith('http') ? `${API_URL}/api${img}` : `http://localhost:3000/api${img}`}
                                 alt={`Image ${index + 1}`}
                                 className="w-full h-full object-cover transition-transform group-hover:scale-110"
                             />

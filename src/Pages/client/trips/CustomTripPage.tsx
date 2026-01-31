@@ -9,8 +9,10 @@ import { Label } from '../../../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
 import { Calendar, MapPin, Clock, Hotel, Plane, Coffee, ArrowRight } from '../../../components/icons';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
+import { useTranslation } from 'react-i18next';
 
 const CustomTripPage = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -51,13 +53,13 @@ const CustomTripPage = () => {
       };
 
       await createCustomTripRequest(payload);
-      toast.success('Votre demande de voyage a été envoyée avec succès !');
+      toast.success(t('custom_trip.success'));
       // Navigate to dashboard requests tab (assuming we can pass state to switch tab or just go there)
       navigate('/mon-compte', { state: { activeTab: 'requests' } });
 
     } catch (error: any) {
       console.error(error);
-      toast.error(error.message || 'Une erreur est survenue lors de l\'envoi de la demande.');
+      toast.error(error.message || t('custom_trip.error'));
     } finally {
       setLoading(false);
     }
@@ -69,11 +71,10 @@ const CustomTripPage = () => {
 
         <div className="text-center mb-10">
           <h1 className="text-3xl md:text-4xl font-heading font-bold text-slate-900 mb-4">
-            Créez votre voyage sur mesure
+            {t('custom_trip.title')}
           </h1>
           <p className="text-slate-600 max-w-2xl mx-auto">
-            Confiez-nous vos envies, nous construirons pour vous le séjour idéal.
-            Remplissez ce formulaire pour recevoir un devis personnalisé.
+            {t('custom_trip.subtitle')}
           </p>
         </div>
 
@@ -89,14 +90,14 @@ const CustomTripPage = () => {
                 onClick={() => setFormData({ ...formData, type: 'national' })}
                 className={`py-2.5 rounded-lg text-sm font-bold transition-all ${formData.type === 'national' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
               >
-                Tourisme National
+                {t('trips.categories.national')}
               </button>
               <button
                 type="button"
                 onClick={() => setFormData({ ...formData, type: 'international' })}
                 className={`py-2.5 rounded-lg text-sm font-bold transition-all ${formData.type === 'international' ? 'bg-white text-primary shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
               >
-                Tourisme International
+                {t('trips.categories.international')}
               </button>
             </div>
 
@@ -105,11 +106,11 @@ const CustomTripPage = () => {
               {/* Destination */}
               <div className="col-span-1 md:col-span-2 space-y-2">
                 <Label htmlFor="destination" className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-primary" /> Destination souhaitée
+                  <MapPin className="w-4 h-4 text-primary" /> {t('custom_trip.destination')}
                 </Label>
                 <Input
                   id="destination"
-                  placeholder={formData.type === 'national' ? 'Ex: Bejaia, Oran, désert...' : 'Ex: Italie, Turquie, Maldives...'}
+                  placeholder={formData.type === 'national' ? t('custom_trip.destination_placeholder') : t('custom_trip.destination_placeholder')}
                   value={formData.destination}
                   onChange={(e) => setFormData({ ...formData, destination: e.target.value })}
                   required
@@ -120,7 +121,7 @@ const CustomTripPage = () => {
               {/* Date Début */}
               <div className="space-y-2">
                 <Label htmlFor="date_debut" className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-primary" /> Date de départ
+                  <Calendar className="w-4 h-4 text-primary" /> {t('custom_trip.date_debut')}
                 </Label>
                 <Input
                   id="date_debut"
@@ -135,7 +136,7 @@ const CustomTripPage = () => {
               {/* Durée */}
               <div className="space-y-2">
                 <Label htmlFor="duree" className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-primary" /> Durée (jours)
+                  <Clock className="w-4 h-4 text-primary" /> {t('custom_trip.duree')}
                 </Label>
                 <Input
                   id="duree"
@@ -151,22 +152,22 @@ const CustomTripPage = () => {
               {/* Hébergement */}
               <div className="space-y-2">
                 <Label htmlFor="hebergement" className="flex items-center gap-2">
-                  <Hotel className="w-4 h-4 text-primary" /> Hébergement
+                  <Hotel className="w-4 h-4 text-primary" /> {t('custom_trip.hebergement')}
                 </Label>
                 <Select
                   value={formData.hebergement}
                   onValueChange={(val) => setFormData({ ...formData, hebergement: val })}
                 >
                   <SelectTrigger className="h-12 border-slate-200">
-                    <SelectValue placeholder="Choisir un standing" />
+                    <SelectValue placeholder={t('custom_trip.hebergement_placeholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="2 étoiles">2 Étoiles</SelectItem>
-                    <SelectItem value="3 étoiles">3 Étoiles</SelectItem>
-                    <SelectItem value="4 étoiles">4 Étoiles</SelectItem>
-                    <SelectItem value="5 étoiles">5 Étoiles (Luxe)</SelectItem>
-                    <SelectItem value="Appartement">Appartement / Villa</SelectItem>
-                    <SelectItem value="Autre">Autre</SelectItem>
+                    <SelectItem value="2 étoiles">{t('custom_trip.hebergement_options.hotel_3')}</SelectItem>
+                    <SelectItem value="3 étoiles">{t('custom_trip.hebergement_options.hotel_3')}</SelectItem>
+                    <SelectItem value="4 étoiles">{t('custom_trip.hebergement_options.hotel_4')}</SelectItem>
+                    <SelectItem value="5 étoiles">{t('custom_trip.hebergement_options.hotel_5')}</SelectItem>
+                    <SelectItem value="Appartement">{t('custom_trip.hebergement_options.apartment')}</SelectItem>
+                    <SelectItem value="Autre">{t('custom_trip.hebergement_options.villa')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -174,21 +175,21 @@ const CustomTripPage = () => {
               {/* Restauration Option */}
               <div className="space-y-2">
                 <Label htmlFor="restauration" className="flex items-center gap-2">
-                  <Coffee className="w-4 h-4 text-primary" /> Restauration
+                  <Coffee className="w-4 h-4 text-primary" /> {t('custom_trip.restauration')}
                 </Label>
                 <Select
                   value={formData.options.restauration}
                   onValueChange={(val) => setFormData({ ...formData, options: { ...formData.options, restauration: val } })}
                 >
                   <SelectTrigger className="h-12 border-slate-200">
-                    <SelectValue placeholder="Préférence repas" />
+                    <SelectValue placeholder={t('custom_omra.restauration_placeholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="petit déjeuner">Petit déjeuner inclus</SelectItem>
-                    <SelectItem value="demi-pension">Demi-pension (Matin + Soir)</SelectItem>
-                    <SelectItem value="pension complète">Pension complète</SelectItem>
-                    <SelectItem value="all inclusive">All Inclusive</SelectItem>
-                    <SelectItem value="sans repas">Sans repas</SelectItem>
+                    <SelectItem value="petit déjeuner">{t('custom_omra.restauration_options.breakfast')}</SelectItem>
+                    <SelectItem value="demi-pension">{t('custom_omra.restauration_options.half_board')}</SelectItem>
+                    <SelectItem value="pension complète">{t('custom_omra.restauration_options.full_board')}</SelectItem>
+                    <SelectItem value="all inclusive">{t('custom_trip.hebergement_options.villa')}</SelectItem>
+                    <SelectItem value="sans repas">{t('custom_omra.restauration_options.no_meals')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -197,7 +198,7 @@ const CustomTripPage = () => {
             {/* Transport Option - Single Column */}
             <div className="space-y-3 pt-2">
               <Label className="flex items-center gap-2">
-                <Plane className="w-4 h-4 text-primary" /> Transport & Transferts
+                <Plane className="w-4 h-4 text-primary" /> {t('custom_trip.transport')}
               </Label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {['inclus', 'navette aéroport', 'non inclus'].map((opt) => (
@@ -216,7 +217,7 @@ const CustomTripPage = () => {
               <Button type="submit" className="w-full h-14 text-lg font-bold shadow-lg shadow-primary/25 hover:scale-[1.01] transition-transform" disabled={loading}>
                 {loading ? <LoadingSpinner /> : (
                   <span className="flex items-center gap-2">
-                    Envoyer ma demande <ArrowRight className="w-5 h-5" />
+                    {t('custom_trip.submit')} <ArrowRight className="w-5 h-5" />
                   </span>
                 )}
               </Button>

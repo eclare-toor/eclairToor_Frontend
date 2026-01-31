@@ -58,7 +58,7 @@ const Contact = () => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.3 }}
           >
-            <span className="inline-flex items-center gap-2 px-4 py-2 bg-primary/20 backdrop-blur-md border border-white/20 rounded-full text-white text-[10px] font-black uppercase tracking-[0.3em] mb-6">
+            <span className="inline-flex items-center gap-2 px-4 py-2 bg-primary/20 backdrop-blur-md border border-white/20 rounded-full text-white text-[10px] font-black uppercase  mb-6">
               <Sparkles className="w-4 h-4" />
               {t('contact.subtitle')}
             </span>
@@ -152,7 +152,7 @@ const Contact = () => {
                 allowFullScreen={true}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                className="grayscale group-hover:grayscale-0 transition-all duration-1000 scale-105"
+                className=""
               ></iframe>
               <div className="absolute top-6 left-6 flex items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-md rounded-full shadow-lg pointer-events-none">
                 <div className="w-3 h-3 bg-primary rounded-full animate-pulse" />
@@ -270,7 +270,7 @@ const Contact = () => {
                     <Button
                       type="submit"
                       size="lg"
-                      className="w-full text-xl h-20 rounded-[2rem] font-black uppercase tracking-[0.2em] gap-4 shadow-2xl shadow-primary/30 transition-all hover:scale-[1.02]"
+                      className="w-full text-xl h-20 rounded-[2rem] font-black uppercase 0.2em] gap-4 shadow-2xl shadow-primary/30 transition-all hover:scale-[1.02]"
                       disabled={loading}
                     >
                       {loading ? (

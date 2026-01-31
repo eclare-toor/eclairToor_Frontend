@@ -46,7 +46,7 @@ const AdminSidebar = () => {
                     <h2 className="text-xl font-black tracking-tighter text-white uppercase italic">
                         Eclair Travel
                     </h2>
-                    <p className="text-[10px] text-primary font-black uppercase tracking-[0.3em] mt-1 ml-1 opacity-80">
+                    <p className="text-[10px] text-primary font-black uppercase  mt-1 ml-1 opacity-80">
                         Administration
                     </p>
                 </div>

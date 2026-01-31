@@ -624,5 +624,78 @@
         "first": "First",
         "submit": "Search for flights",
         "success": "Your flight request has been successfully sent!"
+    },
+    "custom_omra": {
+        "title": "Customize your Religious Tourism",
+        "subtitle": "Organize your pilgrimage according to your wishes. Choose your hotels in Mecca and Medina, your dates and services for a serene spiritual experience.",
+        "date_debut": "Desired departure date",
+        "duree": "Duration (days)",
+        "makka_hotels": "Available hotels in Mecca (Makkah)",
+        "madina_hotels": "Available hotels in Medina (Madina)",
+        "no_makka_hotels": "No hotels available in Mecca at the moment.",
+        "no_madina_hotels": "No hotels available in Medina at the moment.",
+        "loading_hotels": "Loading hotels...",
+        "restauration": "Meals",
+        "transport": "Transport (Makkah-Madina-Jeddah)",
+        "restauration_placeholder": "Meal preference",
+        "transport_placeholder": "Transport type",
+        "restauration_options": {
+            "breakfast": "Breakfast included",
+            "half_board": "Half board",
+            "full_board": "Full board",
+            "no_meals": "No meals"
+        },
+        "transport_options": {
+            "standard_bus": "Standard Bus",
+            "comfort_bus": "Comfort Bus (VIP)",
+            "private_car": "Private Car (GMC/Sedan)",
+            "train": "High-Speed Train (Haramain)"
+        },
+        "submit": "Send my Omra request",
+        "success": "Your custom Omra request has been successfully sent!",
+        "error_hotels": "Unable to load the hotel list.",
+        "error_select_hotels": "Please select a hotel in Mecca and Medina.",
+        "view_on_map": "View on map"
+    },
+    "custom_trip": {
+        "title": "Create your Custom Trip",
+        "subtitle": "Design your dream trip. Choose your destination, dates, accommodation and activities for a unique and unforgettable experience.",
+        "destination": "Desired destination",
+        "destination_placeholder": "Ex: Paris, Dubai, Istanbul...",
+        "date_debut": "Departure date",
+        "date_fin": "Return date",
+        "duree": "Estimated duration (days)",
+        "type_voyage": "Trip type",
+        "type_placeholder": "Select type",
+        "type_options": {
+            "cultural": "Cultural",
+            "adventure": "Adventure",
+            "relaxation": "Relaxation",
+            "business": "Business",
+            "family": "Family"
+        },
+        "hebergement": "Accommodation type",
+        "hebergement_placeholder": "Accommodation preference",
+        "hebergement_options": {
+            "hotel_3": "3-star hotel",
+            "hotel_4": "4-star hotel",
+            "hotel_5": "5-star hotel",
+            "apartment": "Apartment",
+            "villa": "Villa",
+            "hostel": "Hostel"
+        },
+        "budget": "Approximate budget (DZD)",
+        "budget_placeholder": "Ex: 150000",
+        "nbre_person": "Number of travelers",
+        "options_title": "Options and preferences",
+        "restauration": "Meals",
+        "transport": "Local transport",
+        "activites": "Desired activities",
+        "activites_placeholder": "Ex: Guided tours, water sports, spa...",
+        "remarques": "Additional information",
+        "remarques_placeholder": "Specify your specific needs, allergies, special requests...",
+        "submit": "Send my trip request",
+        "success": "Your custom trip request has been successfully sent!",
+        "error": "An error occurred while sending the request."
     }
 }

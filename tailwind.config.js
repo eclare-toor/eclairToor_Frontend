@@ -52,6 +52,7 @@ export default {
             fontFamily: {
                 sans: ['Inter', 'Noto Sans Arabic', 'IBM Plex Sans Arabic', 'ui-sans-serif', 'system-ui', 'sans-serif'],
                 heading: ['Poppins', 'Noto Sans Arabic', 'sans-serif'],
+                arabic: ['Noto Sans Arabic', 'serif'],
             },
 
             borderRadius: {

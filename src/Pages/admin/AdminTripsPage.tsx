@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../componen
 import TripForm from './components/TripForm';
 import TripHotelsForm from './components/TripHotelsForm';
 import ItineraryForm from './components/ItineraryForm';
+import { API_URL } from '../../config/api';
 
 const AdminTripsPage = () => {
   const [trips, setTrips] = useState<Trip[]>([]);
@@ -270,7 +271,7 @@ const AdminTripsPage = () => {
         </div>
 
         <div className="hidden md:block px-4 py-2 bg-primary/5 rounded-full border border-primary/10">
-          <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] italic">
+          <p className="text-[10px] font-black text-primary uppercase 0.2em] italic">
             {trips.filter(t => t.type === filterType).length} Voyages trouvés
           </p>
         </div>
@@ -307,7 +308,7 @@ const AdminTripsPage = () => {
                     {/* Trip Image with Overlay */}
                     <div className="h-56 overflow-hidden relative">
                       <img
-                        src={Array.isArray(trip.images) && trip.images[0] ? (trip.images[0].startsWith('http') ? trip.images[0] : `http://localhost:3000/api${trip.images[0]}`) : 'https://via.placeholder.com/400x300'}
+                        src={Array.isArray(trip.images) && trip.images[0] ? (trip.images[0].startsWith('http') ? `${API_URL}/api${trip.images[0]}` : `http://localhost:3000/api${trip.images[0]}`) : 'https://via.placeholder.com/400x300'}
                         alt={trip.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       />
@@ -346,7 +347,7 @@ const AdminTripsPage = () => {
                       <div className="flex justify-between items-center pt-5 border-t border-slate-50">
                         <div className="flex flex-col gap-2">
                           <div>
-                            <p className="text-[9px] font-black text-slate-300 uppercase tracking-[0.2em] mb-0.5">À partir de</p>
+                            <p className="text-[9px] font-black text-slate-300 uppercase 0.2em] mb-0.5">À partir de</p>
                             <p className="font-black text-lg text-primary tracking-tight">
                               {Number(trip.base_price || 0).toLocaleString('fr-DZ')} <span className="text-[10px]">DZD</span>
                             </p>

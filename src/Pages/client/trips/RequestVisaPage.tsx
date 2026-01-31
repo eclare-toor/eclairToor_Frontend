@@ -12,9 +12,10 @@ import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 import BackgroundAura from '../../../components/Shared/BackgroundAura';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
+import { cn } from '../../../lib/utils';
 
 const VisaPage = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
@@ -80,13 +81,22 @@ const VisaPage = () => {
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.1, duration: 0.2 }}
                     >
-                        <span className="inline-block px-4 py-1.5 rounded-full bg-primary/20 backdrop-blur-md border border-primary/30 text-white text-[10px] font-black uppercase tracking-[0.3em] mb-6">
-                            Service Visa
+                        <span className={cn(
+                            "inline-block px-4 py-1.5 rounded-full bg-primary/20 backdrop-blur-md border border-primary/30 text-white text-[10px] font-black uppercase mb-6",
+                            i18n.language === 'ar' ? "font-arabic tracking-normal" : ""
+                        )}>
+                            {t('visa.tag', 'Service Visa')}
                         </span>
-                        <h1 className="text-6xl md:text-8xl font-black text-white italic tracking-tighter drop-shadow-2xl mb-4 leading-tight">
+                        <h1 className={cn(
+                            "text-6xl md:text-8xl font-black text-white drop-shadow-2xl mb-4 leading-tight",
+                            i18n.language === 'ar' ? "font-arabic tracking-normal" : "italic tracking-tighter"
+                        )}>
                             {t('visa.title')}
                         </h1>
-                        <p className="text-xl md:text-2xl text-white/90 font-medium italic drop-shadow-lg max-w-2xl mx-auto">
+                        <p className={cn(
+                            "text-xl md:text-2xl text-white/90 font-medium drop-shadow-lg max-w-2xl mx-auto",
+                            i18n.language === 'ar' ? "font-arabic" : "italic"
+                        )}>
                             {t('visa.subtitle')}
                         </p>
                     </motion.div>
@@ -105,18 +115,28 @@ const VisaPage = () => {
                     <form onSubmit={handleSubmit} className="p-8 md:p-12 space-y-10">
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-8">
                             <div>
-                                <h2 className="text-3xl font-black text-slate-900 tracking-tighter italic">{t('visa.form_title')}</h2>
-                                <p className="text-slate-500 font-medium">{t('visa.form_subtitle')}</p>
+                                <h2 className={cn(
+                                    "text-3xl font-black text-slate-900",
+                                    i18n.language === 'ar' ? "font-arabic tracking-normal" : "tracking-tighter italic"
+                                )}>
+                                    {t('visa.form_title')}
+                                </h2>
+                                <p className={cn(
+                                    "text-slate-500 font-medium",
+                                    i18n.language === 'ar' && "font-arabic"
+                                )}>
+                                    {t('visa.form_subtitle')}
+                                </p>
                             </div>
                             <div className="p-4 rounded-3xl bg-primary/10 flex items-center justify-center">
-                                <FileText className="w-8 h-8 text-primary" />
+                                <FileText className="w-8 h-8 text-primary rtl:scale-x-[-1]" />
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             {/* Pays de destination */}
                             <div className="space-y-3 md:col-span-2">
-                                <Label htmlFor="pays_destination" className="flex items-center gap-2 text-slate-700 font-bold ml-1">
+                                <Label htmlFor="pays_destination" className="flex items-center gap-2 text-slate-700 font-bold rtl:mr-1 ltr:ml-1 rtl:flex-row-reverse rtl:justify-end">
                                     <MapPin className="w-4 h-4 text-primary" /> {t('visa.pays_destination')}
                                 </Label>
                                 <Input
@@ -131,7 +151,7 @@ const VisaPage = () => {
 
                             {/* Type de visa */}
                             <div className="space-y-3 md:col-span-2">
-                                <Label className="flex items-center gap-2 text-slate-700 font-bold ml-1">
+                                <Label className="flex items-center gap-2 text-slate-700 font-bold rtl:mr-1 ltr:ml-1 rtl:flex-row-reverse rtl:justify-end">
                                     <FileText className="w-4 h-4 text-primary" /> {t('visa.type_visa')}
                                 </Label>
                                 <Select
@@ -152,7 +172,7 @@ const VisaPage = () => {
 
                             {/* Date de départ */}
                             <div className="space-y-3">
-                                <Label htmlFor="date_depart" className="flex items-center gap-2 text-slate-700 font-bold ml-1">
+                                <Label htmlFor="date_depart" className="flex items-center gap-2 text-slate-700 font-bold rtl:mr-1 ltr:ml-1 rtl:flex-row-reverse rtl:justify-end">
                                     <Calendar className="w-4 h-4 text-primary" /> {t('visa.date_depart')}
                                 </Label>
                                 <Input
@@ -167,7 +187,7 @@ const VisaPage = () => {
 
                             {/* Date de retour */}
                             <div className="space-y-3">
-                                <Label htmlFor="date_retour" className="flex items-center gap-2 text-slate-700 font-bold ml-1">
+                                <Label htmlFor="date_retour" className="flex items-center gap-2 text-slate-700 font-bold rtl:mr-1 ltr:ml-1 rtl:flex-row-reverse rtl:justify-end">
                                     <Calendar className="w-4 h-4 text-primary" /> {t('visa.date_retour')}
                                 </Label>
                                 <Input
@@ -182,7 +202,7 @@ const VisaPage = () => {
 
                             {/* Durée du séjour */}
                             <div className="space-y-3">
-                                <Label htmlFor="duree_sejour" className="flex items-center gap-2 text-slate-700 font-bold ml-1">
+                                <Label htmlFor="duree_sejour" className="flex items-center gap-2 text-slate-700 font-bold rtl:mr-1 ltr:ml-1 rtl:flex-row-reverse rtl:justify-end">
                                     <Users className="w-4 h-4 text-primary" /> {t('visa.duree_sejour')}
                                 </Label>
                                 <Input
@@ -197,7 +217,7 @@ const VisaPage = () => {
 
                             {/* Ville d'entrée */}
                             <div className="space-y-3">
-                                <Label htmlFor="ville_entree" className="flex items-center gap-2 text-slate-700 font-bold ml-1">
+                                <Label htmlFor="ville_entree" className="flex items-center gap-2 text-slate-700 font-bold rtl:mr-1 ltr:ml-1 rtl:flex-row-reverse rtl:justify-end">
                                     <Plane className="w-4 h-4 text-primary" /> {t('visa.ville_entree')}
                                 </Label>
                                 <Input
@@ -212,7 +232,7 @@ const VisaPage = () => {
 
                             {/* Ville de sortie */}
                             <div className="space-y-3 md:col-span-2">
-                                <Label htmlFor="ville_sortie" className="flex items-center gap-2 text-slate-700 font-bold ml-1">
+                                <Label htmlFor="ville_sortie" className="flex items-center gap-2 text-slate-700 font-bold rtl:mr-1 ltr:ml-1 rtl:flex-row-reverse rtl:justify-end">
                                     <Plane className="w-4 h-4 text-primary" /> {t('visa.ville_sortie')}
                                 </Label>
                                 <Input
@@ -227,7 +247,7 @@ const VisaPage = () => {
 
                         {/* Remarks */}
                         <div className="space-y-4">
-                            <Label htmlFor="remarques" className="flex items-center gap-2 text-slate-700 font-bold ml-1">
+                            <Label htmlFor="remarques" className="flex items-center gap-2 text-slate-700 font-bold rtl:mr-1 ltr:ml-1 rtl:flex-row-reverse rtl:justify-end">
                                 {t('visa.remarques')}
                             </Label>
                             <Textarea
@@ -246,9 +266,9 @@ const VisaPage = () => {
                                 disabled={loading}
                             >
                                 {loading ? <LoadingSpinner /> : (
-                                    <span className="flex items-center gap-4">
+                                    <span className="flex items-center gap-4 rtl:flex-row-reverse">
                                         {t('visa.submit')}
-                                        <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                                        <ArrowRight className="w-6 h-6 group-hover:translate-x-2 rtl:group-hover:-translate-x-2 transition-transform rtl:rotate-180" />
                                     </span>
                                 )}
                             </Button>

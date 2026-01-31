@@ -878,7 +878,7 @@ const AdminRequestsPage = () => {
                     <div className="absolute top-0 right-0 w-64 h-full bg-gradient-to-l from-white/5 to-transparent pointer-events-none" />
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 relative z-10">
                       <div>
-                        <p className="text-slate-400 font-bold text-xs uppercase tracking-[0.2em] mb-2">Montant Total Calculé</p>
+                        <p className="text-slate-400 font-bold text-xs uppercase 0.2em] mb-2">Montant Total Calculé</p>
                         <div className="flex items-baseline gap-2">
                           <span className="text-4xl font-black text-white tracking-tight">
                             {Number(selectedBooking.prix_calculer || selectedBooking.total_price || 0).toLocaleString()}
@@ -888,7 +888,7 @@ const AdminRequestsPage = () => {
                       </div>
                       {selectedBooking.prix_vrai_paye && Number(selectedBooking.prix_vrai_paye) !== Number(selectedBooking.prix_calculer) && (
                         <div className="px-6 py-4 bg-emerald-500/10 rounded-2xl border border-emerald-500/20 backdrop-blur-sm">
-                          <p className="text-emerald-400 font-bold text-[10px] uppercase tracking-[0.2em] mb-1">Montant Réel Payé</p>
+                          <p className="text-emerald-400 font-bold text-[10px] uppercase 0.2em] mb-1">Montant Réel Payé</p>
                           <p className="text-2xl font-black text-emerald-400">
                             {Number(selectedBooking.prix_vrai_paye).toLocaleString()} <span className="text-sm">DZD</span>
                           </p>

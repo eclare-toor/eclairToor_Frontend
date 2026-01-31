@@ -87,7 +87,7 @@ const AdminTripBookingsPage = () => {
                     </Button>
                     <div>
                         <div className="flex items-center gap-3 mb-2">
-                            <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-black uppercase tracking-[0.2em] italic">
+                            <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-black uppercase 0.2em] italic">
                                 Rapport de Réservations
                             </span>
                             <span className="text-slate-300">/</span>

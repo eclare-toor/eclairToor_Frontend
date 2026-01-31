@@ -267,7 +267,7 @@ function AdminDashboardPage() {
             </DialogHeader>
             <form onSubmit={handleCreateBooking} className="space-y-6">
               <div className="space-y-2">
-                <Label className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Sélectionner l'Utilisateur</Label>
+                <Label className="text-xs font-black uppercase 0.2em] text-slate-400">Sélectionner l'Utilisateur</Label>
                 <div className="space-y-3">
                   <div className="relative">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-10" />
@@ -293,8 +293,8 @@ function AdminDashboardPage() {
                             setUserSearchTerm(`${user.nom} ${user.prenom}`);
                           }}
                           className={`w-full text-left p-3 rounded-xl transition-all ${bookingForm.user_id === user.id
-                              ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                              : 'bg-white hover:bg-slate-100 border border-slate-100'
+                            ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                            : 'bg-white hover:bg-slate-100 border border-slate-100'
                             }`}
                         >
                           <div className="flex items-center gap-3">
@@ -328,7 +328,7 @@ function AdminDashboardPage() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Sélectionner le Voyage</Label>
+                <Label className="text-xs font-black uppercase 0.2em] text-slate-400">Sélectionner le Voyage</Label>
                 <div className="relative">
                   <Plane className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 z-10" />
                   <Select
@@ -463,7 +463,7 @@ function AdminDashboardPage() {
               {/* Total Price Display */}
               <div className="flex justify-between items-center p-4 bg-slate-900 rounded-2xl shadow-xl shadow-slate-200 overflow-hidden relative">
                 <div className="relative z-10">
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-1">Prix Total Estimé</p>
+                  <p className="text-[10px] font-black uppercase 0.2em] text-slate-400 mb-1">Prix Total Estimé</p>
                   <p className="text-2xl font-black text-white tracking-tight">{totalPrice.toLocaleString('fr-DZ')} <span className="text-sm font-bold text-slate-500">DZD</span></p>
                 </div>
                 <div className="p-3 bg-white/10 rounded-xl relative z-10">
@@ -473,7 +473,7 @@ function AdminDashboardPage() {
               </div>
 
               <DialogFooter className="mt-8">
-                <Button type="submit" className="w-full h-16 rounded-[1.5rem] font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20 hover:shadow-primary/40 transition-all flex items-center justify-center gap-3">
+                <Button type="submit" className="w-full h-16 rounded-[1.5rem] font-black uppercase 0.2em] shadow-xl shadow-primary/20 hover:shadow-primary/40 transition-all flex items-center justify-center gap-3">
                   Confirmer la réservation
                   <ChevronRight className="w-5 h-5" />
                 </Button>

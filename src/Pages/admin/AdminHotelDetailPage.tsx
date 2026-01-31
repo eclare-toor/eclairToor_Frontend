@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { ChevronLeft, Star, MapPin, Building, Calendar, Edit, Loader2, Save, X, Trash2, ImageIcon, Upload } from '../../components/icons';
 import LoadingSpinner from '../../components/Shared/LoadingSpinner';
 import { toast } from 'react-toastify';
+import { API_URL } from '../../config/api';
 
 const AdminHotelDetailPage = () => {
     const { id } = useParams<{ id: string }>();
@@ -213,7 +214,7 @@ const AdminHotelDetailPage = () => {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Ville</Label>
+                                    <Label className="text-[10px] font-black uppercase 0.2em] text-slate-400">Ville</Label>
                                     {isEditing ? (
                                         <Input
                                             value={formData.city || ''}
@@ -226,7 +227,7 @@ const AdminHotelDetailPage = () => {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Type / Catégorie</Label>
+                                    <Label className="text-[10px] font-black uppercase 0.2em] text-slate-400">Type / Catégorie</Label>
                                     {isEditing ? (
                                         <Select
                                             value={formData.type}
@@ -247,7 +248,7 @@ const AdminHotelDetailPage = () => {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Etoiles</Label>
+                                    <Label className="text-[10px] font-black uppercase 0.2em] text-slate-400">Etoiles</Label>
                                     {isEditing ? (
                                         <Input
                                             type="number"
@@ -267,7 +268,7 @@ const AdminHotelDetailPage = () => {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Adresse</Label>
+                                    <Label className="text-[10px] font-black uppercase 0.2em] text-slate-400">Adresse</Label>
                                     {isEditing ? (
                                         <Input
                                             value={formData.address || ''}
@@ -280,7 +281,7 @@ const AdminHotelDetailPage = () => {
                                 </div>
 
                                 <div className="md:col-span-2 space-y-2">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Google Maps</Label>
+                                    <Label className="text-[10px] font-black uppercase 0.2em] text-slate-400">Google Maps</Label>
                                     {isEditing ? (
                                         <Input
                                             type="url"
@@ -307,14 +308,14 @@ const AdminHotelDetailPage = () => {
                 {/* Right Column: Images */}
                 <div className="space-y-6">
                     <div className="bg-white rounded-[2.5rem] border border-slate-100 p-8 shadow-sm">
-                        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6 block">Images</Label>
+                        <Label className="text-[10px] font-black uppercase 0.2em] text-slate-400 mb-6 block">Images</Label>
 
                         <div className="grid grid-cols-1 gap-4">
                             {/* Existing Images */}
                             {formData.images?.map((path, idx) => (
                                 <div key={idx} className="relative aspect-video rounded-3xl overflow-hidden group shadow-lg">
                                     <img
-                                        src={path.startsWith('http') ? path : `http://localhost:3000/api${path}`}
+                                        src={path.startsWith('http') ? `${API_URL}/api${path}` : `http://localhost:3000/api${path}`}
                                         className="w-full h-full object-cover"
                                         alt=""
                                     />

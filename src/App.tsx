@@ -81,7 +81,7 @@ function App() {
               <div className="w-8 h-8 bg-primary/10 rounded-full animate-pulse"></div>
             </div>
           </div>
-          <p className="mt-4 text-xs font-black uppercase tracking-[0.3em] text-slate-400 animate-pulse">
+          <p className="mt-4 text-xs font-black uppercase  text-slate-400 animate-pulse">
             Chargement...
           </p>
         </div>

@@ -10,8 +10,10 @@ import { Label } from '../../../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
 import { Calendar, Clock, MapPin, Coffee, Bus, ArrowRight, Moon, Star, Info, CheckCircle2 } from '../../../components/icons';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
-
+import { useTranslation } from 'react-i18next';
+import { API_URL } from '../../../config/api';
 const CustomOmraTripPage = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [loadingHotels, setLoadingHotels] = useState(true);
@@ -40,7 +42,7 @@ const CustomOmraTripPage = () => {
                 setMadinaHotels(madina);
             } catch (error) {
                 console.error("Failed to load hotels", error);
-                toast.error("Impossible de charger la liste des hôtels.");
+                toast.error(t('custom_omra.error_hotels'));
             } finally {
                 setLoadingHotels(false);
             }
@@ -52,7 +54,7 @@ const CustomOmraTripPage = () => {
         e.preventDefault();
 
         if (!formData.hebergement_makka || !formData.hebergement_madina) {
-            toast.warning('Veuillez sélectionner un hôtel à La Mecque et à Médine.');
+            toast.warning(t('custom_omra.error_select_hotels'));
             return;
         }
 
@@ -74,12 +76,12 @@ const CustomOmraTripPage = () => {
             };
 
             await createCustomTripRequest(payload);
-            toast.success('Votre demande de Omra sur mesure a été envoyée avec succès !');
+            toast.success(t('custom_omra.success'));
             navigate('/mon-compte', { state: { activeTab: 'requests' } });
 
         } catch (error: any) {
             console.error(error);
-            toast.error(error.message || 'Une erreur est survenue lors de l\'envoi de la demande.');
+            toast.error(error.message || t('common.error'));
         } finally {
             setLoading(false);
         }
@@ -92,7 +94,7 @@ const CustomOmraTripPage = () => {
         >
             <div className="aspect-video bg-slate-100 relative overflow-hidden">
                 {hotel.images && hotel.images.length > 0 ? (
-                    <img src={`http://localhost:3000/api${hotel.images[0]}`} alt={hotel.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    <img src={`${API_URL}/api${hotel.images[0]}`} alt={hotel.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-slate-400 bg-slate-100">
                         <Moon className="w-10 h-10 opacity-20" />
@@ -125,7 +127,7 @@ const CustomOmraTripPage = () => {
                         className="text-xs text-blue-500 hover:underline flex items-center gap-1 mt-1"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <Info className="w-3 h-3" /> Voir sur la carte
+                        <Info className="w-3 h-3" /> {t('custom_omra.view_on_map')}
                     </a>
                 )}
             </div>
@@ -141,10 +143,10 @@ const CustomOmraTripPage = () => {
                         <Moon className="w-8 h-8" />
                     </div>
                     <h1 className="text-3xl md:text-4xl font-heading font-bold text-slate-900 mb-4">
-                        Personnalisez votre Tourisme Religieux
+                        {t('custom_omra.title')}
                     </h1>
                     <p className="text-slate-600 max-w-2xl mx-auto">
-                        Organisez votre pèlerinage selon vos souhaits. Choisissez vos hôtels à La Mecque et Médine, vos dates et vos services pour une expérience spirituelle sereine.
+                        {t('custom_omra.subtitle')}
                     </p>
                 </div>
 
@@ -157,7 +159,7 @@ const CustomOmraTripPage = () => {
                             {/* Date Début */}
                             <div className="space-y-2">
                                 <Label htmlFor="date_debut" className="flex items-center gap-2">
-                                    <Calendar className="w-4 h-4 text-emerald-600" /> Date de départ souhaitée
+                                    <Calendar className="w-4 h-4 text-emerald-600" /> {t('custom_omra.date_debut')}
                                 </Label>
                                 <Input
                                     id="date_debut"
@@ -172,7 +174,7 @@ const CustomOmraTripPage = () => {
                             {/* Durée */}
                             <div className="space-y-2">
                                 <Label htmlFor="duree" className="flex items-center gap-2">
-                                    <Clock className="w-4 h-4 text-emerald-600" /> Durée (jours)
+                                    <Clock className="w-4 h-4 text-emerald-600" /> {t('custom_omra.duree')}
                                 </Label>
                                 <Input
                                     id="duree"
@@ -191,14 +193,14 @@ const CustomOmraTripPage = () => {
                         {loadingHotels ? (
                             <div className="py-12 flex justify-center flex-col items-center gap-4">
                                 <LoadingSpinner />
-                                <p className="text-slate-500 animate-pulse">Chargement des hôtels...</p>
+                                <p className="text-slate-500 animate-pulse">{t('custom_omra.loading_hotels')}</p>
                             </div>
                         ) : (
                             <div className="space-y-10">
                                 {/* Makkah Hotels */}
                                 <div className="space-y-4">
                                     <Label className="flex items-center gap-2 text-lg font-bold text-slate-800 border-b pb-2">
-                                        <MapPin className="w-5 h-5 text-emerald-600" /> Hôtels disponibles à La Mecque (Makkah)
+                                        <MapPin className="w-5 h-5 text-emerald-600" /> {t('custom_omra.makka_hotels')}
                                     </Label>
 
                                     {makkaHotels.length > 0 ? (
@@ -213,14 +215,14 @@ const CustomOmraTripPage = () => {
                                             ))}
                                         </div>
                                     ) : (
-                                        <p className="text-slate-500 italic">Aucun hôtel disponible à La Mecque pour le moment.</p>
+                                        <p className="text-slate-500 italic">{t('custom_omra.no_makka_hotels')}</p>
                                     )}
                                 </div>
 
                                 {/* Madina Hotels */}
                                 <div className="space-y-4">
                                     <Label className="flex items-center gap-2 text-lg font-bold text-slate-800 border-b pb-2">
-                                        <MapPin className="w-5 h-5 text-emerald-600" /> Hôtels disponibles à Médine (Madina)
+                                        <MapPin className="w-5 h-5 text-emerald-600" /> {t('custom_omra.madina_hotels')}
                                     </Label>
 
                                     {madinaHotels.length > 0 ? (
@@ -235,7 +237,7 @@ const CustomOmraTripPage = () => {
                                             ))}
                                         </div>
                                     ) : (
-                                        <p className="text-slate-500 italic">Aucun hôtel disponible à Médine pour le moment.</p>
+                                        <p className="text-slate-500 italic">{t('custom_omra.no_madina_hotels')}</p>
                                     )}
                                 </div>
                             </div>
@@ -245,20 +247,20 @@ const CustomOmraTripPage = () => {
                             {/* Restauration Option */}
                             <div className="space-y-2">
                                 <Label htmlFor="restauration" className="flex items-center gap-2">
-                                    <Coffee className="w-4 h-4 text-emerald-600" /> Restauration
+                                    <Coffee className="w-4 h-4 text-emerald-600" /> {t('custom_omra.restauration')}
                                 </Label>
                                 <Select
                                     value={formData.options.restauration}
                                     onValueChange={(val) => setFormData({ ...formData, options: { ...formData.options, restauration: val } })}
                                 >
                                     <SelectTrigger className="h-12 border-slate-200 focus:ring-emerald-500 bg-white">
-                                        <SelectValue placeholder="Préférence repas" />
+                                        <SelectValue placeholder={t('custom_omra.restauration_placeholder')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="petit déjeuner">Petit déjeuner inclus</SelectItem>
-                                        <SelectItem value="demi-pension">Demi-pension</SelectItem>
-                                        <SelectItem value="pension complète">Pension complète</SelectItem>
-                                        <SelectItem value="sans repas">Sans repas</SelectItem>
+                                        <SelectItem value="petit déjeuner">{t('custom_omra.restauration_options.breakfast')}</SelectItem>
+                                        <SelectItem value="demi-pension">{t('custom_omra.restauration_options.half_board')}</SelectItem>
+                                        <SelectItem value="pension complète">{t('custom_omra.restauration_options.full_board')}</SelectItem>
+                                        <SelectItem value="sans repas">{t('custom_omra.restauration_options.no_meals')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -266,20 +268,20 @@ const CustomOmraTripPage = () => {
                             {/* Transport Option */}
                             <div className="space-y-2">
                                 <Label htmlFor="transport" className="flex items-center gap-2">
-                                    <Bus className="w-4 h-4 text-emerald-600" /> Transport (Makkah-Madina-Jeddah)
+                                    <Bus className="w-4 h-4 text-emerald-600" /> {t('custom_omra.transport')}
                                 </Label>
                                 <Select
                                     value={formData.options.transport}
                                     onValueChange={(val) => setFormData({ ...formData, options: { ...formData.options, transport: val } })}
                                 >
                                     <SelectTrigger className="h-12 border-slate-200 focus:ring-emerald-500 bg-white">
-                                        <SelectValue placeholder="Type de transport" />
+                                        <SelectValue placeholder={t('custom_omra.transport_placeholder')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="bus standard">Bus Standard</SelectItem>
-                                        <SelectItem value="bus confort">Bus Confort (VIP)</SelectItem>
-                                        <SelectItem value="voiture privée">Voiture Privée (GMC/Berline)</SelectItem>
-                                        <SelectItem value="tgv">TGV (Train Haramain)</SelectItem>
+                                        <SelectItem value="bus standard">{t('custom_omra.transport_options.standard_bus')}</SelectItem>
+                                        <SelectItem value="bus confort">{t('custom_omra.transport_options.comfort_bus')}</SelectItem>
+                                        <SelectItem value="voiture privée">{t('custom_omra.transport_options.private_car')}</SelectItem>
+                                        <SelectItem value="tgv">{t('custom_omra.transport_options.train')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -289,7 +291,7 @@ const CustomOmraTripPage = () => {
                             <Button type="submit" className="w-full h-14 text-lg font-bold bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/25 hover:scale-[1.01] transition-transform text-white" disabled={loading}>
                                 {loading ? <LoadingSpinner /> : (
                                     <span className="flex items-center gap-2">
-                                        Envoyer ma demande Omra <ArrowRight className="w-5 h-5" />
+                                        {t('custom_omra.submit')} <ArrowRight className="w-5 h-5" />
                                     </span>
                                 )}
                             </Button>

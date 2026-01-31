@@ -11,7 +11,7 @@ import { Label } from '../../../components/ui/label';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 import { Calendar, Users, MapPin, Minus, Plus, ShieldCheck, Mail, Phone, User as UserIcon, ArrowLeft, ArrowRight } from '../../../components/icons';
 import BackgroundAura from '../../../components/Shared/BackgroundAura';
-
+import { API_URL } from '../../../config/api';
 const Reservation = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -229,7 +229,7 @@ const Reservation = () => {
             className="flex items-center gap-3 text-primary mb-4"
           >
             <div className="h-px w-8 bg-primary" />
-            <span className="text-[10px] font-black uppercase tracking-[0.3em]">{t('reservation.step_title')}</span>
+            <span className="text-[10px] font-black uppercase ">{t('reservation.step_title')}</span>
           </motion.div>
           <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter leading-none mb-4">
             {t('reservation.title_start')} <span className="text-primary italic">{t('reservation.title_span')}</span>
@@ -478,13 +478,13 @@ const Reservation = () => {
                 {/* Trip Header */}
                 <div className="relative h-64 overflow-hidden">
                   <img
-                    src={trip.images[0] ? (trip.images[0].startsWith('http') ? trip.images[0] : `http://localhost:3000/api${trip.images[0]}`) : 'https://via.placeholder.com/600x400'}
+                    src={trip.images[0] ? (trip.images[0].startsWith('http') ? `${API_URL}/api${trip.images[0]}` : `http://localhost:3000/api${trip.images[0]}`) : 'https://via.placeholder.com/600x400'}
                     alt={trip.title}
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent" />
                   <div className="absolute bottom-6 left-8 right-8">
-                    <span className="inline-block px-4 py-1 bg-white/20 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full mb-3 border border-white/20">
+                    <span className="inline-block px-4 py-1 bg-white/20 backdrop-blur-md text-white text-[10px] font-black uppercase 0.2em] rounded-full mb-3 border border-white/20">
                       {trip.type}
                     </span>
                     <h3 className="text-2xl font-black text-white leading-tight">{trip.title}</h3>
@@ -573,11 +573,11 @@ const Reservation = () => {
                       <Button
                         onClick={handleConfirm}
                         disabled={loading}
-                        className="w-full h-16 text-lg font-black uppercase tracking-[0.15em] rounded-2xl shadow-xl shadow-primary/25 hover:shadow-primary/40 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-4"
+                        className="w-full h-16 text-lg font-black uppercase 0.15em] rounded-2xl shadow-xl shadow-primary/25 hover:shadow-primary/40 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-4"
                       >
                         {loading ? <LoadingSpinner /> : (
                           <>
-                            <span>{t('confirm_button', { defaultValue: 'Valider la réservation' })}</span>
+                            <span>{t('reservation.confirm_button')}</span>
                             <ArrowRight className="w-6 h-6" />
                           </>
                         )}

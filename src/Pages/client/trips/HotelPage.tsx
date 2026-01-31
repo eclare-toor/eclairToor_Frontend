@@ -92,7 +92,7 @@ const HotelPage = () => {
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ delay: 0.1, duration: 0.2 }}
                     >
-                        <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-500/20 backdrop-blur-md border border-emerald-500/30 text-white text-[10px] font-black uppercase tracking-[0.3em] mb-6">
+                        <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-500/20 backdrop-blur-md border border-emerald-500/30 text-white text-[10px] font-black uppercase  mb-6">
                             {t('hotels_page.subtitle')}
                         </span>
                         <h1 className="text-6xl md:text-8xl font-black text-white italic tracking-tighter drop-shadow-2xl mb-4 leading-tight uppercase">

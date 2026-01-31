@@ -55,7 +55,7 @@ const OnboardingLoader: React.FC = () => {
                         <div className="absolute inset-0 bg-gradient-to-r from-primary to-blue-400 w-full origin-left animate-loading-bar"></div>
                     </div>
 
-                    <p className="mt-6 text-slate-400 text-[10px] md:text-xs font-black uppercase tracking-[0.4em] animate-fade-in-up">
+                    <p className="mt-6 text-slate-400 text-[10px] md:text-xs font-black uppercase 0.4em] animate-fade-in-up">
                         Voyagez avec élégance
                     </p>
                 </div>

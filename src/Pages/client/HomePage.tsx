@@ -54,7 +54,7 @@ const StatItem = ({ label, value, delay, icon: Icon }: { label: string, value: s
             <div className="text-5xl md:text-6xl font-black text-white mb-3 tracking-tighter">
                 {count}{suffix}
             </div>
-            <div className="text-slate-400 text-[10px] font-black uppercase tracking-[0.3em]">{label}</div>
+            <div className="text-slate-400 text-[14px] font-black uppercase ">{label}</div>
         </motion.div>
     );
 };
@@ -114,14 +114,14 @@ const HomePage = () => {
 
                 {/* Content */}
                 <div className="relative z-10 container mx-auto px-6 text-center text-white pt-20">
-                    <div
-                        className="max-w-6xl mx-auto"
-                    >
+                    <div className="max-w-6xl mx-auto">
                         <motion.h1
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="text-6xl md:text-[8rem] font-black leading-[0.85] tracking-tighter mb-10 drop-shadow-2xl"
+
+                            className="text-[3rem] sm:text-[4rem] md:text-[5rem] lg:text-[6.5rem] xl:text-[8rem] font-black leading-[0.9] sm:leading-[0.88] md:leading-[0.85] tracking-tighter mb-6 sm:mb-8 lg:mb-10 drop-shadow-2xl"
                         >
+                            {/* ── "EXPLORE" ── */}
                             <motion.span
                                 initial={{ y: 100, opacity: 0 }}
                                 animate={{ y: 0, opacity: 1 }}
@@ -130,7 +130,18 @@ const HomePage = () => {
                             >
                                 {t('home.hero.explore')}
                             </motion.span>
-                            <div className="h-[1.2em] overflow-hidden flex justify-center mt-4">
+
+                            {/* ── Rotating phrase container ──
+                                • height uses 1.3em (not 1.2em) — gives breathing
+                                  room for descenders and the slight vertical
+                                  overshoot in the entrance animation.
+                                • overflow-hidden only clips vertically (for the
+                                  slide-in effect); horizontally we let it breathe
+                                  with w-full so no word gets cut on the sides.
+                                • mt-2 instead of mt-4 — the old mt-4 pushed the
+                                  block down into its own clip boundary.
+                            */}
+                            <div className="h-[1.3em] overflow-hidden w-full flex justify-center mt-2">
                                 <AnimatePresence mode="wait">
                                     <motion.span
                                         key={typewriterIndex}
@@ -142,7 +153,7 @@ const HomePage = () => {
                                             ease: [0.16, 1, 0.3, 1],
                                             opacity: { duration: 0.3 }
                                         }}
-                                        className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-400 to-white italic block uppercase drop-shadow-lg"
+                                        className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-blue-400 to-white italic block uppercase drop-shadow-lg whitespace-nowrap"
                                         style={{ perspective: "1000px" }}
                                     >
                                         {phrases[typewriterIndex]}
@@ -151,29 +162,35 @@ const HomePage = () => {
                             </div>
                         </motion.h1>
 
-                        <p
-                            className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-16 leading-relaxed font-medium drop-shadow-lg"
-                        >
+                        {/* ── Subtitle ── */}
+                        <p className="text-lg sm:text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-10 sm:mb-14 lg:mb-16 leading-relaxed font-medium drop-shadow-lg">
                             {t('home.hero.subtitle')}
                         </p>
 
-                        <div
-                            className="flex flex-col sm:flex-row items-center justify-center gap-6"
-                        >
+                        {/* ── CTA buttons ── */}
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
                             <Link to="/voyages">
-                                <Button size="lg" className="h-20 text-xl px-12 rounded-full shadow-2xl shadow-primary/40 hover:scale-105 transition-all duration-500 bg-primary hover:bg-white hover:text-primary font-black uppercase tracking-widest border-none">
+                                <Button
+                                    size="lg"
+                                    className="h-16 sm:h-18 lg:h-20 text-base sm:text-lg lg:text-xl px-8 sm:px-10 lg:px-12 rounded-full shadow-2xl shadow-primary/40 hover:scale-105 transition-all duration-500 bg-primary hover:bg-white hover:text-primary font-black uppercase tracking-widest border-none whitespace-nowrap"
+                                >
                                     {t('home.hero.book_trip')}
-                                    <ArrowRight className="ml-3 w-6 h-6" />
+                                    <ArrowRight className="ml-2 lg:ml-3 w-5 h-5 lg:w-6 lg:h-6" />
                                 </Button>
                             </Link>
                             <Link to="/contact">
-                                <Button size="lg" variant="outline" className="h-20 text-xl px-12 rounded-full bg-white/10 backdrop-blur-md border-white/30 text-white hover:bg-white hover:text-slate-900 transition-all duration-500 font-bold uppercase tracking-widest leading-none">
+                                <Button
+                                    size="lg"
+                                    variant="outline"
+                                    className="h-16 sm:h-18 lg:h-20 text-base sm:text-lg lg:text-xl px-8 sm:px-10 lg:px-12 rounded-full bg-white/10 backdrop-blur-md border-white/30 text-white hover:bg-white hover:text-slate-900 transition-all duration-500 font-bold uppercase tracking-widest leading-none whitespace-nowrap"
+                                >
                                     {t('home.hero.need_help')}
                                 </Button>
                             </Link>
                         </div>
                     </div>
                 </div>
+
             </section>
 
             {/* Reassurance Bar - Statistics with Icons & Increment */}
@@ -188,11 +205,12 @@ const HomePage = () => {
                 </div>
             </section>
 
-            {/* Gallery Section - WOW Effect */}
+            {/*
+             Section - WOW Effect */}
             <section className="py-32 bg-white overflow-hidden">
                 <div className="container mx-auto px-6 mb-16">
                     <div className="max-w-3xl">
-                        <span className="text-primary font-black uppercase tracking-[0.4em] text-[10px] mb-4 block">{t('home.gallery.label')}</span>
+                        <span className="text-primary font-black uppercase 0.4em] text-[13px] mb-4 block">{t('home.gallery.label')}</span>
                         <h2 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tighter leading-tight mb-8">
                             {t('home.gallery.title_part1')} <span className="text-primary italic">{t('home.gallery.title_part2')}</span>
                         </h2>
@@ -204,7 +222,11 @@ const HomePage = () => {
                     <button
                         onClick={() => {
                             const container = document.getElementById('gallery-scroll');
-                            if (container) container.scrollBy({ left: -520, behavior: 'smooth' });
+                            if (container) {
+                                const cardWidth = container.querySelector('div')?.clientWidth || 320;
+                                const gap = 32; // gap-8 = 2rem = 32px
+                                container.scrollBy({ left: -(cardWidth + gap), behavior: 'smooth' });
+                            }
                         }}
                         className="absolute left-6 top-1/2 -translate-y-1/2 z-10 w-14 h-14 rounded-full bg-white shadow-2xl flex items-center justify-center text-slate-900 hover:bg-primary hover:text-white transition-all duration-300 hover:scale-110"
                     >
@@ -214,7 +236,11 @@ const HomePage = () => {
                     <button
                         onClick={() => {
                             const container = document.getElementById('gallery-scroll');
-                            if (container) container.scrollBy({ left: 520, behavior: 'smooth' });
+                            if (container) {
+                                const cardWidth = container.querySelector('div')?.clientWidth || 320;
+                                const gap = 32; // gap-8 = 2rem = 32px
+                                container.scrollBy({ left: cardWidth + gap, behavior: 'smooth' });
+                            }
                         }}
                         className="absolute right-6 top-1/2 -translate-y-1/2 z-10 w-14 h-14 rounded-full bg-white shadow-2xl flex items-center justify-center text-slate-900 hover:bg-primary hover:text-white transition-all duration-300 hover:scale-110"
                     >
@@ -230,7 +256,7 @@ const HomePage = () => {
                         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => (
                             <div
                                 key={num}
-                                className="min-w-[320px] md:min-w-[500px] h-[600px] rounded-[4rem] overflow-hidden relative group snap-center shadow-2xl"
+                                className="min-w-[calc(100vw-48px)] md:min-w-[500px] h-[450px] md:h-[600px] rounded-[3rem] md:rounded-[4rem] overflow-hidden relative group snap-center shadow-2xl"
                             >
                                 <img
                                     src={`/src/assets/galerie${num}.webp`}
@@ -243,7 +269,7 @@ const HomePage = () => {
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 flex items-end p-12">
                                     <div>
-                                        <p className="text-white font-black uppercase tracking-[0.3em] text-xs mb-2">{t('home.gallery.card_label')}</p>
+                                        <p className="text-white font-black uppercase  text-xs mb-2">{t('home.gallery.card_label')}</p>
                                         <p className="text-primary text-xl font-bold italic">{t('home.gallery.card_experience')} {num}</p>
                                     </div>
                                 </div>
@@ -257,21 +283,21 @@ const HomePage = () => {
             <section className="py-24 bg-white relative overflow-hidden">
                 <div className="container mx-auto px-6 relative z-10 text-center">
                     <div
-                        className="p-16 md:p-24 rounded-[4rem] bg-slate-900 overflow-hidden relative"
+                        className="p-8 sm:p-16 md:p-24 rounded-[3rem] md:rounded-[4rem] bg-slate-900 overflow-hidden relative"
                     >
                         {/* Background Texture */}
                         <div className="absolute inset-0 opacity-30 mix-blend-overlay bg-[url('https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&q=80')] bg-cover bg-center" />
                         <div className="absolute inset-0 bg-gradient-to-tr from-primary/40 via-transparent to-blue-500/40" />
 
                         <div className="relative z-10">
-                            <h2 className="text-5xl md:text-7xl font-black text-white mb-10 tracking-tighter leading-none uppercase">
+                            <h2 className="text-3xl sm:text-5xl md:text-7xl font-black text-white mb-6 md:mb-10 tracking-tighter leading-none uppercase">
                                 {t('home.cta.title_part1')} <br /> <span className="text-primary italic">{t('home.cta.title_part2')}</span>
                             </h2>
-                            <p className="text-slate-300 text-xl md:text-2xl max-w-3xl mx-auto mb-14 leading-relaxed tracking-tight">
+                            <p className="text-slate-300 text-lg sm:text-xl md:text-2xl max-w-3xl mx-auto mb-10 md:mb-14 leading-relaxed tracking-tight">
                                 {t('home.cta.desc')}
                             </p>
                             <Link to="/voyages">
-                                <Button size="lg" className="px-16 py-10 text-2xl rounded-full font-black shadow-[0_20px_50px_rgba(13,138,188,0.3)] hover:scale-110 transition-all duration-500 uppercase tracking-widest bg-primary hover:bg-white hover:text-primary border-none">
+                                <Button size="lg" className="px-10 py-8 md:px-16 md:py-10 text-xl md:text-2xl rounded-full font-black shadow-[0_20px_50px_rgba(13,138,188,0.3)] hover:scale-110 transition-all duration-500 uppercase tracking-widest bg-primary hover:bg-white hover:text-primary border-none">
                                     {t('home.cta.button')}
                                 </Button>
                             </Link>
@@ -342,7 +368,7 @@ const HomePage = () => {
                             allowFullScreen={true}
                             loading="lazy"
                             referrerPolicy="no-referrer-when-downgrade"
-                            className="grayscale group-hover:grayscale-0 transition-all duration-1000"
+                            className=""
                         ></iframe>
                     </div>
                 </div>

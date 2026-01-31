@@ -632,5 +632,78 @@
                 "luggage": "Bagages"
             }
         }
+    },
+    "custom_omra": {
+        "title": "Personnalisez votre Tourisme Religieux",
+        "subtitle": "Organisez votre pèlerinage selon vos souhaits. Choisissez vos hôtels à La Mecque et Médine, vos dates et vos services pour une expérience spirituelle sereine.",
+        "date_debut": "Date de départ souhaitée",
+        "duree": "Durée (jours)",
+        "makka_hotels": "Hôtels disponibles à La Mecque (Makkah)",
+        "madina_hotels": "Hôtels disponibles à Médine (Madina)",
+        "no_makka_hotels": "Aucun hôtel disponible à La Mecque pour le moment.",
+        "no_madina_hotels": "Aucun hôtel disponible à Médine pour le moment.",
+        "loading_hotels": "Chargement des hôtels...",
+        "restauration": "Restauration",
+        "transport": "Transport (Makkah-Madina-Jeddah)",
+        "restauration_placeholder": "Préférence repas",
+        "transport_placeholder": "Type de transport",
+        "restauration_options": {
+            "breakfast": "Petit déjeuner inclus",
+            "half_board": "Demi-pension",
+            "full_board": "Pension complète",
+            "no_meals": "Sans repas"
+        },
+        "transport_options": {
+            "standard_bus": "Bus Standard",
+            "comfort_bus": "Bus Confort (VIP)",
+            "private_car": "Voiture Privée (GMC/Berline)",
+            "train": "TGV (Train Haramain)"
+        },
+        "submit": "Envoyer ma demande Omra",
+        "success": "Votre demande de Omra sur mesure a été envoyée avec succès !",
+        "error_hotels": "Impossible de charger la liste des hôtels.",
+        "error_select_hotels": "Veuillez sélectionner un hôtel à La Mecque et à Médine.",
+        "view_on_map": "Voir sur la carte"
+    },
+    "custom_trip": {
+        "title": "Créez votre Voyage sur Mesure",
+        "subtitle": "Concevez le voyage de vos rêves. Choisissez votre destination, vos dates, votre hébergement et vos activités pour une expérience unique et inoubliable.",
+        "destination": "Destination souhaitée",
+        "destination_placeholder": "Ex: Paris, Dubai, Istanbul...",
+        "date_debut": "Date de départ",
+        "date_fin": "Date de retour",
+        "duree": "Durée estimée (jours)",
+        "type_voyage": "Type de voyage",
+        "type_placeholder": "Sélectionnez le type",
+        "type_options": {
+            "cultural": "Culturel",
+            "adventure": "Aventure",
+            "relaxation": "Détente",
+            "business": "Affaires",
+            "family": "Famille"
+        },
+        "hebergement": "Type d'hébergement",
+        "hebergement_placeholder": "Préférence d'hébergement",
+        "hebergement_options": {
+            "hotel_3": "Hôtel 3 étoiles",
+            "hotel_4": "Hôtel 4 étoiles",
+            "hotel_5": "Hôtel 5 étoiles",
+            "apartment": "Appartement",
+            "villa": "Villa",
+            "hostel": "Auberge"
+        },
+        "budget": "Budget approximatif (DZD)",
+        "budget_placeholder": "Ex: 150000",
+        "nbre_person": "Nombre de voyageurs",
+        "options_title": "Options et préférences",
+        "restauration": "Restauration",
+        "transport": "Transport local",
+        "activites": "Activités souhaitées",
+        "activites_placeholder": "Ex: Visites guidées, sports nautiques, spa...",
+        "remarques": "Informations complémentaires",
+        "remarques_placeholder": "Précisez vos besoins spécifiques, allergies, demandes particulières...",
+        "submit": "Envoyer ma demande de voyage",
+        "success": "Votre demande de voyage sur mesure a été envoyée avec succès !",
+        "error": "Une erreur est survenue lors de l'envoi de la demande."
     }
 }

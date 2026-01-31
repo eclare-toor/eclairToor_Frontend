@@ -7,11 +7,13 @@ import { Button } from '../../../components/ui/button';
 import { MapPin, Clock, CheckCircle2, Hotel as HotelIcon, ArrowLeft, Share2, Heart, ShieldCheck, Zap, Star, X, ChevronLeft, ChevronRight, Maximize2 } from '../../../components/icons';
 import { cn } from '../../../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { format } from 'date-fns';
+import { fr, enUS, arDZ } from 'date-fns/locale';
 
 import { useTranslation } from 'react-i18next';
-
+import { API_URL } from '../../../config/api';
 const TripDetailsPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const [trip, setTrip] = useState<Trip | null>(null);
   const [itinerary, setItinerary] = useState<TripItinerary[]>([]);
@@ -84,11 +86,8 @@ const TripDetailsPage = () => {
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('fr-FR', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    });
+    const locale = i18n.language === 'ar' ? arDZ : i18n.language === 'en' ? enUS : fr;
+    return format(new Date(dateString), 'd MMMM yyyy', { locale });
   };
 
   const startDate = trip?.start_date ? new Date(trip.start_date) : null;
@@ -105,14 +104,7 @@ const TripDetailsPage = () => {
           <ArrowLeft className="w-4 h-4" />
           {t('trip_details.back_link')}
         </Link>
-        <div className="flex gap-2">
-          <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/10 hover:text-primary transition-colors">
-            <Share2 className="w-5 h-5" />
-          </Button>
-          <Button variant="ghost" size="icon" className="rounded-full hover:bg-red-50 hover:text-red-500 transition-colors">
-            <Heart className="w-5 h-5" />
-          </Button>
-        </div>
+
       </div>
 
       {/* Image Gallery with Smooth Scroll */}
@@ -128,9 +120,9 @@ const TripDetailsPage = () => {
               }}
             >
               <img
-                src={img && typeof img === 'string' ? (img.startsWith('http') ? img : `http://localhost:3000/api${img}`) : 'https://via.placeholder.com/800x600'}
+                src={img && typeof img === 'string' ? (img.startsWith('http') ? `${API_URL}/api${img}` : `http://localhost:3000/api${img}`) : 'https://via.placeholder.com/800x600'}
                 alt={`${trip.title} ${idx + 1}`}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
 
@@ -157,7 +149,8 @@ const TripDetailsPage = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-3xl flex flex-col items-center justify-center p-4 md:p-12"
+            onClick={() => setIsGalleryOpen(false)}
+            className="fixed inset-0 z-[100] backdrop-blur-3xl bg-black/30 flex flex-col items-center justify-center p-4 md:p-12"
           >
             {/* Close Button */}
             <button
@@ -176,7 +169,7 @@ const TripDetailsPage = () => {
                 }}
                 className="p-6 bg-white/5 hover:bg-white/10 text-white rounded-[2rem] border border-white/10 transition-all pointer-events-auto backdrop-blur-xl group"
               >
-                <ChevronLeft className="w-10 h-10 group-hover:-translate-x-1 transition-transform" />
+                <ChevronLeft className="w-8 h-8 group-hover:-translate-x-1 transition-transform" />
               </button>
               <button
                 onClick={(e) => {
@@ -185,12 +178,12 @@ const TripDetailsPage = () => {
                 }}
                 className="p-6 bg-white/5 hover:bg-white/10 text-white rounded-[2rem] border border-white/10 transition-all pointer-events-auto backdrop-blur-xl group"
               >
-                <ChevronRight className="w-10 h-10 group-hover:translate-x-1 transition-transform" />
+                <ChevronRight className="w-8 h-8 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
 
             {/* Image Display */}
-            <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+            <div className="relative w-full h-full flex items-center justify-center overflow-hidden" onClick={(e) => e.stopPropagation()}>
               <motion.div
                 key={currentImageIndex}
                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -201,7 +194,7 @@ const TripDetailsPage = () => {
               >
                 <img
                   src={trip.images[currentImageIndex] && typeof trip.images[currentImageIndex] === 'string'
-                    ? (trip.images[currentImageIndex].startsWith('http') ? trip.images[currentImageIndex] : `http://localhost:3000/api${trip.images[currentImageIndex]}`)
+                    ? (trip.images[currentImageIndex].startsWith('http') ? `${API_URL}/api${trip.images[currentImageIndex]}` : `http://localhost:3000/api${trip.images[currentImageIndex]}`)
                     : 'https://via.placeholder.com/800x600'}
                   alt={`Full view ${currentImageIndex + 1}`}
                   className="max-w-full max-h-full object-contain rounded-3xl md:rounded-[3rem] shadow-2xl"
@@ -211,7 +204,7 @@ const TripDetailsPage = () => {
 
             {/* Footer / Thumbnails */}
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-6 w-full px-8">
-              <div className="bg-white/10 backdrop-blur-2xl px-6 py-2 rounded-full border border-white/10 text-white font-black text-sm uppercase tracking-[0.3em]">
+              <div className="bg-white/10 backdrop-blur-2xl px-6 py-2 rounded-full border border-white/10 text-white font-black text-sm uppercase">
                 {currentImageIndex + 1} / {trip.images.length}
               </div>
 
@@ -226,7 +219,7 @@ const TripDetailsPage = () => {
                     )}
                   >
                     <img
-                      src={img && typeof img === 'string' ? (img.startsWith('http') ? img : `http://localhost:3000/api${img}`) : 'https://via.placeholder.com/800x600'}
+                      src={img && typeof img === 'string' ? (img.startsWith('http') ? `${API_URL}/api${img}` : `http://localhost:3000/api${img}`) : 'https://via.placeholder.com/800x600'}
                       alt="Thumbnail"
                       className="w-full h-full object-cover"
                     />
@@ -338,11 +331,11 @@ const TripDetailsPage = () => {
                             {hotel.images.map((img, idx) => (
                               <div key={idx} className="min-w-full h-full snap-center relative">
                                 <img
-                                  src={img.startsWith('http') ? img : `http://localhost:3000/api${img}`}
+                                  src={img.startsWith('http') ? `${API_URL}/api${img}` : `http://localhost:3000/api${img}`}
                                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                   alt={`${hotel.name} ${idx + 1}`}
                                 />
-                                <div className="absolute bottom-4 left-4 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full text-[10px] text-white font-bold uppercase tracking-wider border border-white/20">
+                                <div className="absolute bottom-4 left-4 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full text-[10px] text-white font-bold uppercase border border-white/20">
                                   {t('trip_details.gallery.photo_count', { index: idx + 1, total: hotel.images?.length || 0 })}
                                 </div>
                               </div>
@@ -351,11 +344,11 @@ const TripDetailsPage = () => {
                         ) : hotel.image ? (
                           <div className="h-full relative">
                             <img
-                              src={hotel.image.startsWith('http') ? hotel.image : `http://localhost:3000/api${hotel.image}`}
+                              src={hotel.image.startsWith('http') ? `${API_URL}/api${hotel.image}` : `http://localhost:3000/api${hotel.image}`}
                               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                               alt={hotel.name}
                             />
-                            <div className="absolute bottom-4 left-4 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full text-[10px] text-white font-bold uppercase tracking-wider border border-white/20">
+                            <div className="absolute bottom-4 left-4 bg-black/40 backdrop-blur-md px-3 py-1 rounded-full text-[10px] text-white font-bold uppercase border border-white/20">
                               {t('trip_details.gallery.main_photo')}
                             </div>
                           </div>
@@ -364,7 +357,7 @@ const TripDetailsPage = () => {
                             <div className="w-16 h-16 rounded-full bg-slate-200 flex items-center justify-center">
                               <HotelIcon className="w-8 h-8" />
                             </div>
-                            <span className="text-xs font-bold uppercase tracking-widest">{t('trip_details.no_images')}</span>
+                            <span className="text-xs font-bold uppercase">{t('trip_details.no_images')}</span>
                           </div>
                         )}
 
@@ -391,11 +384,11 @@ const TripDetailsPage = () => {
 
                           <div className="grid grid-cols-2 gap-4">
                             <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
-                              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('trip_details.location')}</p>
+                              <p className="text-[10px] font-black text-slate-400 uppercase mb-1">{t('trip_details.location')}</p>
                               <p className="text-base font-bold text-slate-700">{hotel.city || t('trip_details.unspecified')}</p>
                             </div>
                             <div className="bg-slate-50 p-5 rounded-2xl border border-slate-100">
-                              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('trip_details.category')}</p>
+                              <p className="text-[10px] font-black text-slate-400 uppercase mb-1">{t('trip_details.category')}</p>
                               <div className="flex gap-1">
                                 {Array.from({ length: 5 }).map((_, i) => (
                                   <Star key={i} className={`w-4 h-4 ${i < (Number(hotel.stars) || 0) ? 'text-yellow-400 fill-yellow-400' : 'text-slate-200'}`} />

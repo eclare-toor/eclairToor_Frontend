@@ -159,7 +159,7 @@ const AdminUsersPage = () => {
 
                 <div className="flex items-center gap-4">
                     <div className="px-6 py-3 bg-gradient-to-br from-primary to-blue-600 rounded-2xl shadow-lg shadow-primary/20">
-                        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-white/70 mb-1">Total Utilisateurs</p>
+                        <p className="text-[9px] font-black uppercase 0.2em] text-white/70 mb-1">Total Utilisateurs</p>
                         <p className="text-3xl font-black text-white">{users.length}</p>
                     </div>
 
@@ -302,11 +302,11 @@ const AdminUsersPage = () => {
                                 <table className="w-full text-left">
                                     <thead className="bg-slate-50/50 border-b border-slate-100">
                                         <tr>
-                                            <th className="p-6 font-black text-[10px] text-slate-400 uppercase tracking-[0.2em]">Contact</th>
-                                            <th className="p-6 font-black text-[10px] text-slate-400 uppercase tracking-[0.2em]">Infos Personnelles</th>
-                                            <th className="p-6 font-black text-[10px] text-slate-400 uppercase tracking-[0.2em]">Réseaux</th>
-                                            <th className="p-6 font-black text-[10px] text-slate-400 uppercase tracking-[0.2em]">Rôle & Statut</th>
-                                            <th className="p-6 font-black text-[10px] text-slate-400 uppercase tracking-[0.2em] text-right">Actions</th>
+                                            <th className="p-6 font-black text-[10px] text-slate-400 uppercase 0.2em]">Contact</th>
+                                            <th className="p-6 font-black text-[10px] text-slate-400 uppercase 0.2em]">Infos Personnelles</th>
+                                            <th className="p-6 font-black text-[10px] text-slate-400 uppercase 0.2em]">Réseaux</th>
+                                            <th className="p-6 font-black text-[10px] text-slate-400 uppercase 0.2em]">Rôle & Statut</th>
+                                            <th className="p-6 font-black text-[10px] text-slate-400 uppercase 0.2em] text-right">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-50">

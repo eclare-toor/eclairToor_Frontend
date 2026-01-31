@@ -121,7 +121,7 @@ const TripsListPage = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-72 p-2 rounded-[1.5rem] border-slate-200/50 shadow-2xl bg-white/95 backdrop-blur-xl">
-                <DropdownMenuLabel className="px-4 py-3 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">{t('trips.custom_trip.label')}</DropdownMenuLabel>
+                <DropdownMenuLabel className="px-4 py-3 text-[10px] font-black text-slate-400 uppercase 0.2em]">{t('trips.custom_trip.label')}</DropdownMenuLabel>
                 <DropdownMenuSeparator className="mx-2" />
                 <DropdownMenuItem onClick={() => navigate('/voyages/CustomTripPage', { state: { type: 'national' } })} className="rounded-xl px-4 py-3 cursor-pointer group hover:bg-primary/5">
                   <MapPin className="mr-3 h-5 w-5 text-slate-400 group-hover:text-primary" />
@@ -147,7 +147,7 @@ const TripsListPage = () => {
           className={cn("flex flex-col lg:flex-row gap-8 items-start", i18n.language === 'ar' && "lg:flex-row-reverse")}
         >
           {/* Sidebar Filters */}
-          <aside className="w-full lg:w-80 shrink-0 space-y-8 sticky top-28 self-start z-10">
+          <aside className="w-full lg:w-80 shrink-0 space-y-8 lg:sticky lg:top-28 self-start z-10">
             <div className="bg-white/80 backdrop-blur-xl border border-white/60 p-6 rounded-[2rem] shadow-xl shadow-slate-200/40">
               <div className="flex items-center gap-2 mb-6 text-slate-900">
                 <Filter className="w-5 h-5 text-primary" />

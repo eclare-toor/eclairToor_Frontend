@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../componen
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { addHotelImages, deleteHotelImages } from '../../api';
 import { X, ImageIcon, Upload } from '../../components/icons';
-
+import { API_URL } from '../../config/api';
 import { useNavigate } from 'react-router-dom';
 
 const AdminOmraHotelsPage = () => {
@@ -190,7 +190,7 @@ const AdminOmraHotelsPage = () => {
 
         <div className="flex items-center gap-4">
           <div className="px-6 py-3 bg-gradient-to-br from-slate-900 to-slate-700 rounded-2xl shadow-lg shadow-slate-200">
-            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-white/70 mb-1">Total Hôtels</p>
+            <p className="text-[9px] font-black uppercase 0.2em] text-white/70 mb-1">Total Hôtels</p>
             <p className="text-3xl font-black text-white">{hotels.length}</p>
           </div>
 
@@ -208,8 +208,8 @@ const AdminOmraHotelsPage = () => {
         <button
           onClick={() => setActiveTab('makka')}
           className={`px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-sm transition-all ${activeTab === 'makka'
-              ? 'bg-primary text-white shadow-lg shadow-primary/20'
-              : 'bg-white text-slate-400 hover:text-slate-900 border border-slate-100'
+            ? 'bg-primary text-white shadow-lg shadow-primary/20'
+            : 'bg-white text-slate-400 hover:text-slate-900 border border-slate-100'
             }`}
         >
           Makkah ({hotels.filter(h => h.type === 'makka').length})
@@ -217,8 +217,8 @@ const AdminOmraHotelsPage = () => {
         <button
           onClick={() => setActiveTab('madina')}
           className={`px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-sm transition-all ${activeTab === 'madina'
-              ? 'bg-primary text-white shadow-lg shadow-primary/20'
-              : 'bg-white text-slate-400 hover:text-slate-900 border border-slate-100'
+            ? 'bg-primary text-white shadow-lg shadow-primary/20'
+            : 'bg-white text-slate-400 hover:text-slate-900 border border-slate-100'
             }`}
         >
           Madinah ({hotels.filter(h => h.type === 'madina').length})
@@ -226,8 +226,8 @@ const AdminOmraHotelsPage = () => {
         <button
           onClick={() => setActiveTab('tourisme')}
           className={`px-6 py-3 rounded-2xl font-black uppercase tracking-widest text-sm transition-all ${activeTab === 'tourisme'
-              ? 'bg-primary text-white shadow-lg shadow-primary/20'
-              : 'bg-white text-slate-400 hover:text-slate-900 border border-slate-100'
+            ? 'bg-primary text-white shadow-lg shadow-primary/20'
+            : 'bg-white text-slate-400 hover:text-slate-900 border border-slate-100'
             }`}
         >
           Tourisme ({hotels.filter(h => h.type === 'tourisme').length})
@@ -248,7 +248,7 @@ const AdminOmraHotelsPage = () => {
               <div className="h-48 overflow-hidden relative">
                 {hotel.images && hotel.images.length > 0 ? (
                   <img
-                    src={hotel.images[0].startsWith('http') ? hotel.images[0] : `http://localhost:3000/api${hotel.images[0]}`}
+                    src={hotel.images[0].startsWith('http') ? `${API_URL}/api${hotel.images[0]}` : `http://localhost:3000/api${hotel.images[0]}`}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     alt={hotel.name}
                   />
@@ -284,7 +284,7 @@ const AdminOmraHotelsPage = () => {
                   <h3 className="font-black text-xl text-slate-900 group-hover:text-primary transition-colors leading-tight line-clamp-1">
                     {hotel.name}
                   </h3>
-                  <div className="flex items-center gap-2 text-slate-400 font-bold uppercase tracking-[0.15em] text-[10px]">
+                  <div className="flex items-center gap-2 text-slate-400 font-bold uppercase 0.15em] text-[10px]">
                     <MapPin className="w-3 h-3 text-primary" />
                     {hotel.city} <span className="text-slate-200">|</span> {hotel.type}
                   </div>
@@ -397,7 +397,7 @@ const AdminOmraHotelsPage = () => {
                       {currentHotel.images.map((path, idx) => (
                         <div key={idx} className="relative aspect-square rounded-lg overflow-hidden group">
                           <img
-                            src={path.startsWith('http') ? path : `http://localhost:3000/api${path}`}
+                            src={path.startsWith('http') ? `${API_URL}/api${path}` : `http://localhost:3000/api${path}`}
                             className="w-full h-full object-cover"
                             alt=""
                           />

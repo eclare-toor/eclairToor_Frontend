@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import type { Trip } from '../../Types';
 import { Calendar, MapPin, ArrowRight, Clock, Star } from '../icons';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../../lib/utils';
+import { API_URL } from '../../config/api';
 
 interface TripCardProps {
     trip: Trip;
@@ -23,6 +24,9 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
         return diffDays <= 7;
     }, [trip.created_at]);
 
+    useEffect(() => {
+        console.log(trip.images[0]);
+    }, [trip.images]);
 
     return (
         <div
@@ -33,7 +37,7 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
                 {/* Image Container */}
                 <div className="relative aspect-[16/10] overflow-hidden">
                     <img
-                        src={trip.images[0] ? (trip.images[0].startsWith('http') ? trip.images[0] : `http://localhost:3000/api${trip.images[0]}`) : 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=800&q=80'}
+                        src={trip.images[0] ? (trip.images[0].startsWith('http') ? `${API_URL}/api${trip.images[0]}` : `http://localhost:3000/api${trip.images[0]}`) : 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=800&q=80'}
                         alt={trip.title}
                         className="h-full w-full object-cover transition-transform duration-1000"
                     />
@@ -46,14 +50,14 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
                         <div className="bg-white/90 backdrop-blur-md px-4 py-2 rounded-2xl shadow-xl border border-white/50">
                             <p className="text-[10px] font-black uppercase text-slate-400 leading-none mb-1">{t('trips.card.from')}</p>
                             <div className="flex flex-col items-end">
-                                {trip.promotion && trip.promotion > 0 ? (
+                                {Number(trip.promotion) > 0 ? (
                                     <>
                                         <span className="text-[10px] font-bold text-slate-400 line-through decoration-red-400/50">
                                             {trip.base_price.toLocaleString()} DZD
                                         </span>
                                         <div className="flex items-baseline gap-1">
                                             <span className="text-2xl font-black text-emerald-600 leading-none">
-                                                {(trip.base_price * (1 - trip.promotion / 100)).toLocaleString()}
+                                                {(trip.base_price * (1 - Number(trip.promotion) / 100)).toLocaleString()}
                                             </span>
                                             <span className="text-[10px] font-bold text-slate-600">DZD</span>
                                         </div>
@@ -72,7 +76,7 @@ const TripCard: React.FC<TripCardProps> = ({ trip }) => {
 
                     {/* Badges */}
                     <div className={cn("absolute top-6 flex flex-col gap-2 z-20", i18n.language === 'ar' ? "right-6" : "left-6")}>
-                        {trip.promotion && trip.promotion > 0 && (
+                        {Number(trip.promotion) > 0 && (
                             <div
                                 className="bg-emerald-500 text-white px-4 py-2 rounded-2xl text-sm font-black shadow-xl border border-emerald-400 flex flex-col items-center justify-center min-w-[60px] animate-in fade-in zoom-in-75 duration-300"
                             >
