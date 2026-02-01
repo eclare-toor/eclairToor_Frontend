@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
@@ -89,7 +89,7 @@ function App() {
         <Routes>
           {/* ROUTES PUBLIQUES (Layout Standard) */}
           <Route element={<UserLayout />}>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={user?.role === 'admin' ? <Navigate to="/admin" replace /> : <HomePage />} />
             <Route path="/voyages" element={<TripsListPage />} />
             <Route path="/voyages/:id" element={<TripDetailsPage />} />
             <Route path="/voyages/:id/reservation" element={<Reservation />} />

@@ -11,6 +11,25 @@ import heroBg3 from '../../assets/heroBg3.avif';
 import heroBg4 from '../../assets/heroBg4.jpeg';
 import heroBg5 from '../../assets/heroBg5.jpeg';
 
+import galerie1 from '../../assets/galerie1.jpeg';
+import galerie2 from '../../assets/galerie2.webp';
+import galerie3 from '../../assets/galerie3.webp';
+import galerie4 from '../../assets/galerie4.webp';
+import galerie5 from '../../assets/galerie5.webp';
+import galerie6 from '../../assets/galerie6.webp';
+import galerie7 from '../../assets/galerie7.webp';
+import galerie8 from '../../assets/galerie8.webp';
+import galerie9 from '../../assets/galerie9.webp';
+import galerie10 from '../../assets/galerie10.jpeg';
+import galerie11 from '../../assets/galerie11.webp';
+import galerie12 from '../../assets/galerie12.jpeg';
+
+const galleryImages = [
+    galerie1, galerie2, galerie3, galerie4, galerie5, galerie6,
+    galerie7, galerie8, galerie9, galerie10, galerie11, galerie12
+];
+
+
 
 // Simple functional component for features
 const StatItem = ({ label, value, delay, icon: Icon }: { label: string, value: string, delay: number, icon: any }) => {
@@ -253,24 +272,20 @@ const HomePage = () => {
                         className="flex gap-8 overflow-x-auto px-6 snap-x scrollbar-hide"
                         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                     >
-                        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => (
+                        {galleryImages.map((image, index) => (
                             <div
-                                key={num}
+                                key={index}
                                 className="min-w-[calc(100vw-48px)] md:min-w-[500px] h-[450px] md:h-[600px] rounded-[3rem] md:rounded-[4rem] overflow-hidden relative group snap-center shadow-2xl"
                             >
                                 <img
-                                    src={`/src/assets/galerie${num}.webp`}
-                                    alt={`Voyage ${num}`}
+                                    src={image}
+                                    alt={`Voyage ${index + 1}`}
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                    onError={(e: any) => {
-                                        e.target.onerror = null; // Éviter boucle infinie
-                                        e.target.src = `/src/assets/galerie${num}.jpeg`;
-                                    }}
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 flex items-end p-12">
                                     <div>
                                         <p className="text-white font-black uppercase  text-xs mb-2">{t('home.gallery.card_label')}</p>
-                                        <p className="text-primary text-xl font-bold italic">{t('home.gallery.card_experience')} {num}</p>
+                                        <p className="text-primary text-xl font-bold italic">{t('home.gallery.card_experience')} {index + 1}</p>
                                     </div>
                                 </div>
                             </div>

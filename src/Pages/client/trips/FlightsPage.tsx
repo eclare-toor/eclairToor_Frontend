@@ -12,6 +12,8 @@ import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 import BackgroundAura from '../../../components/Shared/BackgroundAura';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import flightImg from '../../../assets/flight.webp';
+
 
 const FlightsPage = () => {
     const { t } = useTranslation();
@@ -74,7 +76,8 @@ const FlightsPage = () => {
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.2 }}
                     className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: 'url("src/assets/flight.webp")' }}
+                    style={{ backgroundImage: `url(${flightImg})` }}
+
                 />
 
                 <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">

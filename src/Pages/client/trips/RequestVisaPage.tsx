@@ -13,6 +13,8 @@ import BackgroundAura from '../../../components/Shared/BackgroundAura';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { cn } from '../../../lib/utils';
+import visaImg from '../../../assets/visa.webp';
+
 
 const VisaPage = () => {
     const { t, i18n } = useTranslation();
@@ -72,7 +74,8 @@ const VisaPage = () => {
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.2 }}
                     className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: 'url("src/assets/visa.webp")' }}
+                    style={{ backgroundImage: `url(${visaImg})` }}
+
                 />
 
                 <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">

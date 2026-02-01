@@ -12,6 +12,8 @@ import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 import BackgroundAura from '../../../components/Shared/BackgroundAura';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import hotelImg from '../../../assets/hotel.webp';
+
 
 const HotelPage = () => {
     const { t } = useTranslation();
@@ -82,7 +84,8 @@ const HotelPage = () => {
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.2 }}
                     className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: 'url("src/assets/hotel.webp")' }}
+                    style={{ backgroundImage: `url(${hotelImg})` }}
+
                 />
 
 

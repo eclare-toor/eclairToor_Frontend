@@ -199,7 +199,7 @@ const Navbar = () => {
                                     )} />
                                     {/* Label: hidden md (icons only), show from lg */}
                                     <span className={cn(
-                                        "hidden xl:inline text-xs xl:text-lg",
+                                        "hidden xl:inline text-xs xl:text-[16px]",
                                         i18n.language === 'ar' && "font-arabic text-sm"
                                     )}>
                                         {link.name}
