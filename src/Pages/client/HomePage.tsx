@@ -23,9 +23,11 @@ import galerie9 from '../../assets/galerie9.webp';
 import galerie10 from '../../assets/galerie10.jpeg';
 import galerie11 from '../../assets/galerie11.webp';
 import galerie12 from '../../assets/galerie12.jpeg';
+import galerie13 from '../../assets/galerie13.jpeg';
+
 
 const galleryImages = [
-    galerie1, galerie2, galerie3, galerie4, galerie5, galerie6,
+    galerie1, galerie13, galerie2, galerie3, galerie4, galerie5, galerie6,
     galerie7, galerie8, galerie9, galerie10, galerie11, galerie12
 ];
 

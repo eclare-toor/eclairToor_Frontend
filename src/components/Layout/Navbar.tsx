@@ -156,7 +156,7 @@ const Navbar = () => {
                         </div>
 
                         {/* IATA logo — hidden on small screens, show from lg */}
-                        <div className="hidden xl:flex flex-col items-center">
+                        <div className="hidden 2xl:flex flex-col items-center">
                             <img
                                 src={iataLogo}
                                 alt="IATA Certified"
@@ -411,7 +411,36 @@ const Navbar = () => {
                     {/* ════════════════════════════════════════════════════
                         MOBILE HAMBURGER & NOTIFICATIONS (visible below md = <768px)
                         ════════════════════════════════════════════════════ */}
-                    <div className="md:hidden shrink-0 flex items-center gap-2">
+                    {/* ════════════════════════════════════════════════════
+                        MOBILE HAMBURGER & NOTIFICATIONS (visible below md = <768px)
+                        ════════════════════════════════════════════════════ */}
+                    <div className="md:hidden shrink-0 flex items-center gap-1">
+
+                        {/* Mobile Language Switcher */}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    aria-label={t('nav.change_language')}
+                                    className="h-10 w-10 text-slate-700 hover:bg-slate-100 rounded-full"
+                                >
+                                    <Globe className="w-6 h-6" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-[150px] rounded-2xl border-slate-100 shadow-xl p-2 bg-white/95 backdrop-blur-xl">
+                                <DropdownMenuItem onClick={() => i18n.changeLanguage('ar')} className={cn("rounded-xl px-3 py-2 cursor-pointer font-bold font-arabic text-right text-sm", i18n.language === 'ar' && "bg-primary/10 text-primary")}>
+                                    🇩🇿 العربية
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => i18n.changeLanguage('fr')} className={cn("rounded-xl px-3 py-2 cursor-pointer font-bold text-sm", i18n.language === 'fr' && "bg-primary/10 text-primary")}>
+                                    🇫🇷 Français
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => i18n.changeLanguage('en')} className={cn("rounded-xl px-3 py-2 cursor-pointer font-bold text-sm", i18n.language === 'en' && "bg-primary/10 text-primary")}>
+                                    🇬🇧 English
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
                         {/* Mobile Notifications (only if authenticated) */}
                         {isAuthenticated && (
                             <DropdownMenu>
@@ -420,9 +449,9 @@ const Navbar = () => {
                                         variant="ghost"
                                         size="icon"
                                         aria-label={t('nav.notifications')}
-                                        className="h-9 w-9 text-foreground relative"
+                                        className="h-10 w-10 text-foreground relative hover:bg-slate-100 rounded-full"
                                     >
-                                        <Bell className="w-5 h-5" />
+                                        <Bell className="w-6 h-6" />
                                         {unreadCount > 0 && (
                                             <span className="absolute -top-0.5 -right-0.5 h-4 w-4 bg-red-500 text-white text-[9px] font-black rounded-full flex items-center justify-center ring-2 ring-background">
                                                 {unreadCount > 9 ? '9+' : unreadCount}
@@ -507,9 +536,9 @@ const Navbar = () => {
                                     variant="ghost"
                                     size="icon"
                                     aria-label={t('nav.mobile_menu')}
-                                    className="h-9 w-9 text-foreground"
+                                    className="h-10 w-10 text-foreground hover:bg-slate-100 rounded-full"
                                 >
-                                    <Menu className="w-5 h-5" />
+                                    <Menu className="w-6 h-6" />
                                 </Button>
                             </SheetTrigger>
 
@@ -565,26 +594,6 @@ const Navbar = () => {
                                                 {t('nav.contact')}
                                             </Button>
                                         </Link>
-
-                                        {/* Language dropdown */}
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button variant="outline" size="icon" aria-label={t('nav.change_language')} className="h-10 w-10 shrink-0">
-                                                    <Globe className="w-5 h-5" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end" className="w-[150px] rounded-2xl border-slate-100 shadow-xl p-2 bg-white/95">
-                                                <DropdownMenuItem onClick={() => { i18n.changeLanguage('ar'); setSheetOpen(false); }} className={cn("rounded-xl px-3 py-2 cursor-pointer font-bold font-arabic text-right text-sm", i18n.language === 'ar' && "bg-primary/10 text-primary")}>
-                                                    🇩🇿 العربية
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => { i18n.changeLanguage('fr'); setSheetOpen(false); }} className={cn("rounded-xl px-3 py-2 cursor-pointer font-bold text-sm", i18n.language === 'fr' && "bg-primary/10 text-primary")}>
-                                                    🇫🇷 Français
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => { i18n.changeLanguage('en'); setSheetOpen(false); }} className={cn("rounded-xl px-3 py-2 cursor-pointer font-bold text-sm", i18n.language === 'en' && "bg-primary/10 text-primary")}>
-                                                    🇬🇧 English
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
                                     </div>
 
                                     {/* ── Auth section ── */}
@@ -617,6 +626,7 @@ const Navbar = () => {
                             </SheetContent>
                         </Sheet>
                     </div>
+
                 </div>
             </div>
         </header>
