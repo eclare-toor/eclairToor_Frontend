@@ -1,11 +1,13 @@
 import { useEffect } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { CheckCircle2, MapPin, Calendar, Users, Download, ArrowRight, Home } from '../../../components/icons';
+import { MapPin, Calendar, Users, Download, ArrowRight, Home } from '../../../components/icons';
 import { Button } from '../../../components/ui/button';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import logo from '../../../assets/logo.webp';
+import successGif from '../../../assets/Success.gif';
 import { API_URL } from '../../../config/api';
+import BackgroundAura from '../../../components/Shared/BackgroundAura';
 
 const CongratulationReservation = () => {
   const { t, i18n } = useTranslation();
@@ -154,7 +156,8 @@ const CongratulationReservation = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 relative overflow-hidden flex items-center justify-center p-4 pt-40">
+    <div className="min-h-screen bg-transparent relative overflow-hidden flex items-center justify-center p-4 pt-40">
+      <BackgroundAura />
 
       <div className="max-w-3xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden relative z-10 animate-fade-in-up">
         {/* Header Color Bar */}
@@ -165,8 +168,8 @@ const CongratulationReservation = () => {
           {/* Success Icon */}
           <div className="relative inline-block">
             <div className="absolute inset-0 bg-green-100 rounded-full animate-ping opacity-25" />
-            <div className="relative bg-green-100 p-6 rounded-full inline-flex items-center justify-center mb-2">
-              <CheckCircle2 className="w-16 h-16 text-green-600" />
+            <div className="relative bg-green-100 p-2 rounded-full inline-flex items-center justify-center mb-2">
+              <img src={successGif} alt="Success" className="w-[150px] h-[150px] object-contain" />
             </div>
           </div>
 

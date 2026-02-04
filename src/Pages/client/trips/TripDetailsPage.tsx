@@ -516,7 +516,7 @@ const TripDetailsPage = () => {
                       const parsed = JSON.parse(trip.equipment_list);
                       equipment = Array.isArray(parsed) ? parsed : [trip.equipment_list];
                     } catch {
-                      equipment = trip.equipment_list.split(',').map(s => s.trim()).filter(Boolean);
+                      equipment = trip.equipment_list.split(/[,،]/).map(s => s.trim()).filter(Boolean);
                     }
                   }
 
