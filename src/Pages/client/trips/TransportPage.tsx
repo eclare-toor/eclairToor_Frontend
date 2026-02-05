@@ -12,7 +12,7 @@ import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 import BackgroundAura from '../../../components/Shared/BackgroundAura';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import carsImg from '../../../assets/cars.jpeg';
+import carsImg from '../../../assets/transfert2.jpg';
 
 
 const TransportPage = () => {

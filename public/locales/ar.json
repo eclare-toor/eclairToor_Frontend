@@ -14,7 +14,7 @@
     },
     "nav": {
         "home": "الرئيسية",
-        "trips": "الرحلات",
+        "trips": "عروض السفر",
         "hotels": "الفنادق",
         "flights": "الرحلات الجوية",
         "transport": "النقل",
@@ -41,7 +41,8 @@
         "visa": "تأشيرة",
         "change_language": "تغيير اللغة",
         "mobile_menu": "القائمة",
-        "user_menu": "قائمة المستخدم"
+        "user_menu": "قائمة المستخدم",
+        "license": "ترخيص رقم° 1782"
     },
     "promotions": {
         "title": "عروض استثنائية",
@@ -600,8 +601,11 @@
         "type_visa": "نوع التأشيرة",
         "type_touristique": "سياحية",
         "type_affaires": "أعمال",
-        "type_omra": "عمرة",
-        "type_transit": "ترانزيت",
+        "type_familiale": "عائلية",
+        "type_amical": "صداقة",
+        "type_traitement_medical": "علاج طبي",
+        "type_travail": "عمل",
+        "type_etude": "دراسة",
         "date_depart": "تاريخ المغادرة المتوقع",
         "date_retour": "تاريخ العودة المتوقع",
         "duree_sejour": "مدة الإقامة",

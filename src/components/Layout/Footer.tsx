@@ -16,7 +16,7 @@ const Footer = () => {
                             {t('footer.desc')}
                         </p>
                         <div className="flex gap-4 pt-2">
-                            <a href="https://www.facebook.com/eclairtravel/?locale=fr_FR" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors"><Facebook className="w-5 h-5" /></a>
+                            <a href="https://www.facebook.com/share/1BxDyKzMD8/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors"><Facebook className="w-5 h-5" /></a>
                             <a href="https://www.instagram.com/eclairtravelhydra/" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors"><Instagram className="w-5 h-5" /></a>
                         </div>
                     </div>

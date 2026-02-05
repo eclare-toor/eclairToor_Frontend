@@ -14,10 +14,10 @@
     },
     "nav": {
         "home": "Home",
-        "trips": "Trips",
+        "trips": "Trips Offers",
         "hotels": "Hotels",
         "flights": "Flights",
-        "transport": "Transport",
+        "transport": "Transfer",
         "promotions": "Promotions",
         "contact": "Contact",
         "dashboard": "Dashboard",
@@ -41,7 +41,8 @@
         "visa": "Visa",
         "change_language": "Change language",
         "mobile_menu": "Mobile menu",
-        "user_menu": "User menu"
+        "user_menu": "User menu",
+        "license": "Agreement N°: 1782"
     },
     "promotions": {
         "title": "Exceptional Offers",
@@ -575,8 +576,11 @@
         "type_visa": "Visa type",
         "type_touristique": "Tourist",
         "type_affaires": "Business",
-        "type_omra": "Omra",
-        "type_transit": "Transit",
+        "type_familiale": "Family",
+        "type_amical": "Friendly",
+        "type_traitement_medical": "Medical Treatment",
+        "type_travail": "Work",
+        "type_etude": "Study",
         "date_depart": "Expected departure date",
         "date_retour": "Expected return date",
         "duree_sejour": "Stay duration",

@@ -14,10 +14,10 @@
     },
     "nav": {
         "home": "Accueil",
-        "trips": "Voyages",
+        "trips": "Offres voyage",
         "hotels": "Hôtels",
         "flights": "Vols",
-        "transport": "Transport",
+        "transport": "Transfert",
         "promotions": "Promotions",
         "contact": "Contact",
         "dashboard": "Tableau de bord",
@@ -41,7 +41,8 @@
         "visa": "Visa",
         "change_language": "Changer de langue",
         "mobile_menu": "Menu mobile",
-        "user_menu": "Menu utilisateur"
+        "user_menu": "Menu utilisateur",
+        "license": "agrément n°: 1782"
     },
     "promotions": {
         "title": "Offres Exceptionnelles",
@@ -74,9 +75,12 @@
         "pays_destination_placeholder": "Ex: France, Arabie Saoudite...",
         "type_visa": "Type de visa",
         "type_touristique": "Touristique",
-        "type_affaires": "Affaires",
-        "type_omra": "Omra",
-        "type_transit": "Transit",
+        "type_affaires": "Affaire",
+        "type_familiale": "Familiale",
+        "type_amical": "Amical",
+        "type_traitement_medical": "Traitement médical",
+        "type_travail": "Travail",
+        "type_etude": "Étude",
         "date_depart": "Date prévue de départ",
         "date_retour": "Date prévue de retour",
         "duree_sejour": "Durée du séjour",

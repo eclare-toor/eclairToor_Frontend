@@ -101,9 +101,9 @@ const Navbar = () => {
 
     // ── RENDER ──────────────────────────────────────────────────
     return (
-        <header className="fixed top-0 left-0 right-0 z-50 px-2 sm:px-3 md:px-5 lg:px-6 xl:px-8">
+        <header className="fixed top-0 left-0 right-0 z-50 px-2 sm:px-3 md:px-5 lg:px-6 xl:px-4">
             {/* ── Outer shell ─────────────────────────────────────────── */}
-            <div className="max-w-full bg-white/10 backdrop-blur-md py-2 md:py-2.5 px-3 sm:px-4 md:px-5 lg:px-6 xl:px-8 border-b border-white/10 shadow-md">
+            <div className="max-w-full bg-white/10 backdrop-blur-md py-2 md:py-2.5 px-3 sm:px-4 md:px-5 lg:px-6 xl:px-4 border-b border-white/10 shadow-md">
 
                 {/* ── Inner row ───────────────────────────────────────── */}
                 <div className="flex items-center justify-between gap-2 sm:gap-3">
@@ -111,7 +111,7 @@ const Navbar = () => {
                     {/* ════════════════════════════════════════════════════
                         LOGO SECTION
                         ════════════════════════════════════════════════════ */}
-                    <Link to="/" className="flex items-center gap-2 md:gap-3 lg:gap-4 xl:gap-5 group shrink-0">
+                    <Link to="/" className="flex items-center gap-2 lg:gap-2 xl:gap-1 2xl:gap-4 group shrink-0">
                         {/* Logo image */}
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="relative">
                             <img
@@ -153,10 +153,16 @@ const Navbar = () => {
                             )}>
                                 {t('nav.pride_algerian')}
                             </span>
+                            <span className={cn(
+                                "font-black text-white text-[5px] md:text-[6px] lg:text-[7px] xl:text-[12px] transition-all duration-300 mt-0.5 opacity-80",
+                                i18n.language === 'ar' ? "font-arabic tracking-normal" : "uppercase tracking-widest"
+                            )}>
+                                {t('nav.license')}
+                            </span>
                         </div>
 
                         {/* IATA logo — hidden on small screens, show from lg */}
-                        <div className="hidden 2xl:flex flex-col items-center">
+                        <div className=" hidden lg:flex flex-col items-center">
                             <img
                                 src={iataLogo}
                                 alt="IATA Certified"
@@ -164,9 +170,9 @@ const Navbar = () => {
                                 height={50}
                                 loading="lazy"
                                 decoding="async"
-                                className="object-contain rounded-2xl h-8 lg:h-10 xl:h-12 2xl:h-14 transition-all duration-300"
+                                className="object-contain rounded-2xl h-8 lg:h-10 xl:h-12  transition-all duration-300"
                             />
-                            <span className="font-black bg-white text-[#1E618C] tracking-tight leading-none block text-center text-[8px] lg:text-[9px] xl:text-[10px] 2xl:text-xs mt-0.5">
+                            <span className="font-black bg-white w-14  text-[#1E618C] tracking-tight leading-none block text-center text-[8px] lg:text-[9px] xl:text-[10px] mt-0.5 ">
                                 03216555
                             </span>
                         </div>
@@ -179,14 +185,14 @@ const Navbar = () => {
                         • lg–xl (1024–1279px): icons + short labels
                         • xl+  (1280px+):      icons + full labels
                         ════════════════════════════════════════════════════ */}
-                    <nav className="hidden md:flex items-center justify-center flex-1 mx-1 lg:mx-3 xl:mx-5 min-w-0">
+                    <nav className="hidden md:flex items-center justify-center flex-1 mx-1 lg:mx-3 xl:mx-5  min-w-0">
                         <div className="flex items-center gap-0.5 p-0.5 rounded-full bg-white/40 backdrop-blur-md border border-white/20">
                             {navLinks.map((link) => (
                                 <Link
                                     key={link.path}
                                     to={link.path}
                                     className={cn(
-                                        "relative px-2 md:px-2.5 lg:px-3 xl:px-1 2xl:px-6 py-1.5 md:py-2 font-bold rounded-full flex items-center gap-1.5 xl:gap-2 group transition-all duration-300 whitespace-nowrap",
+                                        "relative px-2 md:px-2.5 lg:px-3 xl:px-1 2xl:px-4 py-1.5 md:py-2 font-bold rounded-full flex items-center gap-1.5 xl:gap-2 group transition-all duration-300 whitespace-nowrap",
                                         location.pathname === link.path
                                             ? "text-primary bg-white shadow-md"
                                             : "text-slate-900 hover:text-primary hover:bg-white/20"
@@ -194,7 +200,7 @@ const Navbar = () => {
                                 >
                                     <link.icon className={cn(
                                         "shrink-0 transition-transform duration-300 group-hover:scale-110",
-                                        "w-4 h-4 md:w-4.5 md:h-4.5 lg:w-5 lg:h-5 xl:w-7 xl:h-7",
+                                        "w-4 h-4 md:w-4.5 md:h-4.5 lg:w-5 lg:h-5 xl:w-7 xl:h-7 ",
                                         location.pathname === link.path ? "text-primary" : "opacity-70 group-hover:opacity-100"
                                     )} />
                                     {/* Label: hidden md (icons only), show from lg */}
@@ -224,15 +230,15 @@ const Navbar = () => {
                         • Notification bell (if authenticated)
                         • User menu / Login button
                         ════════════════════════════════════════════════════ */}
-                    <div className="hidden md:flex items-center gap-1 lg:gap-1.5 shrink-0">
+                    <div className="hidden md:flex items-center gap-1 lg:gap-1.5 xl:gap-0 2xl:gap-1.5 shrink-0">
 
                         {/* Contact */}
                         <Link to="/contact" className="shrink-0">
                             <Button
                                 variant="ghost"
-                                className="rounded-full font-bold gap-1.5 hover:bg-white/20 text-slate-900 border border-white/10 h-8 md:h-9 lg:h-10 px-2 lg:px-3 xl:px-4"
+                                className="rounded-full font-bold gap-1.5  hover:bg-white/20 text-slate-900 border border-white/10 h-8 md:h-9 lg:h-10 px-2 lg:px-3 xl:px-4"
                             >
-                                <Phone className="w-4 h-4 lg:w-5 lg:h-5 text-primary shrink-0" />
+                                <Phone className="w-4 h-4 lg:w-5 lg:h-5  text-primary shrink-0 " />
                                 <span className="hidden">{t('nav.contact')}</span>
                             </Button>
                         </Link>
@@ -246,7 +252,7 @@ const Navbar = () => {
                                     aria-label={t('nav.change_language')}
                                     className="rounded-full hover:bg-white/20 h-8 w-8 md:h-9 md:w-9 lg:h-10 lg:w-10 text-slate-900 shrink-0"
                                 >
-                                    <Globe className="w-4 h-4 lg:w-5 lg:h-5" />
+                                    <Globe className="w-4 h-4 lg:w-5 lg:h-5 t" />
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-[150px] rounded-2xl border-slate-100 shadow-xl p-2 backdrop-blur-xl bg-white/95">

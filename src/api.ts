@@ -984,10 +984,6 @@ export interface CustomVisaRequestPayload {
         pays_destination: string,
         type_visa: string,
         date_depart: string,
-        date_retour: string,
-        duree_sejour: string,
-        ville_entree: string,
-        ville_sortie: string,
         remarques: string
     }
 }

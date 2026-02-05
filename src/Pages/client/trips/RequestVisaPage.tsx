@@ -7,7 +7,7 @@ import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Textarea } from '../../../components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
-import { Calendar, Users, ArrowRight, FileText, MapPin, Plane } from '../../../components/icons';
+import { Calendar, Users, ArrowRight, FileText, MapPin } from '../../../components/icons';
 import LoadingSpinner from '../../../components/Shared/LoadingSpinner';
 import BackgroundAura from '../../../components/Shared/BackgroundAura';
 import { useTranslation } from 'react-i18next';
@@ -25,10 +25,6 @@ const VisaPage = () => {
         pays_destination: '',
         type_visa: 'touristique',
         date_depart: '',
-        date_retour: '',
-        duree_sejour: '',
-        ville_entree: '',
-        ville_sortie: '',
         remarques: ''
     });
 
@@ -43,10 +39,6 @@ const VisaPage = () => {
                     pays_destination: formData.pays_destination,
                     type_visa: formData.type_visa,
                     date_depart: formData.date_depart,
-                    date_retour: formData.date_retour,
-                    duree_sejour: formData.duree_sejour,
-                    ville_entree: formData.ville_entree,
-                    ville_sortie: formData.ville_sortie,
                     remarques: formData.remarques
                 }
             };
@@ -167,14 +159,16 @@ const VisaPage = () => {
                                     <SelectContent className="rounded-2xl border-slate-100 shadow-2xl">
                                         <SelectItem value="touristique" className="py-3 rounded-xl">{t('visa.type_touristique')}</SelectItem>
                                         <SelectItem value="affaires" className="py-3 rounded-xl">{t('visa.type_affaires')}</SelectItem>
-                                        <SelectItem value="omra" className="py-3 rounded-xl">{t('visa.type_omra')}</SelectItem>
-                                        <SelectItem value="transit" className="py-3 rounded-xl">{t('visa.type_transit')}</SelectItem>
+                                        <SelectItem value="familiale" className="py-3 rounded-xl">{t('visa.type_familiale')}</SelectItem>
+                                        <SelectItem value="amical" className="py-3 rounded-xl">{t('visa.type_amical')}</SelectItem>
+                                        <SelectItem value="traitement_medical" className="py-3 rounded-xl">{t('visa.type_traitement_medical')}</SelectItem>
+                                        <SelectItem value="travail" className="py-3 rounded-xl">{t('visa.type_travail')}</SelectItem>
+                                        <SelectItem value="etude" className="py-3 rounded-xl">{t('visa.type_etude')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
 
-                            {/* Date de départ */}
-                            <div className="space-y-3">
+                            <div className="space-y-3 md:col-span-2">
                                 <Label htmlFor="date_depart" className="flex items-center gap-2 text-slate-700 font-bold rtl:mr-1 ltr:ml-1 rtl:flex-row-reverse rtl:justify-end">
                                     <Calendar className="w-4 h-4 text-primary" /> {t('visa.date_depart')}
                                 </Label>
@@ -188,64 +182,7 @@ const VisaPage = () => {
                                 />
                             </div>
 
-                            {/* Date de retour */}
-                            <div className="space-y-3">
-                                <Label htmlFor="date_retour" className="flex items-center gap-2 text-slate-700 font-bold rtl:mr-1 ltr:ml-1 rtl:flex-row-reverse rtl:justify-end">
-                                    <Calendar className="w-4 h-4 text-primary" /> {t('visa.date_retour')}
-                                </Label>
-                                <Input
-                                    id="date_retour"
-                                    type="date"
-                                    value={formData.date_retour}
-                                    onChange={(e) => setFormData({ ...formData, date_retour: e.target.value })}
-                                    required
-                                    className="h-14 bg-white/50 border-slate-200 focus:bg-white focus:ring-primary/20 focus:border-primary transition-all rounded-2xl md:text-lg"
-                                />
-                            </div>
 
-                            {/* Durée du séjour */}
-                            <div className="space-y-3">
-                                <Label htmlFor="duree_sejour" className="flex items-center gap-2 text-slate-700 font-bold rtl:mr-1 ltr:ml-1 rtl:flex-row-reverse rtl:justify-end">
-                                    <Users className="w-4 h-4 text-primary" /> {t('visa.duree_sejour')}
-                                </Label>
-                                <Input
-                                    id="duree_sejour"
-                                    placeholder={t('visa.duree_sejour_placeholder')}
-                                    value={formData.duree_sejour}
-                                    onChange={(e) => setFormData({ ...formData, duree_sejour: e.target.value })}
-                                    required
-                                    className="h-14 bg-white/50 border-slate-200 focus:bg-white focus:ring-primary/20 focus:border-primary transition-all rounded-2xl md:text-lg"
-                                />
-                            </div>
-
-                            {/* Ville d'entrée */}
-                            <div className="space-y-3">
-                                <Label htmlFor="ville_entree" className="flex items-center gap-2 text-slate-700 font-bold rtl:mr-1 ltr:ml-1 rtl:flex-row-reverse rtl:justify-end">
-                                    <Plane className="w-4 h-4 text-primary" /> {t('visa.ville_entree')}
-                                </Label>
-                                <Input
-                                    id="ville_entree"
-                                    placeholder={t('visa.ville_entree_placeholder')}
-                                    value={formData.ville_entree}
-                                    onChange={(e) => setFormData({ ...formData, ville_entree: e.target.value })}
-                                    required
-                                    className="h-14 bg-white/50 border-slate-200 focus:bg-white focus:ring-primary/20 focus:border-primary transition-all rounded-2xl md:text-lg"
-                                />
-                            </div>
-
-                            {/* Ville de sortie */}
-                            <div className="space-y-3 md:col-span-2">
-                                <Label htmlFor="ville_sortie" className="flex items-center gap-2 text-slate-700 font-bold rtl:mr-1 ltr:ml-1 rtl:flex-row-reverse rtl:justify-end">
-                                    <Plane className="w-4 h-4 text-primary" /> {t('visa.ville_sortie')}
-                                </Label>
-                                <Input
-                                    id="ville_sortie"
-                                    placeholder={t('visa.ville_sortie_placeholder')}
-                                    value={formData.ville_sortie}
-                                    onChange={(e) => setFormData({ ...formData, ville_sortie: e.target.value })}
-                                    className="h-14 bg-white/50 border-slate-200 focus:bg-white focus:ring-primary/20 focus:border-primary transition-all rounded-2xl md:text-lg"
-                                />
-                            </div>
                         </div>
 
                         {/* Remarks */}

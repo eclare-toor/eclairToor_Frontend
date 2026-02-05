@@ -105,8 +105,11 @@ const Contact = () => {
                   <div>
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('contact.phone_label')}</p>
                     <div className="space-y-1">
-                      <p className="text-lg font-bold text-slate-900 hover:text-primary transition-colors cursor-pointer">+213 560 043 393</p>
+                      <p className="text-lg font-bold text-slate-900 hover:text-primary transition-colors cursor-pointer">+213 557 585 226</p>
                       <p className="text-lg font-bold text-slate-900 hover:text-primary transition-colors cursor-pointer">+213 667 441 129</p>
+                      <p className="text-lg font-bold text-slate-900 hover:text-primary transition-colors cursor-pointer">+213 560 043 393</p>
+                      <p className="text-lg font-bold text-slate-900 hover:text-primary transition-colors cursor-pointer">044 011 889</p>
+
                     </div>
                   </div>
                 </div>
