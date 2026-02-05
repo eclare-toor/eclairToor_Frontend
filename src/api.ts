@@ -569,6 +569,30 @@ export const register = async (data: RegisterPayload): Promise<AuthResponse> => 
     }
 };
 
+export const adminRegister = async (data: RegisterPayload): Promise<AuthResponse> => {
+    const token = Cookies.get('token');
+    try {
+        const response = await fetch(`${API_URL}/api/auth/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+        if (!response.ok) {
+            throw new Error(result.error || result.message || 'Registration failed');
+        }
+
+        return result;
+    } catch (error) {
+        console.error('Error in admin registration:', error);
+        throw error;
+    }
+};
+
 export const login = async (email: string, password: string): Promise<AuthResponse> => {
     try {
         const response = await fetch(`${API_URL}/api/auth/login`, {
