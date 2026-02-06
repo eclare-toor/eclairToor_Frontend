@@ -162,7 +162,7 @@ const Navbar = () => {
                         </div>
 
                         {/* IATA logo — hidden on small screens, show from lg */}
-                        <div className=" hidden lg:flex flex-col items-center">
+                        <div className="flex flex-col items-center">
                             <img
                                 src={iataLogo}
                                 alt="IATA Certified"
@@ -170,9 +170,9 @@ const Navbar = () => {
                                 height={50}
                                 loading="lazy"
                                 decoding="async"
-                                className="object-contain rounded-2xl h-8 lg:h-10 xl:h-12  transition-all duration-300"
+                                className="object-contain rounded-2xl  h-6 sm:h-8 lg:h-10 xl:h-12  transition-all duration-300"
                             />
-                            <span className="font-black bg-white w-14  text-[#1E618C] tracking-tight leading-none block text-center text-[8px] lg:text-[9px] xl:text-[10px] mt-0.5 ">
+                            <span className="font-black bg-white w-10 sm:w-14  text-[#1E618C] tracking-tight leading-none block text-center text-[8px] lg:text-[9px] xl:text-[10px] mt-0.5 ">
                                 03216555
                             </span>
                         </div>
